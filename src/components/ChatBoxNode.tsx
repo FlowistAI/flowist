@@ -1,4 +1,4 @@
-import { Handle, Position } from 'reactflow';
+import { Handle, NodeResizer, Position } from 'reactflow';
 import { XIcon } from '@primer/octicons-react';
 import './ChatBoxNode.css';
 import Chat from './Chat';
@@ -13,7 +13,7 @@ export type ChatBoxNodeProps = {
 };
 const handleStyle = { left: 10 };
 
-export function ChatBoxNode({ data }: ChatBoxNodeProps) {
+export function ChatBoxNode({ data, selected }: ChatBoxNodeProps) {
     const user = {
         imgUrl: 'user-avatar.jpg',
         name: 'John Doe',
@@ -51,6 +51,8 @@ export function ChatBoxNode({ data }: ChatBoxNodeProps) {
 
             return true
         }}>
+            <NodeResizer minWidth={300} minHeight={200} isVisible={selected} />
+
             <Handle type="target" position={Position.Top} />
 
             <div className="chat-box__header">
