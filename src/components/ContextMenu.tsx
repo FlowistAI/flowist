@@ -2,14 +2,27 @@ import React from 'react';
 import { PlusIcon } from '@primer/octicons-react';
 
 import "./ContextMenu.css"
-import { NodeType, NodeTypeName } from '../constants/nodeTypes';
+import { AppNodeTypes } from '../constants/nodeTypes';
+import { useNodeManager } from '../hooks/NodeManager';
 
 type ContextMenuProps = {
     position: { x: number; y: number };
-    onAddNode: (type: NodeTypeName) => void;
+    isOpen?: boolean;
+    onClose?: () => void;
 };
 
-export const ContextMenu: React.FC<ContextMenuProps> = ({ position, onAddNode }) => {
+export const ContextMenu: React.FC<ContextMenuProps> = ({ position, isOpen, onClose }) => {
+    const nodeManager = useNodeManager()
+
+    const handleAddNode = (options: Parameters<typeof nodeManager.addNode>[0]) => {
+        nodeManager.addNode(options);
+        onClose?.();
+    }
+
+    if (!isOpen) {
+        return null;
+    }
+
     return (
         <div
             style={{
@@ -23,13 +36,15 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({ position, onAddNode })
             >
                 <li
                     className='context-menu__item'
-                    onClick={() => onAddNode(NodeType.ChatBox)}>
+                    onClick={() => handleAddNode({ type: AppNodeTypes.ChatBox })}
+                >
                     <PlusIcon size={24} />
                     新建对话节点
                 </li>
                 <li
                     className='context-menu__item'
-                    onClick={() => onAddNode(NodeType.TextToSpeech)}>
+                    onClick={() => handleAddNode({ type: AppNodeTypes.TextToSpeech })}
+                >
                     <PlusIcon size={24} />
                     新建语音节点
                 </li>

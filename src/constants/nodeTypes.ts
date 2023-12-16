@@ -1,22 +1,16 @@
 import { CSSProperties } from "react";
 import { ChatBoxNode } from "../components/ChatBoxNode";
 import { TextToSpeechNode } from "../components/TextToSpeechNode";
-import { TodoList } from "../components/TodoList";
 
-export const nodeTypes = {
+export const appNodeTypeComponents = {
     'chat-box': ChatBoxNode,
     'text-to-speech': TextToSpeechNode,
-    'todo': TodoList,
 }
 
-export enum NodeType {
-    ChatBox = 'chat-box',
-    TextToSpeech = 'text-to-speech'
-}
 
-export type NodeTypeName = keyof typeof nodeTypes;
+export type AppNodeType = keyof typeof appNodeTypeComponents;
 
-export const defaultStyles: Record<NodeTypeName, CSSProperties> = {
+export const defaultStyles: Record<AppNodeType, CSSProperties> = {
     'chat-box': {
         width: 400,
         height: 400,
@@ -25,8 +19,9 @@ export const defaultStyles: Record<NodeTypeName, CSSProperties> = {
         width: 400,
         height: 200,
     },
-    'todo': {
-        width: 400,
-        height: 200,
-    }
-}  
+}
+
+export enum AppNodeTypes {
+    ChatBox = 'chat-box',
+    TextToSpeech = 'text-to-speech'
+}

@@ -1,17 +1,6 @@
 import React, { useRef, useEffect } from 'react';
-import './Chat.css'; // 假设样式保存在 Chat.css 文件中
-
-interface User {
-    imgUrl: string;
-    name: string;
-    role: string;
-}
-
-interface Message {
-    imgUrl: string;
-    content: string;
-    isOwn: boolean;
-}
+import './Chat.css';
+import { Participant, ChatMessage, Bot } from '../types/chat-types';
 
 interface AvatarProps {
     src: string;
@@ -21,35 +10,35 @@ const Avatar: React.FC<AvatarProps> = ({ src }) => (
     <img src={src} alt="Profile" className="avatar" />
 );
 
-interface UserInfoProps {
-    user: User;
+interface BotInfoProps {
+    bot: Bot;
 }
 
-const UserInfo: React.FC<UserInfoProps> = ({ user }) => (
+const BotInfo: React.FC<BotInfoProps> = ({ bot: user }) => (
     <div className="user-info">
-        <Avatar src={user.imgUrl} />
+        <Avatar src={user.avatar} />
         <div>
             <div className="user-name">{user.name}</div>
-            <div className="user-role">{user.role}</div>
+            <div className="user-role">{user.settings.model}</div>
         </div>
     </div>
 );
 
 interface MessageProps {
-    message: Message;
+    message: ChatMessage;
     isOwn: boolean;
 }
 
 const Message: React.FC<MessageProps> = ({ message, isOwn }) => (
     <div className={`message ${isOwn ? 'own' : ''}`}>
-        {!isOwn && <Avatar src={message.imgUrl} />}
+        {!isOwn && <Avatar src={message.avatar} />}
         <div className="message-content">{message.content}</div>
-        {isOwn && <Avatar src={message.imgUrl} />}
+        {isOwn && <Avatar src={message.avatar} />}
     </div>
 );
 
 interface MessageListProps {
-    messages: Message[];
+    messages: ChatMessage[];
 }
 
 const MessageList: React.FC<MessageListProps> = ({ messages }) => {
@@ -64,7 +53,7 @@ const MessageList: React.FC<MessageListProps> = ({ messages }) => {
     }, [messages]);
 
     return (
-        <div className="messages">
+        <div className="messages nodrag">
             {messages.map((message, index) => (
                 <Message key={index} message={message} isOwn={message.isOwn} />
             ))}
@@ -88,7 +77,7 @@ const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage }) => {
     };
 
     return (
-        <div className="message-input">
+        <div className="message-input nodrag">
             <input
                 type="text"
                 placeholder="Write your message!"
@@ -102,14 +91,15 @@ const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage }) => {
 };
 
 interface ChatProps {
-    user: User;
-    messages: Message[];
+    user: Participant;
+    bot: Bot;
+    messages: ChatMessage[];
     onSendMessage?: (message: string) => void;
 }
 
-const Chat: React.FC<ChatProps> = ({ user, messages, onSendMessage }) => (
+const Chat: React.FC<ChatProps> = ({ bot, messages, onSendMessage }) => (
     <div className="chat">
-        <UserInfo user={user} />
+        <BotInfo bot={bot} />
         <MessageList messages={messages} />
         <MessageInput onSendMessage={onSendMessage} />
     </div>

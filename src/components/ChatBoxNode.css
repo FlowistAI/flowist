@@ -11,23 +11,17 @@
 
 .chat-box__header {
   padding: 5px;
-  background: #eee;
   border-bottom: 1px solid #ddd;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.chat-box__settings {
+.chat-box__menu {
   padding: 2px;
   border: none;
-  border-radius: 3px;
   background: none;
   cursor: pointer;
-}
-
-.chat-box__settings:hover {
-  background-color: var(--color-gray-30);
 }
 
 .chat-box__title {
@@ -38,6 +32,12 @@
   border: none;
   background: none;
   cursor: pointer;
+  padding: 2px;
+}
+
+.chat-box__close:hover {
+  background-color: var(--color-gray-30);
+  border-radius: 9999px;
 }
 
 .chat-box__content {

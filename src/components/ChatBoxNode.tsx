@@ -1,33 +1,35 @@
 import { Handle, NodeResizer, Position } from 'reactflow';
-import { GearIcon, XIcon } from '@primer/octicons-react';
+import { XIcon } from '@primer/octicons-react';
 import './ChatBoxNode.css';
 import Chat from './Chat';
 import { useState } from 'react';
+import { ChatNodeData } from '../types/chat-types';
+import { chatSessionsState } from '../states/chat-states';
+import { useRecoilValue } from 'recoil';
+import { useNodeManager } from '../hooks/NodeManager';
+import { ChatBoxDropDownMenu } from './ChatBoxDropdownMenu';
+import { Invalid } from './Invalid';
 
 export type ChatBoxNodeProps = {
-    data: {
-        title: string;
-        content: string;
-        onClose: () => void;
-    };
+    data: ChatNodeData
+    selected: boolean
 };
+
 const handleStyle = { left: 10 };
 
 export function ChatBoxNode({ data, selected }: ChatBoxNodeProps) {
-    const user = {
-        imgUrl: 'user-avatar.jpg',
-        name: 'John Doe',
-        role: 'Admin',
-    };
+    const { id } = data
+    const { removeNode } = useNodeManager()
+    const session = useRecoilValue(chatSessionsState).find(session => session.id === id);
 
     const initMessages = [
         {
-            imgUrl: 'user-avatar.jpg',
+            avatar: 'chatgpt3.png',
             content: 'Hello',
             isOwn: false,
         },
         {
-            imgUrl: 'user-avatar.jpg',
+            avatar: 'user-avatar.jpg',
             content: 'Hi there!',
             isOwn: true,
         },
@@ -37,12 +39,18 @@ export function ChatBoxNode({ data, selected }: ChatBoxNodeProps) {
 
     const handleSendMessage = (message: string) => {
         const newMessage = {
-            imgUrl: 'user-avatar.jpg',
+            avatar: 'user-avatar.jpg',
             content: message,
             isOwn: true,
         };
         setMessages([...messages, newMessage]);
     };
+
+    if (!session) {
+        console.error('session not found', id)
+        return <Invalid />
+    }
+    const { bot, user } = session
 
     return (
         <div className="chat-box" onContextMenu={e => {
@@ -54,21 +62,17 @@ export function ChatBoxNode({ data, selected }: ChatBoxNodeProps) {
             <NodeResizer minWidth={300} minHeight={200} isVisible={selected} />
             <Handle type="target" position={Position.Top} />
             <div className="chat-box__header">
-                <button className="chat-box__settings nodrag" onClick={() => {
-                    console.log('setting')
-                }
-                }>
-                    <GearIcon size={16} />
-                </button>
-                <span className="chat-box__title">{data.title ?? "Chat"}</span>
-                <button className="chat-box__close" onClick={data.onClose}>
+                <ChatBoxDropDownMenu sessionId={session.id} />
+
+                <span className="chat-box__title">{session.bot.name ?? "Chat"}</span>
+                <button className="chat-box__close" onClick={() => removeNode(data.id)}>
                     <span>
                         <XIcon size={16} />
                     </span>
                 </button>
             </div>
-            <div className="chat-box__content nodrag nowheel cursor-default" >
-                <Chat user={user} messages={messages} onSendMessage={handleSendMessage} />
+            <div className="chat-box__content nowheel cursor-default" >
+                <Chat user={user} bot={bot} messages={messages} onSendMessage={handleSendMessage} />
             </div>
             <Handle type="source" position={Position.Bottom} id="a" />
             <Handle
@@ -77,6 +81,6 @@ export function ChatBoxNode({ data, selected }: ChatBoxNodeProps) {
                 id="b"
                 style={handleStyle}
             />
-        </div>
+        </div >
     );
 }

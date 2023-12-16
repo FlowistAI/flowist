@@ -1,18 +1,24 @@
-// 生成 id
-export function generateId() {
-    let id = '';
+export class IdGenerator {
+    private index: number;
 
-    // 字母部分
-    const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-
-    for (let i = 0; i < letters.length; i++) {
-        id += letters[i];
-        if (id.length === 2) break;
+    constructor() {
+        this.index = 0;
     }
 
-    // 数字部分
-    const nums = Math.floor(Math.random() * 1000);
-    id += nums;
+    public next(): string {
+        let id = this.index++;
+        let ret = "";
 
-    return id;
+        while (id >= 0) {
+            const remainder = id % 26;
+            ret = String.fromCharCode(65 + remainder) + ret;
+            id = Math.floor(id / 26) - 1;
+        }
+
+        return ret;
+    }
 }
+
+export const idGenerator = new IdGenerator();
+
+export const generateId = () => idGenerator.next();
