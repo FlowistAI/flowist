@@ -20,7 +20,8 @@
     "@primer/octicons-react": "^19.8.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "reactflow": "^11.9.4"
+    "reactflow": "^11.9.4",
+    "recoil": "^0.7.7"
   },
   "license": "AGPL",
   "devDependencies": {
