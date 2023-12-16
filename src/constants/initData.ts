@@ -5,7 +5,7 @@ export const initNodes: Node[] = [
         id: 'a',
         type: 'chat-box',
         data: { label: 'Node A' },
-        position: { x: 250, y: 0 },
+        position: { x: 250, y: 250 },
         style: { width: 400, height: 400 },
     },
     {

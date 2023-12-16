@@ -1,4 +1,4 @@
-import { PlusIcon } from '@primer/octicons-react';
+import { PlusIcon, GearIcon } from '@primer/octicons-react';
 
 import './FloatingMenu.css';
 
@@ -11,17 +11,21 @@ export function FloatingMenu({
 }: FloatingMenuProps) {
 
     const handleMouseEnter = () => {
-        // 进入时打开菜单
     };
 
     const handleMouseLeave = () => {
-        // 离开时关闭菜单
     };
     return (
         <div
             className="floating-menu"
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
+            onContextMenu={
+                (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+            }
         >
             {logo && (
                 <div className="floating-menu__logo">
@@ -31,7 +35,7 @@ export function FloatingMenu({
                 </div>
             )}
             <button className="floating-menu__item" >
-                <PlusIcon size={24} />
+                <GearIcon size={24} />
             </button>
         </div>
     )
