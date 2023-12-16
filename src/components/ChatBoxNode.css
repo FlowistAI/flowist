@@ -1,0 +1,36 @@
+.chat-box {
+  border: 1px solid #ddd;
+  background: #fff;
+  border-radius: 3px;
+  min-width: 150px;
+  z-index: 200;
+  height: inherit;
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-box__header {
+  padding: 5px;
+  background: #eee;
+  border-bottom: 1px solid #ddd;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.chat-box__title {
+  font-weight: bold;
+}
+
+.chat-box__close {
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.chat-box__content {
+  padding: 10px;
+  box-sizing: border-box;
+  flex-grow: 1;
+}
+  

@@ -1,0 +1,50 @@
+.floating-menu {
+  position: fixed;
+  top: 50px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 200px;
+  display: flex;
+  items-align: center;
+
+  --padding: 0;
+  box-sizing: border-box;
+  background-color: var(--island-bg-color);
+  box-shadow: var(--shadow-island);
+  border-radius: var(--border-radius-lg);
+  padding: calc(var(--padding) * var(--space-factor));
+  transition: box-shadow .5s ease-in-out;
+  z-index: 100;
+}
+
+.floating-menu__item {
+  display: inline-block;
+  padding: 5px 5px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.floating-menu__item:hover {
+  background: #eee;
+}
+
+.floating-menu__item span {
+  display: block;
+  font-size: 14px;
+}
+
+.floating-menu__logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.floating-menu__logo-text {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+}
+  
