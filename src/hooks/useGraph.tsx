@@ -1,16 +1,17 @@
 import { useNodesState, useEdgesState, Node, Edge, XYPosition } from 'reactflow';
 import { generateId } from '../util/misc-util';
+import { NodeTypeName, defaultStyles } from '../constants/nodeTypes';
 
 export const useGraph = (initialNodes: Node[], initialEdges: Edge[]) => {
     const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
     const [edges, , onEdgesChange] = useEdgesState(initialEdges);
 
-    const handleAddNode = (position: XYPosition) => {
+    const handleAddNode = (type: NodeTypeName, position: XYPosition) => {
         const newNode = {
             id: generateId(),
-            type: 'chat-box',
+            type: type,
             data: { label: 'New Node' },
-            style: { width: 400, height: 400 },
+            style: defaultStyles[type],
             position: position
         };
         setNodes((nds) => [...nds, newNode]);

@@ -2,6 +2,7 @@
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
+  font-size: 12px;
 }
 
 html,
@@ -117,4 +118,8 @@ body,
   --color-border-outline: #767680;
   --color-border-outline-variant: #c5c5d0;
   --color-surface-primary-container: #e0dfff;
+}
+
+.react-flow__renderer {
+  position: fixed !important;
 }

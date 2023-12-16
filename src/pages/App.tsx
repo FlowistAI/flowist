@@ -1,14 +1,13 @@
-import React, { useCallback, useMemo, useRef, useState } from 'react';
-import ReactFlow, { Background, Controls, MiniMap, ReactFlowInstance, XYPosition } from 'reactflow';
+import React, { useCallback, useRef, useState } from 'react';
+import ReactFlow, { Background, Controls, MiniMap, NodeMouseHandler, ReactFlowInstance, XYPosition } from 'reactflow';
 import 'reactflow/dist/style.css';
-import "@chatscope/chat-ui-kit-styles/dist/default/styles.min.css";
 import './App.css';
 import { FloatingMenu } from '../components/FloatingMenu';
 import { ContextMenu } from '../components/ContextMenu';
 import { useGraph } from '../hooks/useGraph';
 import { initNodes, initEdges } from '../constants/initData';
 import { Optional } from '../types/types';
-import { ChatBoxNode } from '../components/ChatBoxNode';
+import { NodeTypeName, nodeTypes } from '../constants/nodeTypes';
 
 function App() {
   const { nodes, onNodesChange, edges, onEdgesChange, handleAddNode } = useGraph(initNodes, initEdges);
@@ -16,7 +15,6 @@ function App() {
   const [cvsCurPos, setCvsCurPos] = useState<Optional<XYPosition>>(undefined);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [reactFlowInstance, setReactFlowInstance] = useState<Optional<ReactFlowInstance<any, any>>>(undefined);
-  const nodeTypes = useMemo(() => ({ 'chat-box': ChatBoxNode }), []);
 
   const onContextMenu = useCallback((event: React.MouseEvent<HTMLDivElement>) => {
     event.preventDefault();
@@ -35,20 +33,24 @@ function App() {
   }, [reactFlowInstance]);
   const reactFlowWrapper = useRef(null);
 
-  const addNode = useCallback(() => {
+  const addNode = (nodeType: NodeTypeName) => {
     if (cvsCurPos) {
-      handleAddNode(cvsCurPos);
+      handleAddNode(nodeType, cvsCurPos);
       setCtxMenuPos(undefined);
     }
-  }, [cvsCurPos, handleAddNode]);
+  }
+
+  const onNodeContextMenu = useCallback<NodeMouseHandler>((event, node) => {
+    event.preventDefault();
+    console.log('node:', node);
+    // 显示上下文菜单
+  }, []);
+
   return (
-    <div className='app' onContextMenu={onContextMenu} ref={reactFlowWrapper}>
-      <FloatingMenu
-      />
-      {ctxMenuPos && (
-        <ContextMenu position={ctxMenuPos} onAddNode={addNode} />
-      )}
+    <div className='app' ref={reactFlowWrapper}>
       <ReactFlow
+        onContextMenu={onContextMenu}
+        onNodeContextMenu={onNodeContextMenu}
         nodes={nodes}
         edges={edges}
         nodeTypes={nodeTypes}
@@ -56,8 +58,9 @@ function App() {
         onEdgesChange={onEdgesChange}
         onInit={(instance) => {
           console.log('flow instance:', instance);
-          instance.zoomTo(1);
           setReactFlowInstance(instance);
+          console.log(instance.getZoom());
+
         }}
         onClick={
           () => {
@@ -74,13 +77,18 @@ function App() {
             setCtxMenuPos(undefined);
           }
         }
-        fitView
       >
         <Background />
         <Controls />
         <MiniMap
           pannable
         />
+
+        <FloatingMenu
+        />
+        {ctxMenuPos && (
+          <ContextMenu position={ctxMenuPos} onAddNode={addNode} />
+        )}
       </ReactFlow>
 
     </div>

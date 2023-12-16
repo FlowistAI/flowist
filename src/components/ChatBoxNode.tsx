@@ -1,22 +1,8 @@
 import { Handle, Position } from 'reactflow';
 import { XIcon } from '@primer/octicons-react';
 import './ChatBoxNode.css';
-
-import {
-    BasicStorage,
-    ChatProvider,
-    AutoDraft,
-    ChatServiceFactory
-} from "@chatscope/use-chat";
-import { ExampleChatService } from '../services/ExampleChatService';
-import { generateId } from '../util/misc-util';
-import { ChatWrapper } from './ChatWrapper';
-import { useMemo } from 'react';
-
-const messageIdGenerator = () => generateId();
-const groupIdGenerator = () => generateId();
-
-
+import Chat from './Chat';
+import { useState } from 'react';
 
 export type ChatBoxNodeProps = {
     data: {
@@ -28,35 +14,55 @@ export type ChatBoxNodeProps = {
 const handleStyle = { left: 10 };
 
 export function ChatBoxNode({ data }: ChatBoxNodeProps) {
-    const storage = useMemo(() => new BasicStorage({ groupIdGenerator, messageIdGenerator }), [])
-    const serviceFactory: ChatServiceFactory<ExampleChatService> = (storage, updateState) => {
-        console.log("serviceFactory", storage);
-
-        return new ExampleChatService(storage, updateState);
+    const user = {
+        imgUrl: 'user-avatar.jpg',
+        name: 'John Doe',
+        role: 'Admin',
     };
+
+    const initMessages = [
+        {
+            imgUrl: 'user-avatar.jpg',
+            content: 'Hello',
+            isOwn: false,
+        },
+        {
+            imgUrl: 'user-avatar.jpg',
+            content: 'Hi there!',
+            isOwn: true,
+        },
+    ];
+
+    const [messages, setMessages] = useState(initMessages);
+
+    const handleSendMessage = (message: string) => {
+        const newMessage = {
+            imgUrl: 'user-avatar.jpg',
+            content: message,
+            isOwn: true,
+        };
+        setMessages([...messages, newMessage]);
+    };
+
     return (
-        <div className="chat-box">
+        <div className="chat-box" onContextMenu={e => {
+            e.preventDefault()
+            e.stopPropagation()
+
+            return true
+        }}>
             <Handle type="target" position={Position.Top} />
 
             <div className="chat-box__header">
-                <span className="chat-box__title">{data.title ?? "GPT4"}</span>
+                <span className="chat-box__title">{data.title ?? "Chat"}</span>
                 <button className="chat-box__close" onClick={data.onClose}>
                     <span>
                         <XIcon size={16} />
                     </span>
                 </button>
             </div>
-            <div className="chat-box__content">
-                <ChatProvider serviceFactory={serviceFactory} storage={storage} config={{
-                    typingThrottleTime: 250,
-                    typingDebounceTime: 900,
-                    debounceTyping: true,
-                    autoDraft: AutoDraft.Save | AutoDraft.Restore
-                }}>
-                    <ChatWrapper className="nodrag h-full " />
-                    {data.content}
-                </ChatProvider>
-
+            <div className="chat-box__content nodrag nowheel cursor-default" >
+                <Chat user={user} messages={messages} onSendMessage={handleSendMessage} />
             </div>
             <Handle type="source" position={Position.Bottom} id="a" />
             <Handle

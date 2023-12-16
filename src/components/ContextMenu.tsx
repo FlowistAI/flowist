@@ -2,10 +2,11 @@ import React from 'react';
 import { PlusIcon } from '@primer/octicons-react';
 
 import "./ContextMenu.css"
+import { NodeType, NodeTypeName } from '../constants/nodeTypes';
 
 type ContextMenuProps = {
     position: { x: number; y: number };
-    onAddNode: () => void;
+    onAddNode: (type: NodeTypeName) => void;
 };
 
 export const ContextMenu: React.FC<ContextMenuProps> = ({ position, onAddNode }) => {
@@ -22,10 +23,16 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({ position, onAddNode })
             >
                 <li
                     className='context-menu__item'
-                    onClick={onAddNode}>
+                    onClick={() => onAddNode(NodeType.ChatBox)}>
                     <PlusIcon size={24} />
-                    添加节点</li>
-                {/* 可以添加更多的菜单项 */}
+                    新建对话节点
+                </li>
+                <li
+                    className='context-menu__item'
+                    onClick={() => onAddNode(NodeType.TextToSpeech)}>
+                    <PlusIcon size={24} />
+                    新建语音节点
+                </li>
             </ul>
         </div>
     );

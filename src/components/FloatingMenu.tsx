@@ -25,7 +25,9 @@ export function FloatingMenu({
         >
             {logo && (
                 <div className="floating-menu__logo">
-                    <span className="floating-menu__logo-text">GIDE</span>
+                    <img src="logo.png" alt="Logo" width={32} />
+                    <span className="floating-menu__logo-text">
+                    </span>
                 </div>
             )}
             <button className="floating-menu__item" >
