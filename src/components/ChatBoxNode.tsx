@@ -1,5 +1,5 @@
 import { Handle, NodeResizer, Position } from 'reactflow';
-import { XIcon } from '@primer/octicons-react';
+import { GearIcon, XIcon } from '@primer/octicons-react';
 import './ChatBoxNode.css';
 import Chat from './Chat';
 import { useState } from 'react';
@@ -52,10 +52,14 @@ export function ChatBoxNode({ data, selected }: ChatBoxNodeProps) {
             return true
         }}>
             <NodeResizer minWidth={300} minHeight={200} isVisible={selected} />
-
             <Handle type="target" position={Position.Top} />
-
             <div className="chat-box__header">
+                <button className="chat-box__settings nodrag" onClick={() => {
+                    console.log('setting')
+                }
+                }>
+                    <GearIcon size={16} />
+                </button>
                 <span className="chat-box__title">{data.title ?? "Chat"}</span>
                 <button className="chat-box__close" onClick={data.onClose}>
                     <span>

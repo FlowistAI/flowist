@@ -18,6 +18,18 @@
   align-items: center;
 }
 
+.chat-box__settings {
+  padding: 2px;
+  border: none;
+  border-radius: 3px;
+  background: none;
+  cursor: pointer;
+}
+
+.chat-box__settings:hover {
+  background-color: var(--color-gray-30);
+}
+
 .chat-box__title {
   font-weight: bold;
 }
