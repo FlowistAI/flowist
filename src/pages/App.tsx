@@ -48,6 +48,8 @@ function App() {
 
   return (
     <div className='app' ref={reactFlowWrapper}>
+      <FloatingMenu
+      />
       <ReactFlow
         onContextMenu={onContextMenu}
         onNodeContextMenu={onNodeContextMenu}
@@ -84,8 +86,6 @@ function App() {
           pannable
         />
 
-        <FloatingMenu
-        />
         {ctxMenuPos && (
           <ContextMenu position={ctxMenuPos} onAddNode={addNode} />
         )}

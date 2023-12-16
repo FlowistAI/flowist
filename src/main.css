@@ -21,7 +21,6 @@ body,
   --button-gray-3: #adb5bd;
   --button-special-active-bg-color: #ebfbee;
   --dialog-border-color: var(--color-gray-20);
-  --dropdown-icon: url(data:image/svg+xml, <svg xmlns="http://www.w3.org/2000/svg" width="292.4" height="292.4" viewBox="0 0 292 292"><path d="M287 197L159 69c-4-3-8-5-13-5s-9 2-13 5L5 197c-3 4-5 8-5 13s2 9 5 13c4 4 8 5 13 5h256c5 0 9-1 13-5s5-8 5-13-1-9-5-13z"/></svg>);
   --focus-highlight-color: #a5d8ff;
   --icon-fill-color: var(--color-on-surface);
   --icon-green-fill-color: #2b8a3e;
@@ -39,7 +38,6 @@ body,
   --popup-text-color: #000000;
   --popup-text-inverted-color: #ffffff;
   --select-highlight-color: #339af0;
-  --shadow-island: 0px 0px .9310142993927002px 0px rgba(0, 0, 0, .17), 0px 0px 3.1270833015441895px 0px rgba(0, 0, 0, .08), 0px 7px 14px 0px rgba(0, 0, 0, .05);
   --button-hover-bg: var(--color-surface-high);
   --button-active-bg: var(--color-surface-high);
   --button-active-border: var(--color-brand-active);
@@ -51,12 +49,9 @@ body,
   --editor-container-padding: 1rem;
   --scrollbar-thumb: var(--button-gray-2);
   --scrollbar-thumb-hover: var(--button-gray-3);
-  --modal-shadow: 0px 100px 80px rgba(0, 0, 0, .07), 0px 41.7776px 33.4221px rgba(0, 0, 0, .0503198), 0px 22.3363px 17.869px rgba(0, 0, 0, .0417275), 0px 12.5216px 10.0172px rgba(0, 0, 0, .035), 0px 6.6501px 5.32008px rgba(0, 0, 0, .0282725), 0px 2.76726px 2.21381px rgba(0, 0, 0, .0196802);
   --avatar-border-color: var(--color-gray-20);
-  --sidebar-shadow: 0px 100px 80px rgba(0, 0, 0, .07), 0px 41.7776px 33.4221px rgba(0, 0, 0, .0503198), 0px 22.3363px 17.869px rgba(0, 0, 0, .0417275), 0px 12.5216px 10.0172px rgba(0, 0, 0, .035), 0px 6.6501px 5.32008px rgba(0, 0, 0, .0282725), 0px 2.76726px 2.21381px rgba(0, 0, 0, .0196802);
   --sidebar-border-color: var(--color-surface-high);
   --sidebar-bg-color: var(--island-bg-color);
-  --library-dropdown-shadow: 0px 15px 6px rgba(0, 0, 0, .01), 0px 8px 5px rgba(0, 0, 0, .05), 0px 4px 4px rgba(0, 0, 0, .09), 0px 1px 2px rgba(0, 0, 0, .1), 0px 0px 0px rgba(0, 0, 0, .1);
   --space-factor: .25rem;
   --text-primary-color: var(--color-on-surface);
   --color-selection: #6965db;
@@ -118,6 +113,11 @@ body,
   --color-border-outline: #767680;
   --color-border-outline-variant: #c5c5d0;
   --color-surface-primary-container: #e0dfff;
+  --modal-shadow: 0px 100px 80px rgba(0, 0, 0, .07), 0px 41.7776px 33.4221px rgba(0, 0, 0, .0503198), 0px 22.3363px 17.869px rgba(0, 0, 0, .0417275), 0px 12.5216px 10.0172px rgba(0, 0, 0, .035), 0px 6.6501px 5.32008px rgba(0, 0, 0, .0282725), 0px 2.76726px 2.21381px rgba(0, 0, 0, .0196802);
+  --sidebar-shadow: 0px 100px 80px rgba(0, 0, 0, .07), 0px 41.7776px 33.4221px rgba(0, 0, 0, .0503198), 0px 22.3363px 17.869px rgba(0, 0, 0, .0417275), 0px 12.5216px 10.0172px rgba(0, 0, 0, .035), 0px 6.6501px 5.32008px rgba(0, 0, 0, .0282725), 0px 2.76726px 2.21381px rgba(0, 0, 0, .0196802);
+  --library-dropdown-shadow: 0px 15px 6px rgba(0, 0, 0, .01), 0px 8px 5px rgba(0, 0, 0, .05), 0px 4px 4px rgba(0, 0, 0, .09), 0px 1px 2px rgba(0, 0, 0, .1), 0px 0px 0px rgba(0, 0, 0, .1);
+  --dropdown-icon: url(data:image/svg+xml, <svg xmlns="http://www.w3.org/2000/svg" width="292.4" height="292.4" viewBox="0 0 292 292"><path d="M287 197L159 69c-4-3-8-5-13-5s-9 2-13 5L5 197c-3 4-5 8-5 13s2 9 5 13c4 4 8 5 13 5h256c5 0 9-1 13-5s5-8 5-13-1-9-5-13z"/></svg>);
+  --shadow-island: 0px 0px .9310142993927002px 0px rgba(0, 0, 0, .17), 0px 0px 3.1270833015441895px 0px rgba(0, 0, 0, .08), 0px 7px 14px 0px rgba(0, 0, 0, .05);
 }
 
 .react-flow__renderer {

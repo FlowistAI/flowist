@@ -8,17 +8,17 @@ export const initNodes: Node[] = [
         position: { x: 250, y: 250 },
         style: { width: 400, height: 400 },
     },
-    {
-        id: 'b',
-        data: { label: 'Node B' },
-        position: { x: 100, y: 100 },
-    },
+    // {
+    //     id: 'b',
+    //     data: { label: 'Node B' },
+    //     position: { x: 100, y: 100 },
+    // },
 ];
 
 export const initEdges = [
-    {
-        id: 'a-b',
-        source: 'a',
-        target: 'b',
-    },
+    // {
+    //     id: 'a-b',
+    //     source: 'a',
+    //     target: 'b',
+    // },
 ];
