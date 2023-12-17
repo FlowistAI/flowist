@@ -25,6 +25,7 @@ export const useGoogleAI: (options: GoogleAIHookOptions) => GoogleAIHook = ({ ap
     // useCallback ensures that the same function is used unless dependencies change
     const onQuery = useCallback(async (query: string) => {
         try {
+            setOutput('');
             const { totalTokens } = await generativeModel.countTokens(query);
             console.log('totalTokens', totalTokens);
 
