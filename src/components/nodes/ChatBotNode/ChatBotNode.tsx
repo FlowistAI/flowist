@@ -56,7 +56,11 @@ export function ChatBotNode({ data, selected }: ChatBotNodeProps) {
             return true
         }}>
             <NodeResizer minWidth={300} minHeight={200} isVisible={selected} />
-            <Handle type="target" position={Position.Top} />
+            <Handle type="target" position={Position.Right}>
+                <div className='ml-2 pointer-events-none'>
+                    Input
+                </div>
+            </Handle>
             <div className="chat-bot__header">
                 <ChatBotDropDownMenu sessionId={session.id} />
 
@@ -70,8 +74,8 @@ export function ChatBotNode({ data, selected }: ChatBotNodeProps) {
             <div className="chat-bot__content nowheel cursor-default" >
                 <Chat user={user} bot={bot} messages={messages} onSendMessage={handleSendMessage} />
             </div>
-            <Handle type="source" position={Position.Bottom}>
-                <div className='-ml-6 pointer-events-none'>
+            <Handle type="source" position={Position.Left}>
+                <div className='-ml-14 pointer-events-none'>
                     Output
                 </div>
             </Handle>

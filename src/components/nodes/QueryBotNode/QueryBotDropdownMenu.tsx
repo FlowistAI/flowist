@@ -6,8 +6,8 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import SaveAsIcon from '@mui/icons-material/SaveAs';
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { produce } from "immer";
-import { chatSessionsState } from "../../../states/chat-states";
-import ChatBotSettingsForm from "./ChatBotSettings";
+import { querySessionsState } from "../../../states/query-states";
+import BotSettingsForm from "../_common/BotSettings";
 import { BotNodePreset } from "../../../types/bot-types";
 import { useToast } from "../../../hooks/Toast/useToast";
 
@@ -16,10 +16,11 @@ export type QueryBotDropDownMenuProps = {
 }
 export const QueryBotDropDownMenu: FC<QueryBotDropDownMenuProps> = ({ sessionId }) => {
     const [open, setOpen] = useState<boolean>(false);
-    const session = useRecoilValue(chatSessionsState).find(session => session.id === sessionId);
-    const setSessions = useSetRecoilState(chatSessionsState);
+    const session = useRecoilValue(querySessionsState).find(session => session.id === sessionId);
+    const setSessions = useSetRecoilState(querySessionsState);
     const toast = useToast()
     if (!session) {
+        console.log(`QueryBotDropDownMenu: session not found for id ${sessionId}, ignore if just deleted`);
         return null
     }
     const saveBotSettings = (values: BotNodePreset) => {
@@ -39,7 +40,7 @@ export const QueryBotDropDownMenu: FC<QueryBotDropDownMenuProps> = ({ sessionId 
                 slots={{ root: IconButton }}
                 sx={{ borderRadius: 40 }}
             >
-                <div className="chat-bot__menu nodrag" >
+                <div className="query-bot__menu nodrag" >
                     <KebabHorizontalIcon size={16} />
                 </div>
             </MenuButton>
@@ -74,7 +75,7 @@ export const QueryBotDropDownMenu: FC<QueryBotDropDownMenuProps> = ({ sessionId 
                 >
                     Bot Settings
                 </Typography>
-                <ChatBotSettingsForm initialValues={session} onSubmit={saveBotSettings} />
+                <BotSettingsForm initialValues={session} onSubmit={saveBotSettings} />
             </ModalDialog>
         </Modal>
     </>
