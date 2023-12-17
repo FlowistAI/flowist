@@ -7,9 +7,14 @@ import { AppNodeTypes } from '../constants/nodeTypes';
 import { chatSessionsState } from '../states/chat-states';
 import { useMemo } from 'react';
 import { SubManager } from '../hooks/NodeManager/NodeManager';
+import { querySessionsState } from '../states/query-states';
+import { QueryBotNodeService } from '../services/query-submanager';
 
 export function NodeManaged({ children }: { children: React.ReactElement; }) {
     const [nodes, setNodes, onNodesChange] = useNodesState(initNodes);
+    /**
+     * Chat session state
+     */
     const setChatSession = useSetRecoilState(chatSessionsState);
     const chatService = useMemo(() => new ChatBotNodeService({
         sessionCreateHandler: (session) => {
@@ -20,9 +25,26 @@ export function NodeManaged({ children }: { children: React.ReactElement; }) {
         }
     }), [setChatSession]);
 
+    /**
+     * Query session state
+     */
+
+    const setQuerySession = useSetRecoilState(querySessionsState);
+    const queryService = useMemo(() => new QueryBotNodeService({
+        sessionCreateHandler: (session) => {
+            setQuerySession((sessions) => sessions.concat(session));
+        },
+        sessionDestroyHandler: (sessId) => {
+            setQuerySession((sessions) => sessions.filter(s => s.id !== sessId));
+        }
+    }), [setQuerySession]);
+    /**
+     * Sub managers
+     */
     const subManagers: Record<AppNodeTypes, SubManager<AppNodeTypes, unknown>> = useMemo(() => ({
         [AppNodeTypes.ChatBot]: chatService,
-    }), [chatService]);
+        [AppNodeTypes.QueryBot]: queryService,
+    }), [chatService, queryService]);
 
     return (<NodeManagerProvider
         options={{

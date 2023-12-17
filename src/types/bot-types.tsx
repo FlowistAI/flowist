@@ -1,4 +1,3 @@
-
 export type Participant = {
     type: 'bot' | 'user'
     name: string;
@@ -14,11 +13,6 @@ export type User = Participant & {
     type: 'user';
 }
 
-export type ChatMessage = {
-    avatar: string;
-    content: string;
-    isOwn: boolean;
-}
 
 export type SessionId = string;
 
@@ -27,21 +21,6 @@ export type BotSettings = {
     temperature: number;
     prompt: string;
     maxTokens: number;
-}
-
-export type ChatSession = {
-    id: SessionId; // also as node id
-    bot: Bot;
-    user: Participant;
-    messages: ChatMessage[];
-}
-
-export type ChatBotNodeData = {
-    id: SessionId;
-}
-
-export type ChatBotNodePreset = {
-    bot: Bot,
 }
 
 export enum ModelIds {
@@ -75,3 +54,8 @@ export const botModelOptions = [
         value: ModelIds.GPT4,
     },
 ]
+
+export type BotNodePreset = {
+    bot: Bot;
+};
+

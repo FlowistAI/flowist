@@ -1,20 +1,21 @@
 import React, { useRef, useEffect } from 'react';
 import './Chat.css';
-import { Participant, ChatMessage, Bot } from '../types/chat-types';
+import { Participant, Bot } from '../types/bot-types';
+import { ChatMessage } from "../types/chat-node-types";
 
-interface AvatarProps {
+export interface AvatarProps {
     src: string;
 }
 
-const Avatar: React.FC<AvatarProps> = ({ src }) => (
+export const Avatar: React.FC<AvatarProps> = ({ src }) => (
     <img src={src} alt="Profile" className="avatar" />
 );
 
-interface BotInfoProps {
+export interface BotInfoProps {
     bot: Bot;
 }
 
-const BotInfo: React.FC<BotInfoProps> = ({ bot: user }) => (
+export const BotInfo: React.FC<BotInfoProps> = ({ bot: user }) => (
     <div className="user-info">
         <Avatar src={user.avatar} />
         <div>
@@ -24,12 +25,12 @@ const BotInfo: React.FC<BotInfoProps> = ({ bot: user }) => (
     </div>
 );
 
-interface MessageProps {
+export interface MessageProps {
     message: ChatMessage;
     isOwn: boolean;
 }
 
-const Message: React.FC<MessageProps> = ({ message, isOwn }) => (
+export const Message: React.FC<MessageProps> = ({ message, isOwn }) => (
     <div className={`message ${isOwn ? 'own' : ''}`}>
         {!isOwn && <Avatar src={message.avatar} />}
         <div className="message-content">{message.content}</div>
@@ -37,11 +38,11 @@ const Message: React.FC<MessageProps> = ({ message, isOwn }) => (
     </div>
 );
 
-interface MessageListProps {
+export interface MessageListProps {
     messages: ChatMessage[];
 }
 
-const MessageList: React.FC<MessageListProps> = ({ messages }) => {
+export const MessageList: React.FC<MessageListProps> = ({ messages }) => {
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
     const scrollToBottom = () => {
@@ -62,11 +63,11 @@ const MessageList: React.FC<MessageListProps> = ({ messages }) => {
     );
 };
 
-interface MessageInputProps {
+export interface MessageInputProps {
     onSendMessage?: (message: string) => void;
 }
 
-const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage }) => {
+export const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage }) => {
     const [input, setInput] = React.useState('');
 
     const handleSend = () => {
@@ -90,7 +91,7 @@ const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage }) => {
     );
 };
 
-interface ChatProps {
+export interface ChatProps {
     user: Participant;
     bot: Bot;
     messages: ChatMessage[];

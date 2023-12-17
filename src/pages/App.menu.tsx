@@ -25,6 +25,11 @@ export const createMenuItems: MenuItemsCreator = (
                     callback: () => nodeManager.addNode({ type: AppNodeTypes.ChatBot, data: { position: cursor } })
                 },
                 {
+                    key: 'new-query-node',
+                    text: '新建查询节点',
+                    callback: () => nodeManager.addNode({ type: AppNodeTypes.QueryBot, data: { position: cursor } })
+                },
+                {
                     key: 'new-tts-node',
                     text: '新建语音节点',
                     callback: () => nodeManager.addNode({ type: AppNodeTypes.TextToSpeech, data: { position: cursor } })

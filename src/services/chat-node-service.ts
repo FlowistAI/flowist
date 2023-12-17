@@ -1,10 +1,12 @@
 import { Node } from "reactflow";
 import { AppNodeTypes } from "../constants/nodeTypes";
 import { generateId } from "../util/misc-util";
-import { Bot, ChatBotNodeData, ChatBotNodePreset, ChatSession, ModelIds as Models, SessionId, User } from "../types/chat-types";
+import { Bot, ModelIds as Models, SessionId, User } from "../types/bot-types";
+import { ChatBotNodeData, ChatSession } from "../types/chat-node-types";
+import { BotNodePreset } from "../types/bot-types";
 
 export type CreateNodeOptions = {
-    preset?: ChatBotNodePreset
+    preset?: BotNodePreset
     data?: Partial<Node<ChatBotNodeData, AppNodeTypes.ChatBot>>
 }
 
@@ -24,6 +26,12 @@ export class ChatBotNodeService {
             maxTokens: 0,
             prompt: ''
         },
+    }
+
+    static readonly DefaultUser: User = {
+        type: 'user',
+        name: 'User',
+        avatar: 'user-avatar.jpg',
     }
 
     sessionCreateHandler: (sess: ChatSession) => void
@@ -55,15 +63,11 @@ export class ChatBotNodeService {
         return node
     }
 
-    private addSession(user?: User, preset?: ChatBotNodePreset): ChatSession {
+    private addSession(user?: User, preset?: BotNodePreset): ChatSession {
         const sess = {
             id: generateId(),
             bot: preset?.bot ?? ChatBotNodeService.DefaultBot,
-            user: user ?? {
-                type: 'user',
-                name: 'User',
-                avatar: 'user-avatar.jpg',
-            },
+            user: user ?? ChatBotNodeService.DefaultUser,
             messages: [],
         }
         console.log('addSession', sess);

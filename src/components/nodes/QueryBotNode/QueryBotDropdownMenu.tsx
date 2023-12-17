@@ -7,14 +7,14 @@ import SaveAsIcon from '@mui/icons-material/SaveAs';
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { produce } from "immer";
 import { chatSessionsState } from "../../../states/chat-states";
-import BotSettingsForm from "../_common/BotSettings";
+import ChatBotSettingsForm from "./ChatBotSettings";
 import { BotNodePreset } from "../../../types/bot-types";
 import { useToast } from "../../../hooks/Toast/useToast";
 
-export type ChatBotDropDownMenuProps = {
+export type QueryBotDropDownMenuProps = {
     sessionId: string
 }
-export const ChatBotDropDownMenu: FC<ChatBotDropDownMenuProps> = ({ sessionId }) => {
+export const QueryBotDropDownMenu: FC<QueryBotDropDownMenuProps> = ({ sessionId }) => {
     const [open, setOpen] = useState<boolean>(false);
     const session = useRecoilValue(chatSessionsState).find(session => session.id === sessionId);
     const setSessions = useSetRecoilState(chatSessionsState);
@@ -74,7 +74,7 @@ export const ChatBotDropDownMenu: FC<ChatBotDropDownMenuProps> = ({ sessionId })
                 >
                     Bot Settings
                 </Typography>
-                <BotSettingsForm initialValues={session} onSubmit={saveBotSettings} />
+                <ChatBotSettingsForm initialValues={session} onSubmit={saveBotSettings} />
             </ModalDialog>
         </Modal>
     </>

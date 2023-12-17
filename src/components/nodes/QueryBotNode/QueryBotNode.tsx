@@ -1,23 +1,23 @@
 import { Handle, NodeResizer, Position } from 'reactflow';
 import { XIcon } from '@primer/octicons-react';
-import './ChatBotNode.css';
-import Chat from '../../Chat';
+import './QueryBotNode.css';
 import { useState } from 'react';
-import { ChatBotNodeData } from "../../../types/chat-node-types";
-import { chatSessionsState } from '../../../states/chat-states';
+import { QueryBotNodeData } from "../../../types/query-node-types";
+import { querySessionsState } from '../../../states/query-states';
 import { useRecoilValue } from 'recoil';
 import { useNodeManager } from '../../../hooks/NodeManager';
-import { ChatBotDropDownMenu } from './ChatBotDropdownMenu';
+import { QueryBotDropDownMenu } from './QueryBotDropdownMenu';
+import QueryBot from '../../QueryBot';
 
-export type ChatBotNodeProps = {
-    data: ChatBotNodeData
+export type QueryBotNodeProps = {
+    data: QueryBotNodeData
     selected: boolean
 };
 
-export function ChatBotNode({ data, selected }: ChatBotNodeProps) {
+export function QueryBotNode({ data, selected }: QueryBotNodeProps) {
     const { id } = data
     const { removeNode } = useNodeManager()
-    const session = useRecoilValue(chatSessionsState).find(session => session.id === id);
+    const session = useRecoilValue(querySessionsState).find(session => session.id === id);
 
     const initMessages = [
         {
@@ -56,9 +56,13 @@ export function ChatBotNode({ data, selected }: ChatBotNodeProps) {
             return true
         }}>
             <NodeResizer minWidth={300} minHeight={200} isVisible={selected} />
-            <Handle type="target" position={Position.Top} />
+            <Handle type="target" position={Position.Top}>
+                <div className='-ml-6 -mt-6 pointer-events-none'>
+                    Input
+                </div>
+            </Handle>
             <div className="chat-bot__header">
-                <ChatBotDropDownMenu sessionId={session.id} />
+                <QueryBotDropDownMenu sessionId={session.id} />
 
                 <span className="chat-bot__title">{session.bot.name ?? "Chat"}</span>
                 <button className="chat-bot__close" onClick={() => removeNode(data.id)}>
@@ -68,7 +72,7 @@ export function ChatBotNode({ data, selected }: ChatBotNodeProps) {
                 </button>
             </div>
             <div className="chat-bot__content nowheel cursor-default" >
-                <Chat user={user} bot={bot} messages={messages} onSendMessage={handleSendMessage} />
+                <QueryBot user={user} bot={bot} onQuery={handleSendMessage} />
             </div>
             <Handle type="source" position={Position.Bottom}>
                 <div className='-ml-6 pointer-events-none'>

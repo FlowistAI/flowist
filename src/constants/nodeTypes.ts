@@ -1,27 +1,18 @@
-import { CSSProperties } from "react";
 import { ChatBotNode } from "../components/nodes/ChatBotNode/ChatBotNode";
 import { TextToSpeechNode } from "../components/TextToSpeechNode";
+import { QueryBotNode } from "../components/nodes/QueryBotNode/QueryBotNode";
 
 export const appNodeTypeComponents = {
     'chat-bot': ChatBotNode,
+    'query-bot': QueryBotNode,
     'text-to-speech': TextToSpeechNode,
 }
 
 
 export type AppNodeType = keyof typeof appNodeTypeComponents;
 
-export const defaultStyles: Record<AppNodeType, CSSProperties> = {
-    'chat-bot': {
-        width: 400,
-        height: 400,
-    },
-    'text-to-speech': {
-        width: 400,
-        height: 200,
-    },
-}
-
 export enum AppNodeTypes {
     ChatBot = 'chat-bot',
-    TextToSpeech = 'text-to-speech'
+    TextToSpeech = 'text-to-speech',
+    QueryBot = 'query-bot',
 }
