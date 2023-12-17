@@ -1,5 +1,5 @@
 import { CSSProperties } from "react";
-import { ChatBotNode } from "../components/ChatBotNode";
+import { ChatBotNode } from "../components/nodes/ChatBotNode/ChatBotNode";
 import { TextToSpeechNode } from "../components/TextToSpeechNode";
 
 export const appNodeTypeComponents = {

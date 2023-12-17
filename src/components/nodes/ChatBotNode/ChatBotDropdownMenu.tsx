@@ -6,10 +6,10 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import SaveAsIcon from '@mui/icons-material/SaveAs';
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { produce } from "immer";
-import { chatSessionsState } from "../states/chat-states";
+import { chatSessionsState } from "../../../states/chat-states";
 import ChatBotSettingsForm from "./ChatBotSettings";
-import { ChatBotNodePreset } from "../types/chat-types";
-import { useToast } from "../hooks/Toast/useToast";
+import { ChatBotNodePreset } from "../../../types/chat-types";
+import { useToast } from "../../../hooks/Toast/useToast";
 
 export type ChatBotDropDownMenuProps = {
     sessionId: string

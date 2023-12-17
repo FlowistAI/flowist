@@ -1,12 +1,12 @@
 import { Handle, NodeResizer, Position } from 'reactflow';
 import { XIcon } from '@primer/octicons-react';
 import './ChatBotNode.css';
-import Chat from './Chat';
+import Chat from '../../Chat';
 import { useState } from 'react';
-import { ChatBotNodeData } from '../types/chat-types';
-import { chatSessionsState } from '../states/chat-states';
+import { ChatBotNodeData } from '../../../types/chat-types';
+import { chatSessionsState } from '../../../states/chat-states';
 import { useRecoilValue } from 'recoil';
-import { useNodeManager } from '../hooks/NodeManager';
+import { useNodeManager } from '../../../hooks/NodeManager';
 import { ChatBotDropDownMenu } from './ChatBotDropdownMenu';
 
 export type ChatBotNodeProps = {

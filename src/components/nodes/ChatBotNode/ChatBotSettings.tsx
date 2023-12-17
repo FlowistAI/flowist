@@ -2,7 +2,7 @@ import { useFormik } from 'formik';
 import { Input, Select, Button, FormControl, Option, Textarea } from '@mui/joy';
 
 import { InputLabel } from '@mui/material';
-import { ChatBotNodePreset, botAvatarOptions, botModelOptions } from '../types/chat-types';
+import { ChatBotNodePreset, botAvatarOptions, botModelOptions } from '../../../types/chat-types';
 import { FC } from 'react';
 
 type Errors<T> = {
