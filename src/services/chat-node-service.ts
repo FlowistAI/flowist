@@ -1,7 +1,7 @@
 import { Node } from "reactflow";
 import { AppNodeTypes } from "../constants/nodeTypes";
 import { generateId } from "../util/id-generator";
-import { Bot, BotModelProviderType, GoogleGeminiModelIds, GoogleGeminiOfficialServiceSource, OpenAIModelIds as Models, SessionId, User } from "../types/bot-types";
+import { Bot, BotModelProviderType, GoogleGeminiModelIds, GoogleGeminiOfficialServiceSource, SessionId, User } from "../types/bot-types";
 import { ChatBotNodeData, ChatSession } from "../types/chat-node-types";
 import { BotNodePreset } from "../types/bot-types";
 import { SubManager } from "../hooks/NodeManager/SubManager";
@@ -77,7 +77,7 @@ export class ChatBotNodeService implements SubManager<AppNodeTypes.ChatBot> {
             user: user ?? ChatBotNodeService.DefaultUser,
             messages: [],
         }
-        console.log('addSession', sess);
+        console.log('add chat bot session', sess);
         this.sessionCreateHandler(sess)
 
         return sess

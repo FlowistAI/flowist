@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Button, Modal } from '@mui/joy';
 import SettingPage from '../pages/setting/SettingPage';
 import { SaveOutlined, SettingsOutlined } from '@mui/icons-material';
-import { NodeManager, useNodeManager } from '../hooks/NodeManager';
+import { useNodeManager } from '../hooks/NodeManager';
 import { persistData, retrieveData } from '../constants/persistence';
 import { NodeManagerSnapshot } from '../hooks/NodeManager/NodeManager';
 import { useToast } from '../hooks/Toast/useToast';

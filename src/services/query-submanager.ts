@@ -87,7 +87,7 @@ export class QueryBotNodeService implements SubManager<AppNodeTypes.QueryBot> {
     restore(snapshot: QueryParitionSnapshot) {
         console.log('QueryBot Partition restore', snapshot);
         snapshot.sessions.forEach(sess => {
-            this.addSession(sess.user, { bot: sess.bot })
+            this.sessionCreateHandler(sess)
         })
     }
 }

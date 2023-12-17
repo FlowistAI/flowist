@@ -31,8 +31,8 @@ export type NodeManagerSnapshot = ReturnType<NodeManager['snapshot']>;
 
 export class NodeManager {
     private subManagers;
-    private nodeMap: Record<string, Node> = {};
-    private edgeMap: Record<string, Edge> = {};
+    private nodeTypes: Record<string, AppNodeType> = {};
+    private edgeTypes: Record<string, string> = {};
 
     private _addNode: NodeAddHandler;
     private _removeNode: (nodeId: string) => void;
@@ -88,18 +88,18 @@ export class NodeManager {
         if (!prev) {
             return manager;
         }
-        if (!prev.nodeMap) {
+        if (!prev.nodeTypes) {
             throw new Error('prev.nodeMap is undefined');
         }
-        manager.nodeMap = prev.nodeMap;
-        manager.edgeMap = prev.edgeMap;
+        manager.nodeTypes = prev.nodeTypes;
+        manager.edgeTypes = prev.edgeTypes;
         return manager;
     }
 
     snapshot() {
         return {
-            nodeMap: this.nodeMap,
-            edgeMap: this.edgeMap,
+            nodeMap: Object.fromEntries(this.nodes.map(node => [node.id, node])),
+            edgeMap: Object.fromEntries(this.edges.map(edge => [edge.id, edge])),
             partitions: {
                 ...Object.fromEntries(Object.entries(this.subManagers).map(([type, subManager]) => {
                     return [type, subManager.snapshot()];
@@ -110,6 +110,9 @@ export class NodeManager {
 
     restore(snapshot: NodeManagerSnapshot) {
         console.log('NodeManagerrestore', snapshot);
+        if (this.nodes.length > 0) {
+            throw new Error('already initialized');
+        }
 
         Object.entries(snapshot.partitions).forEach(([type, partition]) => {
             const subManager = this.subManagers[type as AppNodeTypes];
@@ -121,13 +124,11 @@ export class NodeManager {
 
         const { nodeMap, edgeMap } = snapshot;
 
-        Object.entries(nodeMap).forEach(([nodeId, node]) => {
-            this.nodeMap[nodeId] = node;
+        Object.values(nodeMap).forEach((node) => {
             this._addNode(node);
         });
 
-        Object.entries(edgeMap).forEach(([edgeId, edge]) => {
-            this.edgeMap[edgeId] = edge;
+        Object.values(edgeMap).forEach((edge) => {
             this._addEdge(edge);
         });
     }
@@ -141,16 +142,12 @@ export class NodeManager {
             throw new Error(`factory for node type ${options.type} not found`);
         }
         const node = subManager.createNode(options);
-        this.nodeMap[node.id] = node;
+        this.nodeTypes[node.id] = options.type;
         this._addNode(node);
     }
 
     removeNode(nodeId: string) {
-        const node = this.nodeMap[nodeId];
-        if (!node) {
-            throw new Error(`node ${nodeId} not found`);
-        }
-        const type = node.type;
+        const type = this.nodeTypes[nodeId];
         if (type === undefined) {
             throw new Error(`node ${nodeId} has no type`);
         }
@@ -159,21 +156,24 @@ export class NodeManager {
             throw new Error(`factory for node type ${type} not found`);
         }
         subManager.destroyNode(nodeId);
-        delete this.nodeMap[nodeId];
+        delete this.nodeTypes[nodeId];
         this._removeNode(nodeId);
     }
 
     addEdge(edge: Edge) {
-        this.edgeMap[edge.id] = edge;
+        if (edge.type === undefined) {
+            throw new Error('edge.type is undefined');
+        }
+        this.edgeTypes[edge.id] = edge.type;
         this._addEdge(edge);
     }
 
     removeEdge(edgeId: string) {
-        const edge = this.edgeMap[edgeId];
+        const edge = this.edgeTypes[edgeId];
         if (!edge) {
             throw new Error(`edge ${edgeId} not found`);
         }
-        delete this.edgeMap[edgeId];
+        delete this.edgeTypes[edgeId];
         this._removeEdge(edgeId);
     }
 
