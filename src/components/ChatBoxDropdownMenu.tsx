@@ -4,9 +4,12 @@ import { KebabHorizontalIcon } from "@primer/octicons-react"
 import { FC, useState } from "react"
 import SettingsIcon from '@mui/icons-material/Settings';
 import SaveAsIcon from '@mui/icons-material/SaveAs';
-import { useRecoilValue } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import { produce } from "immer";
 import { chatSessionsState } from "../states/chat-states";
 import ChatBoxSettingsForm from "./ChatBoxSettings";
+import { ChatNodePreset } from "../types/chat-types";
+import { useToast } from "../hooks/Toast/useToast";
 
 export type ChatBoxDropDownMenuProps = {
     sessionId: string
@@ -14,10 +17,20 @@ export type ChatBoxDropDownMenuProps = {
 export const ChatBoxDropDownMenu: FC<ChatBoxDropDownMenuProps> = ({ sessionId }) => {
     const [open, setOpen] = useState<boolean>(false);
     const session = useRecoilValue(chatSessionsState).find(session => session.id === sessionId);
-
+    const setSessions = useSetRecoilState(chatSessionsState);
+    const toast = useToast()
     if (!session) {
-        console.error('session not found', sessionId)
         return null
+    }
+    const saveBotSettings = (values: ChatNodePreset) => {
+        setSessions((prev) => produce(prev, (draft) => {
+            const session = draft.find(s => s.id === sessionId);
+            if (session) {
+                session.bot = values.bot;
+            }
+        }));
+        toast({ type: 'success', content: 'Bot settings saved' })
+        setOpen(false);
     }
 
     return <>
@@ -61,7 +74,7 @@ export const ChatBoxDropDownMenu: FC<ChatBoxDropDownMenuProps> = ({ sessionId })
                 >
                     Bot Settings
                 </Typography>
-                <ChatBoxSettingsForm initialValues={session} />
+                <ChatBoxSettingsForm initialValues={session} onSubmit={saveBotSettings} />
             </ModalDialog>
         </Modal>
     </>

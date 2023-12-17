@@ -3,12 +3,14 @@ import ReactFlow, { Background, Controls, MiniMap, NodeMouseHandler, XYPosition 
 import 'reactflow/dist/style.css';
 import './App.css';
 import { FloatingMenu } from '../components/FloatingMenu';
-import { ContextMenu } from '../components/ContextMenu';
 import { Optional } from '../types/types';
-import { AppNodeType, appNodeTypeComponents } from '../constants/nodeTypes';
+import { appNodeTypeComponents } from '../constants/nodeTypes';
 import { useNodeManager } from '../hooks/NodeManager';
 import { useRecoilState } from 'recoil';
 import { ReactFlowInstanceState } from '../states/react-flow';
+import Toast from '../hooks/Toast/Toast';
+import { ContextMenu } from '../components/ContextMenu';
+import { createMenuItems as createMenuItems } from './App.menu';
 
 function App() {
   const [ctxMenuPos, setCtxMenuPos] = useState<Optional<XYPosition>>(undefined);
@@ -33,23 +35,18 @@ function App() {
   }, [reactFlowInstance]);
   const reactFlowWrapper = useRef(null);
 
-  const addNode = (nodeType: AppNodeType) => {
-    if (cvsCurPos) {
-      // handleAddNode(nodeType, cvsCurPos);
-      setCtxMenuPos(undefined);
-    }
-  }
-
   const onNodeContextMenu = useCallback<NodeMouseHandler>((event, node) => {
     event.preventDefault();
     console.log('node:', node);
     // 显示上下文菜单
   }, []);
 
-  const { nodes, onNodesChange } = useNodeManager();
+  const nodeManager = useNodeManager();
+  const menuItems = createMenuItems({ nodeManager: nodeManager, cursor: cvsCurPos })
 
   return (
     <div className='app' ref={reactFlowWrapper}>
+      <Toast />
       <FloatingMenu
       />
       {
@@ -57,15 +54,16 @@ function App() {
           position={ctxMenuPos}
           isOpen={ctxMenuPos !== undefined}
           onClose={() => setCtxMenuPos(undefined)}
+          items={menuItems}
         />
       }
       <ReactFlow
         onContextMenu={onContextMenu}
         onNodeContextMenu={onNodeContextMenu}
-        nodes={nodes}
+        nodes={nodeManager.nodes}
         // edges={edges}
         nodeTypes={appNodeTypeComponents}
-        onNodesChange={onNodesChange}
+        onNodesChange={nodeManager.onNodesChange}
         // onEdgesChange={onEdgesChange}
         onInit={(instance) => {
           console.log('flow instance:', instance);

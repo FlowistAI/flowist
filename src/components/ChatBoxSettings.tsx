@@ -32,19 +32,15 @@ const validate = (values: ChatNodePreset) => {
 
 export type ChatBoxSettingsFormProps = {
     initialValues: ChatNodePreset;
+    onSubmit: (values: ChatNodePreset) => void;
 };
 
-const ChatBoxSettingsForm: FC<ChatBoxSettingsFormProps> = ({ initialValues }) => {
-
-    console.log("initialValues", initialValues);
-
+const ChatBoxSettingsForm: FC<ChatBoxSettingsFormProps> = ({ initialValues, onSubmit }) => {
 
     const formik = useFormik({
         initialValues,
         validate,
-        onSubmit: (values) => {
-            console.log('values', values);
-        },
+        onSubmit
     });
 
     return (

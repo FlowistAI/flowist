@@ -2,7 +2,7 @@ import { GearIcon } from '@primer/octicons-react';
 
 import './FloatingMenu.css';
 import { useState } from 'react';
-import { Button, Modal } from '@mui/material';
+import { Button, Modal } from '@mui/joy';
 import SettingPage from '../pages/setting/SettingPage';
 
 interface FloatingMenuProps {

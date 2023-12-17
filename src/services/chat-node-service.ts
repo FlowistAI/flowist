@@ -66,11 +66,14 @@ export class ChatNodeService {
             },
             messages: [],
         }
+        console.log('addSession', sess);
         this.sessionCreateHandler(sess)
+
         return sess
     }
 
     destroyNode(nodeId: string) {
+        console.log('removeSession', nodeId);
         this.sessionDestroyHandler(nodeId)
     }
 

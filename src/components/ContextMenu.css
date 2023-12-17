@@ -1,5 +1,5 @@
-/* context-menu */
-.context-menu {
+/* rc-dropdown-menu */
+.rc-dropdown-menu {
   position: absolute;
   width: 200px;
   z-index: 100;
@@ -9,15 +9,15 @@
   padding: calc(var(--padding) * var(--space-factor));
 }
 
-/* menu items */
-.context-menu__items {
+/* rc-menu-item-list */
+.rc-menu-item-list {
   list-style: none;
   padding: 5px 0;
   margin: 0;
 }
 
-/* menu item */
-.context-menu__item {
+/* rc-menu-item */
+.rc-menu-item {
   padding: 5px 12px;
   font-size: 14px;
   cursor: pointer;
@@ -25,10 +25,46 @@
   align-items: center;
 }
 
-.context-menu__item:hover {
+.rc-menu-item:hover {
   background: #f5f5f5;
 }
 
-.context-menu__item:hover::after {
-  transform: scaleY(1);
+/* Submenu styles */
+
+.rc-menu-item--submenu:hover .rc-menu-submenu {
+  display: block; /* 显示二级菜单 */
+}
+
+.rc-menu-submenu {
+  /* display: none;  */
+  position: absolute;
+  /* top: 0; */
+  /* left: 210px;  */
+  z-index: 1000;
+  background-color: var(--island-bg-color); /* 与一级菜单背景色一致 */
+  border-radius: var(--border-radius-lg); /* 圆角 */
+  box-shadow: var(--shadow-island); /* 阴影 */
+  min-width: 160px; /* 子菜单的最小宽度 */
+  padding: 5px 0; /* 子菜单的内边距 */
+}
+
+.rc-menu-item {
+  padding: 5px 12px; /* 子菜单项的内边距 */
+  font-size: 14px; /* 字体大小 */
+  cursor: pointer; /* 鼠标样式 */
+  background: none; /* 背景色 */
+  border: none; /* 边框 */
+  text-align: left; /* 文本对齐 */
+  white-space: nowrap; /* 防止文本换行 */
+}
+
+.rc-menu-item:hover {
+  background: #e9e9e9; /* 子菜单项鼠标悬停的背景色 */
+}
+
+/* Optional: Add an icon to indicate that a menu item has children */
+.rc-menu-item--submenu::after {
+  content: '▶';
+  margin-left: auto; /* Push the arrow icon to the right */
+  padding-left: 5px;
 }

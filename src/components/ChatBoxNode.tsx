@@ -8,7 +8,6 @@ import { chatSessionsState } from '../states/chat-states';
 import { useRecoilValue } from 'recoil';
 import { useNodeManager } from '../hooks/NodeManager';
 import { ChatBoxDropDownMenu } from './ChatBoxDropdownMenu';
-import { Invalid } from './Invalid';
 
 export type ChatBoxNodeProps = {
     data: ChatNodeData
@@ -47,8 +46,7 @@ export function ChatBoxNode({ data, selected }: ChatBoxNodeProps) {
     };
 
     if (!session) {
-        console.error('session not found', id)
-        return <Invalid />
+        return null;
     }
     const { bot, user } = session
 

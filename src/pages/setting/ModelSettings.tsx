@@ -11,7 +11,7 @@ const ModelSettings = () => {
   return (
     <div className="model-settings">
       <div className="setting-item">
-        <label htmlFor="global-prompt">全局提示词：</label>
+        <label htmlFor="global-prompt">全局默认提示词：</label>
         <textarea
           id="global-prompt"
           value={globalPrompt}
