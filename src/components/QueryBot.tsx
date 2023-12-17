@@ -16,7 +16,7 @@ const QueryBot: React.FC<ChatProps> = ({ session }) => {
 
     const [input, setInput] = React.useState<string>('');
     const bot = session.bot;
-    const { output: modelOutput, onQuery } = useGoogleAI({
+    const { output: modelOutput, query: onQuery } = useGoogleAI({
         apiKey: session.bot.settings.serviceSource.apiKey,
         model: session.bot.settings.model,
     })

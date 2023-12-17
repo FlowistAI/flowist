@@ -2,7 +2,6 @@ import { Handle, NodeResizer, Position } from 'reactflow';
 import { XIcon } from '@primer/octicons-react';
 import './ChatBotNode.css';
 import Chat from '../../Chat';
-import { useState } from 'react';
 import { ChatBotNodeData } from "../../../types/chat-node-types";
 import { chatSessionsState } from '../../../states/chat-states';
 import { useRecoilValue } from 'recoil';
@@ -20,34 +19,9 @@ export function ChatBotNode({ data, selected }: ChatBotNodeProps) {
     const { removeNode } = useNodeManager()
     const session = useRecoilValue(chatSessionsState).find(session => session.id === id);
 
-    const initMessages = [
-        {
-            avatar: 'chatgpt3.png',
-            content: 'Hello',
-            isOwn: false,
-        },
-        {
-            avatar: 'user-avatar.jpg',
-            content: 'Hi there!',
-            isOwn: true,
-        },
-    ];
-
-    const [messages, setMessages] = useState(initMessages);
-
-    const handleSendMessage = (message: string) => {
-        const newMessage = {
-            avatar: 'user-avatar.jpg',
-            content: message,
-            isOwn: true,
-        };
-        setMessages([...messages, newMessage]);
-    };
-
     if (!session) {
         return null;
     }
-    const { bot, user } = session
 
     return (
         <div className="chat-bot" onContextMenu={e => {
@@ -75,7 +49,7 @@ export function ChatBotNode({ data, selected }: ChatBotNodeProps) {
                 </button>
             </div>
             <div className="chat-bot__content nowheel cursor-default" >
-                <Chat user={user} bot={bot} messages={messages} onSendMessage={handleSendMessage} />
+                <Chat session={session} />
             </div>
             <Handle type="source" position={Position.Left} style={sourceStyle}>
                 <div className='-ml-14 pointer-events-none'>

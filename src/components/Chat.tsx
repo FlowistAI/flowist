@@ -1,15 +1,21 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useCallback } from 'react';
 import './Chat.css';
-import { Participant, Bot } from '../types/bot-types';
-import { ChatMessage } from "../types/chat-node-types";
+import { Bot } from '../types/bot-types';
+import { ChatMessage, ChatSession } from "../types/chat-node-types";
 import { Button, Textarea, Tooltip } from '@mui/joy';
+import { useSetRecoilState } from 'recoil';
+import { addMessageFnCreater, chatSessionsState, updateMessageFnCreater } from '../states/chat-states';
+import { useGoogleChatAI } from '../hooks/GenerativeAI/Google';
+import { generateId } from '../util/id-generator';
 
 export interface AvatarProps {
     src: string;
+    show?: boolean;
 }
 
-export const Avatar: React.FC<AvatarProps> = ({ src }) => (
-    <img src={src} alt="Profile" className="avatar" />
+export const Avatar: React.FC<AvatarProps> = ({ src, show = true }) => (
+    show ? <img src={src} alt="Profile" className="avatar" />
+        : <div className="avatar" />
 );
 
 export interface BotInfoProps {
@@ -38,14 +44,14 @@ export const BotInfo: React.FC<BotInfoProps> = ({ bot }) => (
 
 export interface MessageProps {
     message: ChatMessage;
-    isOwn: boolean;
+    isUser: boolean;
 }
 
-export const Message: React.FC<MessageProps> = ({ message, isOwn }) => (
-    <div className={`message ${isOwn ? 'own' : ''}`}>
-        {!isOwn && <Avatar src={message.avatar} />}
-        <div className="message-content">{message.content}</div>
-        {isOwn && <Avatar src={message.avatar} />}
+export const Message: React.FC<MessageProps> = ({ message, isUser }) => (
+    <div className={`message max-w-full ${isUser ? 'own' : ''}`}>
+        <Avatar show={!isUser} src={message.avatar} />
+        <div className="message-content min-w-0">{message.content}</div>
+        <Avatar show={isUser} src={message.avatar} />
     </div>
 );
 
@@ -67,7 +73,7 @@ export const MessageList: React.FC<MessageListProps> = ({ messages }) => {
     return (
         <div className="messages nodrag">
             {messages.map((message, index) => (
-                <Message key={index} message={message} isOwn={message.isOwn} />
+                <Message key={index} message={message} isUser={message.isUser} />
             ))}
             <div ref={messagesEndRef} />
         </div>
@@ -111,18 +117,51 @@ export const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage }) => 
 };
 
 export interface ChatProps {
-    user: Participant;
-    bot: Bot;
-    messages: ChatMessage[];
-    onSendMessage?: (message: string) => void;
+    session: ChatSession
 }
 
-const Chat: React.FC<ChatProps> = ({ bot, messages, onSendMessage }) => (
-    <div className="chat">
-        <BotInfo bot={bot} />
-        <MessageList messages={messages} />
-        <MessageInput onSendMessage={onSendMessage} />
-    </div>
-);
+const Chat: React.FC<ChatProps> = ({ session }) => {
+    const { bot, user, messages } = session;
+    const setSessions = useSetRecoilState(chatSessionsState);
+    const addMessage = addMessageFnCreater(setSessions);
+    const updateMessage = updateMessageFnCreater(setSessions);
+    const botMessageIdRef = useRef<string | undefined>();
+
+    const { send } = useGoogleChatAI({
+        apiKey: bot.settings.serviceSource.apiKey,
+        model: bot.settings.model,
+        historyMessages: messages,
+        onResponseChunk: (chunk: string) => {
+            const botMessageId = botMessageIdRef.current;
+            if (!botMessageId) {
+                console.error('botMessageId is undefined but onResponseChunk is called');
+                return;
+            }
+            updateMessage(session.id, botMessageId, (prev) => prev + chunk);
+        },
+        onDone: () => {
+            botMessageIdRef.current = undefined;
+        }
+    });
+
+    const onSendMessage = useCallback(async (message: string) => {
+        // add user message to the list
+        addMessage(session.id, { id: generateId(), content: message, isUser: true, avatar: user.avatar });
+        // add bot message to the list and store the id in the ref
+        const id = generateId();
+        botMessageIdRef.current = id;
+        addMessage(session.id, { id, content: '', isUser: false, avatar: bot.avatar });
+        // send message to the bot
+        await send(message);
+    }, [addMessage, bot.avatar, send, session.id, user.avatar]);
+
+    return (
+        <div className="chat">
+            <BotInfo bot={bot} />
+            <MessageList messages={messages} />
+            <MessageInput onSendMessage={onSendMessage} />
+        </div>
+    );
+};
 
 export default Chat;

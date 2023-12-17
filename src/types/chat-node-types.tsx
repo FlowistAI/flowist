@@ -9,9 +9,10 @@ export type ChatSession = {
 };
 
 export type ChatMessage = {
+    id: string;
     avatar: string;
     content: string;
-    isOwn: boolean;
+    isUser: boolean;
 };
 
 export type ChatBotNodeData = {
