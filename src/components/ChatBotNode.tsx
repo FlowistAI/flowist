@@ -1,22 +1,20 @@
 import { Handle, NodeResizer, Position } from 'reactflow';
 import { XIcon } from '@primer/octicons-react';
-import './ChatBoxNode.css';
+import './ChatBotNode.css';
 import Chat from './Chat';
 import { useState } from 'react';
-import { ChatNodeData } from '../types/chat-types';
+import { ChatBotNodeData } from '../types/chat-types';
 import { chatSessionsState } from '../states/chat-states';
 import { useRecoilValue } from 'recoil';
 import { useNodeManager } from '../hooks/NodeManager';
-import { ChatBoxDropDownMenu } from './ChatBoxDropdownMenu';
+import { ChatBotDropDownMenu } from './ChatBotDropdownMenu';
 
-export type ChatBoxNodeProps = {
-    data: ChatNodeData
+export type ChatBotNodeProps = {
+    data: ChatBotNodeData
     selected: boolean
 };
 
-const handleStyle = { left: 10 };
-
-export function ChatBoxNode({ data, selected }: ChatBoxNodeProps) {
+export function ChatBotNode({ data, selected }: ChatBotNodeProps) {
     const { id } = data
     const { removeNode } = useNodeManager()
     const session = useRecoilValue(chatSessionsState).find(session => session.id === id);
@@ -51,7 +49,7 @@ export function ChatBoxNode({ data, selected }: ChatBoxNodeProps) {
     const { bot, user } = session
 
     return (
-        <div className="chat-box" onContextMenu={e => {
+        <div className="chat-bot" onContextMenu={e => {
             e.preventDefault()
             e.stopPropagation()
 
@@ -59,26 +57,24 @@ export function ChatBoxNode({ data, selected }: ChatBoxNodeProps) {
         }}>
             <NodeResizer minWidth={300} minHeight={200} isVisible={selected} />
             <Handle type="target" position={Position.Top} />
-            <div className="chat-box__header">
-                <ChatBoxDropDownMenu sessionId={session.id} />
+            <div className="chat-bot__header">
+                <ChatBotDropDownMenu sessionId={session.id} />
 
-                <span className="chat-box__title">{session.bot.name ?? "Chat"}</span>
-                <button className="chat-box__close" onClick={() => removeNode(data.id)}>
+                <span className="chat-bot__title">{session.bot.name ?? "Chat"}</span>
+                <button className="chat-bot__close" onClick={() => removeNode(data.id)}>
                     <span>
                         <XIcon size={16} />
                     </span>
                 </button>
             </div>
-            <div className="chat-box__content nowheel cursor-default" >
+            <div className="chat-bot__content nowheel cursor-default" >
                 <Chat user={user} bot={bot} messages={messages} onSendMessage={handleSendMessage} />
             </div>
-            <Handle type="source" position={Position.Bottom} id="a" />
-            <Handle
-                type="source"
-                position={Position.Bottom}
-                id="b"
-                style={handleStyle}
-            />
+            <Handle type="source" position={Position.Bottom}>
+                <div className='-ml-6 pointer-events-none'>
+                    Output
+                </div>
+            </Handle>
         </div >
     );
 }

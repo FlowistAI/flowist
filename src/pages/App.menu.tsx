@@ -22,7 +22,7 @@ export const createMenuItems: MenuItemsCreator = (
                 {
                     key: 'new-chat-node',
                     text: '新建对话节点',
-                    callback: () => nodeManager.addNode({ type: AppNodeTypes.ChatBox, data: { position: cursor } })
+                    callback: () => nodeManager.addNode({ type: AppNodeTypes.ChatBot, data: { position: cursor } })
                 },
                 {
                     key: 'new-tts-node',

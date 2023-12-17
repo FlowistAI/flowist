@@ -1,19 +1,19 @@
 import { Node } from "reactflow";
 import { AppNodeTypes } from "../constants/nodeTypes";
 import { generateId } from "../util/misc-util";
-import { Bot, ChatNodeData, ChatNodePreset, ChatSession, ModelIds as Models, SessionId, User } from "../types/chat-types";
+import { Bot, ChatBotNodeData, ChatBotNodePreset, ChatSession, ModelIds as Models, SessionId, User } from "../types/chat-types";
 
 export type CreateNodeOptions = {
-    preset?: ChatNodePreset
-    data?: Partial<Node<ChatNodeData, AppNodeTypes.ChatBox>>
+    preset?: ChatBotNodePreset
+    data?: Partial<Node<ChatBotNodeData, AppNodeTypes.ChatBot>>
 }
 
-export type ChatNodeServiceProps = {
+export type ChatBotNodeServiceProps = {
     sessionCreateHandler: (sess: ChatSession) => void
     sessionDestroyHandler: (sessId: SessionId) => void
 }
 
-export class ChatNodeService {
+export class ChatBotNodeService {
     static readonly DefaultBot: Bot = {
         type: 'bot',
         name: 'Bot',
@@ -32,22 +32,22 @@ export class ChatNodeService {
     constructor({
         sessionCreateHandler,
         sessionDestroyHandler,
-    }: ChatNodeServiceProps) {
+    }: ChatBotNodeServiceProps) {
         this.sessionCreateHandler = sessionCreateHandler
         this.sessionDestroyHandler = sessionDestroyHandler
     }
 
     createNode({ preset, data }: CreateNodeOptions) {
         const sess = this.addSession(undefined, preset)
-        const chatNodeData: ChatNodeData = {
+        const chatBotNodeData: ChatBotNodeData = {
             id: sess.id,
         }
         const posDefault = { x: 250, y: 250 }
 
-        const node: Node<ChatNodeData, AppNodeTypes.ChatBox> = {
+        const node: Node<ChatBotNodeData, AppNodeTypes.ChatBot> = {
             id: sess.id,
-            type: AppNodeTypes.ChatBox,
-            data: chatNodeData,
+            type: AppNodeTypes.ChatBot,
+            data: chatBotNodeData,
             position: posDefault,
             style: { width: 400, height: 400 },
             ...data,
@@ -55,10 +55,10 @@ export class ChatNodeService {
         return node
     }
 
-    private addSession(user?: User, preset?: ChatNodePreset): ChatSession {
+    private addSession(user?: User, preset?: ChatBotNodePreset): ChatSession {
         const sess = {
             id: generateId(),
-            bot: preset?.bot ?? ChatNodeService.DefaultBot,
+            bot: preset?.bot ?? ChatBotNodeService.DefaultBot,
             user: user ?? {
                 type: 'user',
                 name: 'User',

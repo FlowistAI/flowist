@@ -1,4 +1,4 @@
-.chat-box {
+.chat-bot {
   border: 1px solid #ddd;
   background: #fff;
   border-radius: 3px;
@@ -9,7 +9,7 @@
   height: 100%;
 }
 
-.chat-box__header {
+.chat-bot__header {
   padding: 5px;
   border-bottom: 1px solid #ddd;
   display: flex;
@@ -17,30 +17,30 @@
   align-items: center;
 }
 
-.chat-box__menu {
+.chat-bot__menu {
   padding: 2px;
   border: none;
   background: none;
   cursor: pointer;
 }
 
-.chat-box__title {
+.chat-bot__title {
   font-weight: bold;
 }
 
-.chat-box__close {
+.chat-bot__close {
   border: none;
   background: none;
   cursor: pointer;
   padding: 2px;
 }
 
-.chat-box__close:hover {
+.chat-bot__close:hover {
   background-color: var(--color-gray-30);
   border-radius: 9999px;
 }
 
-.chat-box__content {
+.chat-bot__content {
   box-sizing: border-box;
   flex-grow: 1;
   display: flex;

@@ -2,15 +2,15 @@ import { useFormik } from 'formik';
 import { Input, Select, Button, FormControl, Option, Textarea } from '@mui/joy';
 
 import { InputLabel } from '@mui/material';
-import { ChatNodePreset, botAvatarOptions, botModelOptions } from '../types/chat-types';
+import { ChatBotNodePreset, botAvatarOptions, botModelOptions } from '../types/chat-types';
 import { FC } from 'react';
 
 type Errors<T> = {
     [P in keyof T]?: T[P] extends object ? Errors<T[P]> : string;
 };
 
-const validate = (values: ChatNodePreset) => {
-    const errors: Errors<ChatNodePreset> = {};
+const validate = (values: ChatBotNodePreset) => {
+    const errors: Errors<ChatBotNodePreset> = {};
 
     if (!values.bot.name) {
         errors.bot = { ...errors.bot, name: 'Bot Name is required' };
@@ -30,12 +30,12 @@ const validate = (values: ChatNodePreset) => {
     return errors;
 };
 
-export type ChatBoxSettingsFormProps = {
-    initialValues: ChatNodePreset;
-    onSubmit: (values: ChatNodePreset) => void;
+export type ChatBotSettingsFormProps = {
+    initialValues: ChatBotNodePreset;
+    onSubmit: (values: ChatBotNodePreset) => void;
 };
 
-const ChatBoxSettingsForm: FC<ChatBoxSettingsFormProps> = ({ initialValues, onSubmit }) => {
+const ChatBotSettingsForm: FC<ChatBotSettingsFormProps> = ({ initialValues, onSubmit }) => {
 
     const formik = useFormik({
         initialValues,
@@ -134,4 +134,4 @@ const ChatBoxSettingsForm: FC<ChatBoxSettingsFormProps> = ({ initialValues, onSu
     );
 };
 
-export default ChatBoxSettingsForm;
+export default ChatBotSettingsForm;

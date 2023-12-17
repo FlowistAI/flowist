@@ -36,11 +36,11 @@ export type ChatSession = {
     messages: ChatMessage[];
 }
 
-export type ChatNodeData = {
+export type ChatBotNodeData = {
     id: SessionId;
 }
 
-export type ChatNodePreset = {
+export type ChatBotNodePreset = {
     bot: Bot,
 }
 

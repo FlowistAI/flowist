@@ -36,7 +36,7 @@ export const AppContextMenu: React.FC<AppContextMenuProps> = ({ position, isOpen
             >
                 <li
                     className='context-menu__item'
-                    onClick={() => handleAddNode({ type: AppNodeTypes.ChatBox })}
+                    onClick={() => handleAddNode({ type: AppNodeTypes.ChatBot })}
                 >
                     <PlusIcon size={24} />
                     新建对话节点

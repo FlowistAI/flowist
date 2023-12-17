@@ -7,14 +7,14 @@ import SaveAsIcon from '@mui/icons-material/SaveAs';
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { produce } from "immer";
 import { chatSessionsState } from "../states/chat-states";
-import ChatBoxSettingsForm from "./ChatBoxSettings";
-import { ChatNodePreset } from "../types/chat-types";
+import ChatBotSettingsForm from "./ChatBotSettings";
+import { ChatBotNodePreset } from "../types/chat-types";
 import { useToast } from "../hooks/Toast/useToast";
 
-export type ChatBoxDropDownMenuProps = {
+export type ChatBotDropDownMenuProps = {
     sessionId: string
 }
-export const ChatBoxDropDownMenu: FC<ChatBoxDropDownMenuProps> = ({ sessionId }) => {
+export const ChatBotDropDownMenu: FC<ChatBotDropDownMenuProps> = ({ sessionId }) => {
     const [open, setOpen] = useState<boolean>(false);
     const session = useRecoilValue(chatSessionsState).find(session => session.id === sessionId);
     const setSessions = useSetRecoilState(chatSessionsState);
@@ -22,7 +22,7 @@ export const ChatBoxDropDownMenu: FC<ChatBoxDropDownMenuProps> = ({ sessionId })
     if (!session) {
         return null
     }
-    const saveBotSettings = (values: ChatNodePreset) => {
+    const saveBotSettings = (values: ChatBotNodePreset) => {
         setSessions((prev) => produce(prev, (draft) => {
             const session = draft.find(s => s.id === sessionId);
             if (session) {
@@ -39,7 +39,7 @@ export const ChatBoxDropDownMenu: FC<ChatBoxDropDownMenuProps> = ({ sessionId })
                 slots={{ root: IconButton }}
                 sx={{ borderRadius: 40 }}
             >
-                <div className="chat-box__menu nodrag" >
+                <div className="chat-bot__menu nodrag" >
                     <KebabHorizontalIcon size={16} />
                 </div>
             </MenuButton>
@@ -74,7 +74,7 @@ export const ChatBoxDropDownMenu: FC<ChatBoxDropDownMenuProps> = ({ sessionId })
                 >
                     Bot Settings
                 </Typography>
-                <ChatBoxSettingsForm initialValues={session} onSubmit={saveBotSettings} />
+                <ChatBotSettingsForm initialValues={session} onSubmit={saveBotSettings} />
             </ModalDialog>
         </Modal>
     </>
