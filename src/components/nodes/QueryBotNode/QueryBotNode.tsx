@@ -25,6 +25,10 @@ export function QueryBotNode({ data, selected }: QueryBotNodeProps) {
 
     return (
         <div className="chat-bot" onContextMenu={e => {
+            if (e.target !== e.currentTarget) {
+                e.stopPropagation()
+                return false
+            }
             e.preventDefault()
             e.stopPropagation()
 

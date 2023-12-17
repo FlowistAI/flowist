@@ -51,10 +51,12 @@ export function ChatBotNode({ data, selected }: ChatBotNodeProps) {
 
     return (
         <div className="chat-bot" onContextMenu={e => {
+            if (e.target !== e.currentTarget) {
+                e.stopPropagation()
+                return false
+            }
             e.preventDefault()
             e.stopPropagation()
-
-            return true
         }}>
             <NodeResizer minWidth={300} minHeight={200} isVisible={selected} />
             <Handle type="target" position={Position.Right} style={targetStyle}>
