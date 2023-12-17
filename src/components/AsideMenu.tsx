@@ -10,7 +10,7 @@ import Settings from '@mui/icons-material/Settings';
 import Person from '@mui/icons-material/Person';
 import Dropdown from '@mui/joy/Dropdown';
 import MenuButton from '@mui/joy/MenuButton';
-
+import { Output } from '@mui/icons-material';
 // The Menu is built on top of Popper v2, so it accepts `modifiers` prop that will be passed to the Popper.
 // https://popper.js.org/docs/v2/modifiers/offset/
 interface MenuButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
@@ -30,6 +30,7 @@ const modifiers = [
     {
         name: 'offset',
         options: {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             offset: ({ placement }: any) => {
                 if (placement.includes('end')) {
                     return [8, 20];
@@ -121,6 +122,15 @@ function NavMenuButton({
     );
 }
 
+const IconText = ({ icon, text }: { icon?: React.ReactNode; text: string }) => (
+    <>
+        {icon && <span>
+            {icon}
+        </span>}
+        {text}
+    </>
+);
+
 export default function MenuIconSideNavExample() {
     const [menuIndex, setMenuIndex] = React.useState<null | number>(null);
     const itemProps = {
@@ -168,8 +178,14 @@ export default function MenuIconSideNavExample() {
                         onLeaveMenu={createHandleLeaveMenu(1)}
                         menu={
                             <Menu onClose={() => setMenuIndex(null)}>
-                                <MenuItem {...itemProps}>Setting 1</MenuItem>
-                                <MenuItem {...itemProps}>Setting 2</MenuItem>
+                                <MenuItem {...itemProps}>
+                                    <IconText icon={<Output
+                                        sx={{ transform: 'rotate(180deg)' }}
+                                    />} text="Import" />
+                                </MenuItem>
+                                <MenuItem {...itemProps}>
+                                    <IconText icon={<Output />} text="Export" />
+                                </MenuItem>
                                 <MenuItem {...itemProps}>Setting 3</MenuItem>
                             </Menu>
                         }

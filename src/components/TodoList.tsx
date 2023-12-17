@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { generateId } from "../util/misc-util";
+import { generateId } from "../util/id-generator";
 
 export type Todo = {
     id: string;

@@ -2,15 +2,11 @@
 import { Dispatch, SetStateAction } from "react";
 import { Connection, Edge, EdgeChange, MarkerType, Node, NodeChange } from "reactflow";
 import { AppNodeType, AppNodeTypes } from "../../constants/nodeTypes";
+import { SubManager } from "./SubManager";
 
 export type NodeAddHandler = (node: Node) => void;
 export type EdgeAddHandler = (edge: Edge) => void;
 type OnChange<ChangesType> = (changes: ChangesType[]) => void;
-
-export type SubManager<NodeType extends AppNodeType, NodeData = any, Preset = any> = {
-    createNode: (options: AddNodeOptions<NodeType, NodeData, Preset>) => Node<NodeData, NodeType>;
-    destroyNode: (nodeId: string) => void;
-};
 
 export type NodeManagerOptions<NodeType extends AppNodeType, NodeData = any> = {
     // node
@@ -30,6 +26,8 @@ export type AddNodeOptions<NodeType extends AppNodeType, NodeData = any, Preset 
     preset?: Preset
     data?: Partial<Node<NodeData, NodeType>>
 }
+
+export type NodeManagerSnapshot = ReturnType<NodeManager['snapshot']>;
 
 export class NodeManager {
     private subManagers;
@@ -98,6 +96,41 @@ export class NodeManager {
         return manager;
     }
 
+    snapshot() {
+        return {
+            nodeMap: this.nodeMap,
+            edgeMap: this.edgeMap,
+            partitions: {
+                ...Object.fromEntries(Object.entries(this.subManagers).map(([type, subManager]) => {
+                    return [type, subManager.snapshot()];
+                }))
+            }
+        };
+    }
+
+    restore(snapshot: NodeManagerSnapshot) {
+        console.log('NodeManagerrestore', snapshot);
+
+        Object.entries(snapshot.partitions).forEach(([type, partition]) => {
+            const subManager = this.subManagers[type as AppNodeTypes];
+            if (!subManager) {
+                throw new Error(`factory for node type ${type} not found`);
+            }
+            subManager.restore(partition);
+        });
+
+        const { nodeMap, edgeMap } = snapshot;
+
+        Object.entries(nodeMap).forEach(([nodeId, node]) => {
+            this.nodeMap[nodeId] = node;
+            this._addNode(node);
+        });
+
+        Object.entries(edgeMap).forEach(([edgeId, edge]) => {
+            this.edgeMap[edgeId] = edge;
+            this._addEdge(edge);
+        });
+    }
 
     addNode(options: AddNodeOptions<AppNodeTypes>) {
         if (options.type === undefined) {
@@ -180,4 +213,5 @@ export class NodeManager {
             },
         };
     }
+
 }

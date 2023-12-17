@@ -24,6 +24,7 @@
     "dexie-react-hooks": "^1.1.7",
     "formik": "^2.4.5",
     "immer": "^10.0.3",
+    "localforage": "^1.10.0",
     "mui-nested-menu": "^3.2.2",
     "rc-dropdown": "^4.1.0",
     "rc-menu": "^9.12.4",

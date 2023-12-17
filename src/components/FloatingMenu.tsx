@@ -1,16 +1,21 @@
-import { GearIcon } from '@primer/octicons-react';
-
 import './FloatingMenu.css';
 import { useState } from 'react';
 import { Button, Modal } from '@mui/joy';
 import SettingPage from '../pages/setting/SettingPage';
-
+import { SaveOutlined, SettingsOutlined } from '@mui/icons-material';
+import { NodeManager, useNodeManager } from '../hooks/NodeManager';
+import { persistData, retrieveData } from '../constants/persistence';
+import { NodeManagerSnapshot } from '../hooks/NodeManager/NodeManager';
+import { useToast } from '../hooks/Toast/useToast';
+import BrowserUpdatedOutlinedIcon from '@mui/icons-material/BrowserUpdatedOutlined';
 interface FloatingMenuProps {
     logo?: boolean;
 }
 
+const iconStyle = { width: 24, height: 24, color: 'var(--color-gray-80)' }
+
 export function FloatingMenu({
-    logo = true
+    logo = false
 }: FloatingMenuProps) {
 
     const handleMouseEnter = () => {
@@ -23,9 +28,24 @@ export function FloatingMenu({
 
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
+    const nm = useNodeManager()
+    const toast = useToast()
+    const handleSave = async () => {
+        await persistData('nm-data', nm.snapshot())
+        toast({ type: 'success', content: 'Saved' })
+    }
+
+    const handleLoad = async () => {
+        const data = await retrieveData<NodeManagerSnapshot>('nm-data')
+        if (data) {
+            console.log('restore from data', data);
+
+            nm.restore(data)
+        }
+    }
     return (
         <div
-            className="floating-menu"
+            className="floating-menu px-2"
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
             onContextMenu={
@@ -43,8 +63,14 @@ export function FloatingMenu({
                     </span>
                 </div>
             )}
+            <button className="floating-menu__item" onClick={handleSave}>
+                <SaveOutlined sx={iconStyle} />
+            </button>
+            <button className="floating-menu__item" onClick={handleLoad}>
+                <BrowserUpdatedOutlinedIcon sx={iconStyle} />
+            </button>
             <button className="floating-menu__item" onClick={handleOpen}>
-                <GearIcon size={24} />
+                <SettingsOutlined sx={iconStyle} />
             </button>
             <Modal
                 open={open}

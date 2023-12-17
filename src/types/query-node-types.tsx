@@ -1,10 +1,10 @@
-import { SessionId, Bot, Participant } from "./bot-types";
+import { SessionId, Bot, User } from "./bot-types";
 
 
 export type QuerySession = {
     id: SessionId; // also as node id
     bot: Bot;
-    user: Participant;
+    user: User;
     input: string;
     output: string;
 };

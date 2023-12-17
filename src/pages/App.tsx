@@ -47,7 +47,7 @@ function App() {
 
   return (
     <div className='app flex' ref={reactFlowWrapper}>
-      <div className='border-r fixed left-0 top-0 z-50 flex h-screen w-18 flex-col items-center bg-white py-6 dark:bg-gray-800'>
+      <div className='border-r fixed left-0 top-0 z-50 flex h-screen w-18 flex-col items-center bg-white py-6 '>
         <Toast />
         <FloatingMenu
         />

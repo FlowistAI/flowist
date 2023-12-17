@@ -1,35 +1,44 @@
 import { Node } from "reactflow";
 import { AppNodeTypes } from "../constants/nodeTypes";
-import { generateId } from "../util/misc-util";
+import { generateId } from "../util/id-generator";
 import { Bot, SessionId, User } from "../types/bot-types";
 import { QueryBotNodeData, QuerySession } from "../types/query-node-types";
 import { BotNodePreset } from "../types/bot-types";
 import { ChatBotNodeService } from "./chat-node-service";
+import { SubManager } from "../hooks/NodeManager/SubManager";
 
 export type CreateNodeOptions = {
     preset?: BotNodePreset
     data?: Partial<Node<QueryBotNodeData, AppNodeTypes.QueryBot>>
 }
 
+export type QueryParitionSnapshot = {
+    sessions: QuerySession[]
+}
+
 export type QueryBotNodeServiceProps = {
     sessionCreateHandler: (sess: QuerySession) => void
     sessionDestroyHandler: (sessId: SessionId) => void
+    sessionsGetter: () => QuerySession[]
 }
 
-export class QueryBotNodeService {
+export class QueryBotNodeService implements SubManager<AppNodeTypes.QueryBot> {
     static readonly DefaultBot: Bot = ChatBotNodeService.DefaultBot
     static readonly DefaultUser: User = ChatBotNodeService.DefaultUser
 
 
     sessionCreateHandler: (sess: QuerySession) => void
     sessionDestroyHandler: (sessId: SessionId) => void
+    sessionsGetter: () => QuerySession[]
 
     constructor({
         sessionCreateHandler,
         sessionDestroyHandler,
+        sessionsGetter,
     }: QueryBotNodeServiceProps) {
         this.sessionCreateHandler = sessionCreateHandler
         this.sessionDestroyHandler = sessionDestroyHandler
+        this.sessionsGetter = sessionsGetter
     }
 
     createNode({ preset, data }: CreateNodeOptions) {
@@ -69,5 +78,17 @@ export class QueryBotNodeService {
         this.sessionDestroyHandler(nodeId)
     }
 
+    snapshot(): QueryParitionSnapshot {
+        return {
+            sessions: this.sessionsGetter()
+        }
+    }
+
+    restore(snapshot: QueryParitionSnapshot) {
+        console.log('QueryBot Partition restore', snapshot);
+        snapshot.sessions.forEach(sess => {
+            this.addSession(sess.user, { bot: sess.bot })
+        })
+    }
 }
 

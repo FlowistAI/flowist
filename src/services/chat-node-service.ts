@@ -1,9 +1,10 @@
 import { Node } from "reactflow";
 import { AppNodeTypes } from "../constants/nodeTypes";
-import { generateId } from "../util/misc-util";
+import { generateId } from "../util/id-generator";
 import { Bot, BotModelProviderType, GoogleGeminiModelIds, GoogleGeminiOfficialServiceSource, OpenAIModelIds as Models, SessionId, User } from "../types/bot-types";
 import { ChatBotNodeData, ChatSession } from "../types/chat-node-types";
 import { BotNodePreset } from "../types/bot-types";
+import { SubManager } from "../hooks/NodeManager/SubManager";
 
 export type CreateNodeOptions = {
     preset?: BotNodePreset
@@ -13,9 +14,10 @@ export type CreateNodeOptions = {
 export type ChatBotNodeServiceProps = {
     sessionCreateHandler: (sess: ChatSession) => void
     sessionDestroyHandler: (sessId: SessionId) => void
+    sessionsGetter: () => ChatSession[]
 }
 
-export class ChatBotNodeService {
+export class ChatBotNodeService implements SubManager<AppNodeTypes.ChatBot> {
     static readonly DefaultBot: Bot = {
         type: 'bot',
         name: 'Gemini Pro',
@@ -38,13 +40,16 @@ export class ChatBotNodeService {
 
     sessionCreateHandler: (sess: ChatSession) => void
     sessionDestroyHandler: (sessId: SessionId) => void
+    sessionsGetter: () => ChatSession[]
 
     constructor({
         sessionCreateHandler,
         sessionDestroyHandler,
+        sessionsGetter,
     }: ChatBotNodeServiceProps) {
         this.sessionCreateHandler = sessionCreateHandler
         this.sessionDestroyHandler = sessionDestroyHandler
+        this.sessionsGetter = sessionsGetter
     }
 
     createNode({ preset, data }: CreateNodeOptions) {
@@ -83,5 +88,16 @@ export class ChatBotNodeService {
         this.sessionDestroyHandler(nodeId)
     }
 
+    snapshot(): ChatSession[] {
+        return this.sessionsGetter()
+    }
+
+    restore(snapshot: ChatSession[]) {
+        console.log('ChatBot Partition restore', snapshot);
+
+        snapshot.forEach(sess => {
+            this.sessionCreateHandler(sess)
+        })
+    }
 }
 

@@ -2,7 +2,7 @@ import React, { useRef, useEffect } from 'react';
 import './Chat.css';
 import { Participant, Bot } from '../types/bot-types';
 import { ChatMessage } from "../types/chat-node-types";
-import { Button, Textarea } from '@mui/joy';
+import { Button, Textarea, Tooltip } from '@mui/joy';
 
 export interface AvatarProps {
     src: string;
@@ -16,13 +16,23 @@ export interface BotInfoProps {
     bot: Bot;
 }
 
-export const BotInfo: React.FC<BotInfoProps> = ({ bot: user }) => (
+export const BotInfo: React.FC<BotInfoProps> = ({ bot }) => (
     <div className="user-info">
-        <Avatar src={user.avatar} />
-        <div>
-            <div className="user-name">{user.name}</div>
-            <div className="user-role">{user.settings.model}</div>
+        <Avatar src={bot.avatar} />
+        <div className='flex-1'>
+            <div className="user-name">{bot.name}</div>
+            <div className="user-role">{bot.settings.model}</div>
         </div>
+        <Tooltip title={
+            <div>
+                <div>Model: {bot.settings.model}</div>
+                <div>Max Tokens: {bot.settings.maxTokens}</div>
+                <div>Temperature: {bot.settings.temperature}</div>
+                <div>Prompt: {bot.settings.prompt}</div>
+            </div>
+        } arrow placement="right">
+            <span className='px-2'>...</span>
+        </Tooltip>
     </div>
 );
 

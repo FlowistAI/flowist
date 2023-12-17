@@ -1,10 +1,11 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import './Chat.css';
 import { BotInfo } from './Chat';
 import { Button } from '@mui/joy';
 import { QuerySession } from '../types/query-node-types';
-import { GoogleGenerativeAI } from '@google/generative-ai';
-import { TextArea } from './Textarea';
+import { TextArea } from './TextArea';
+import useGoogleAI from '../hooks/GenerativeAI/Google';
+import { replacePrompt } from '../util/misc.util';
 
 
 interface ChatProps {
@@ -14,22 +15,17 @@ interface ChatProps {
 const QueryBot: React.FC<ChatProps> = ({ session }) => {
 
     const [input, setInput] = React.useState<string>('');
-    const [output, setOutput] = React.useState<string>('');
-    const { bot } = session;
-    const genAI = useMemo(() => new GoogleGenerativeAI(bot.settings.serviceSource.apiKey), [bot.settings.serviceSource.apiKey])
-    const model = useMemo(() => genAI.getGenerativeModel({ model: bot.settings.model }), [genAI, bot.settings.model])
-    console.log('render');
+    const bot = session.bot;
+    const { output: modelOutput, onQuery } = useGoogleAI({
+        apiKey: session.bot.settings.serviceSource.apiKey,
+        model: session.bot.settings.model,
+    })
 
-    const onQuery = async (query: string) => {
-        const { totalTokens } = await model.countTokens(query);
-        console.log('totalTokens', totalTokens);
-        const result = await model.generateContentStream([query]);
-        for await (const chunk of result.stream) {
-            const chunkText = chunk.text();
-            console.log(chunkText);
-            setOutput((prev) => prev + chunkText)
-        }
-    }
+    const [output, setOutput] = React.useState<string>(modelOutput);
+
+    React.useEffect(() => {
+        setOutput(modelOutput);
+    }, [modelOutput]);
 
     return (
         <div className="chat h-full">
@@ -61,7 +57,7 @@ const QueryBot: React.FC<ChatProps> = ({ session }) => {
                     {/* query */}
                     <Button
                         onClick={() => {
-                            onQuery(input);
+                            onQuery(replacePrompt(bot.settings.prompt, input));
                         }}
                     >
                         Query
