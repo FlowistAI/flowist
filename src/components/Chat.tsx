@@ -2,6 +2,7 @@ import React, { useRef, useEffect } from 'react';
 import './Chat.css';
 import { Participant, Bot } from '../types/bot-types';
 import { ChatMessage } from "../types/chat-node-types";
+import { Button, Textarea } from '@mui/joy';
 
 export interface AvatarProps {
     src: string;
@@ -78,15 +79,23 @@ export const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage }) => 
     };
 
     return (
-        <div className="message-input nodrag">
-            <input
-                type="text"
-                placeholder="Write your message!"
+        <div className="message-input nodrag gap-2">
+            <Textarea
+                sx={{ flex: 1 }}
+                placeholder="Write your message (Ctrl+Enter to submit)"
+                maxRows={10}
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handleSend()}
+                onKeyUp={(e) => {
+                    // ctrl + enter
+                    if (e.ctrlKey && e.key === 'Enter') {
+                        handleSend();
+                    }
+                }}
             />
-            <button onClick={handleSend}>Send</button>
+            <Button color="primary" onClick={handleSend}>
+                Send
+            </Button>
         </div>
     );
 };

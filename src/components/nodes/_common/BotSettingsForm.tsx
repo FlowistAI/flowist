@@ -2,9 +2,10 @@ import { useFormik } from 'formik';
 import { Input, Select, Button, FormControl, Option, Textarea } from '@mui/joy';
 
 import { InputLabel } from '@mui/material';
-import { botAvatarOptions, botModelOptions } from '../../../types/bot-types';
+import { BotModelProviderType, botAvatarOptions, botModelOptions, botModelProviderOptions, getDefaultModel, getInitialServiceSource } from '../../../types/bot-types';
 import { BotNodePreset } from "../../../types/bot-types";
 import { FC } from 'react';
+import { produce } from 'immer';
 
 type Errors<T> = {
     [P in keyof T]?: T[P] extends object ? Errors<T[P]> : string;
@@ -47,7 +48,7 @@ const BotSettingsForm: FC<BotSettingsFormProps> = ({ initialValues, onSubmit }) 
     return (
         <form onSubmit={formik.handleSubmit} className='flex flex-col'>
             <FormControl>
-                <InputLabel htmlFor="bot-name">Bot Name</InputLabel>
+                <InputLabel htmlFor="bot-name">Name</InputLabel>
                 <Input
                     id="bot-name"
                     name="bot.name"
@@ -58,7 +59,7 @@ const BotSettingsForm: FC<BotSettingsFormProps> = ({ initialValues, onSubmit }) 
             </FormControl>
 
             <FormControl>
-                <InputLabel htmlFor="bot-avatar">Bot Avatar</InputLabel>
+                <InputLabel htmlFor="bot-avatar">Avatar</InputLabel>
                 <Select
                     id="bot-avatar"
                     name="bot.avatar"
@@ -74,6 +75,32 @@ const BotSettingsForm: FC<BotSettingsFormProps> = ({ initialValues, onSubmit }) 
             </FormControl>
 
             <FormControl>
+                <InputLabel htmlFor="bot-provider">Provider</InputLabel>
+                <Select
+                    id="bot-provider"
+                    name="bot.settings.provider"
+                    value={formik.values.bot.settings.provider}
+                    onChange={(_, newValue) => {
+                        if (!newValue) return;
+                        const newValues = produce(formik.values, (draft) => {
+                            console.log("newValue", newValue);
+
+                            draft.bot.settings.provider = newValue as BotModelProviderType;
+                            draft.bot.settings.serviceSource = getInitialServiceSource(newValue as BotModelProviderType);
+                            draft.bot.settings.model = getDefaultModel(newValue as BotModelProviderType);
+                        })
+                        formik.setValues(newValues);
+                    }}
+                >
+                    {botModelProviderOptions.map((option) => (
+                        <Option key={option.value} value={option.value}>
+                            {option.label}
+                        </Option>
+                    ))}
+                </Select>
+            </FormControl>
+
+            <FormControl>
                 <InputLabel htmlFor="bot-model">Bot Model</InputLabel>
                 <Select
                     id="bot-model"
@@ -81,12 +108,32 @@ const BotSettingsForm: FC<BotSettingsFormProps> = ({ initialValues, onSubmit }) 
                     value={formik.values.bot.settings.model}
                     onChange={formik.handleChange}
                 >
-                    {botModelOptions.map((option) => (
+                    {botModelOptions[formik.values.bot.settings.serviceSource.type].map((option) => (
                         <Option key={option.value} value={option.value}>
                             {option.label}
                         </Option>
                     ))}
                 </Select>
+            </FormControl>
+
+            <FormControl>
+                <InputLabel htmlFor="endpoint">Endpoint</InputLabel>
+                <Input
+                    id="endpoint"
+                    name="bot.settings.serviceSource.endpoint"
+                    value={formik.values.bot.settings.serviceSource.endpoint}
+                    onChange={formik.handleChange}
+                />
+            </FormControl>
+
+            <FormControl>
+                <InputLabel htmlFor="bot-key">Key</InputLabel>
+                <Input
+                    id="bot-key"
+                    name="bot.settings.serviceSource.key"
+                    value={formik.values.bot.settings.serviceSource.apiKey}
+                    onChange={formik.handleChange}
+                />
             </FormControl>
 
             <FormControl>

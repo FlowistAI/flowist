@@ -7,7 +7,7 @@ import SaveAsIcon from '@mui/icons-material/SaveAs';
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { produce } from "immer";
 import { chatSessionsState } from "../../../states/chat-states";
-import BotSettingsForm from "../_common/BotSettings";
+import BotSettingsForm from "../_common/BotSettingsForm";
 import { BotNodePreset } from "../../../types/bot-types";
 import { useToast } from "../../../hooks/Toast/useToast";
 

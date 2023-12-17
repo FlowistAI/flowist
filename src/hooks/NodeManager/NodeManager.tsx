@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Dispatch, SetStateAction } from "react";
-import { Node, NodeChange } from "reactflow";
+import { Connection, Edge, EdgeChange, MarkerType, Node, NodeChange } from "reactflow";
 import { AppNodeType, AppNodeTypes } from "../../constants/nodeTypes";
 
 export type NodeAddHandler = (node: Node) => void;
+export type EdgeAddHandler = (edge: Edge) => void;
 type OnChange<ChangesType> = (changes: ChangesType[]) => void;
 
 export type SubManager<NodeType extends AppNodeType, NodeData = any, Preset = any> = {
@@ -12,9 +13,15 @@ export type SubManager<NodeType extends AppNodeType, NodeData = any, Preset = an
 };
 
 export type NodeManagerOptions<NodeType extends AppNodeType, NodeData = any> = {
+    // node
+    nodes: Node[];
     setNodes: Dispatch<SetStateAction<Node<NodeData>[]>>;
     onNodesChange: OnChange<NodeChange>;
-    nodes: Node[];
+    // edge
+    edges: Edge[];
+    setEdges: Dispatch<SetStateAction<Edge[]>>;
+    onEdgesChange: OnChange<EdgeChange>;
+    // sub managers
     subManagers: Record<NodeType, SubManager<NodeType, NodeData>>;
 };
 
@@ -26,28 +33,56 @@ export type AddNodeOptions<NodeType extends AppNodeType, NodeData = any, Preset 
 
 export class NodeManager {
     private subManagers;
+    private nodeMap: Record<string, Node> = {};
+    private edgeMap: Record<string, Edge> = {};
+
     private _addNode: NodeAddHandler;
     private _removeNode: (nodeId: string) => void;
-    private nodeMap: Record<string, Node> = {};
     private _nodes: Node[];
     get nodes() {
         return this._nodes;
     }
 
+    private _addEdge: EdgeAddHandler;
+    private _removeEdge: (edgeId: string) => void;
+    private _edges: Edge[];
+    get edges() {
+        return this._edges;
+    }
+
     onNodesChange: OnChange<NodeChange>;
+    onEdgesChange: OnChange<EdgeChange>;
 
     private constructor(options: NodeManagerOptions<AppNodeTypes>) {
+        this.subManagers = options.subManagers;
+
         this._addNode = (node: Node) => {
             options.setNodes((nodes) => nodes.concat(node));
         }
         this._removeNode = (nodeId: string) => {
             options.setNodes((nodes) => nodes.filter(node => node.id !== nodeId));
         }
+
         this._nodes = options.nodes;
         this.onNodesChange = options.onNodesChange;
-        this.subManagers = options.subManagers;
         this.removeNode = this.removeNode.bind(this);
         this.addNode = this.addNode.bind(this);
+
+        this._addEdge = (edge: Edge) => {
+            options.setEdges((edges) => edges.concat(edge));
+        }
+
+        this._removeEdge = (edgeId: string) => {
+            options.setEdges((edges) => edges.filter(edge => edge.id !== edgeId));
+        }
+
+        this._edges = options.edges;
+        this.onEdgesChange = options.onEdgesChange;
+        this.removeEdge = this.removeEdge.bind(this);
+        this.addEdge = this.addEdge.bind(this);
+        this.onConnect = this.onConnect.bind(this);
+        this.createEdge = this.createEdge.bind(this);
+
     }
 
     static from(prev: NodeManager | undefined, options: NodeManagerOptions<AppNodeTypes>) {
@@ -59,6 +94,7 @@ export class NodeManager {
             throw new Error('prev.nodeMap is undefined');
         }
         manager.nodeMap = prev.nodeMap;
+        manager.edgeMap = prev.edgeMap;
         return manager;
     }
 
@@ -92,5 +128,56 @@ export class NodeManager {
         subManager.destroyNode(nodeId);
         delete this.nodeMap[nodeId];
         this._removeNode(nodeId);
+    }
+
+    addEdge(edge: Edge) {
+        this.edgeMap[edge.id] = edge;
+        this._addEdge(edge);
+    }
+
+    removeEdge(edgeId: string) {
+        const edge = this.edgeMap[edgeId];
+        if (!edge) {
+            throw new Error(`edge ${edgeId} not found`);
+        }
+        delete this.edgeMap[edgeId];
+        this._removeEdge(edgeId);
+    }
+
+    onConnect(connection: Connection) {
+        console.log('onConnect', connection);
+        const edge = this.createEdge(connection);
+        console.log('edge', edge);
+
+        if (!edge) {
+            return;
+        }
+        this.addEdge(edge);
+    }
+
+    createEdge(connection: Connection): Edge | undefined {
+        if (!connection.source || !connection.target) {
+            console.warn('connection source or target is undefined', connection);
+            return undefined;
+        }
+
+        return {
+            id: `${connection.source}-${connection.target}`,
+            source: connection.source,
+            target: connection.target,
+            sourceHandle: connection.sourceHandle,
+            targetHandle: connection.targetHandle,
+            type: 'smoothstep',
+            markerEnd: {
+                type: MarkerType.ArrowClosed,
+                width: 20,
+                height: 20,
+                color: '#4776dd',
+            },
+            style: {
+                strokeWidth: 1.2,
+                stroke: '#4776dd',
+            },
+        };
     }
 }

@@ -11,6 +11,7 @@ import { ReactFlowInstanceState } from '../states/react-flow';
 import Toast from '../hooks/Toast/Toast';
 import { ContextMenu } from '../components/ContextMenu';
 import { createMenuItems as createMenuItems } from './App.menu';
+import { AsideMenu } from '../components/AsideMenu';
 
 function App() {
   const [ctxMenuPos, setCtxMenuPos] = useState<Optional<XYPosition>>(undefined);
@@ -45,55 +46,59 @@ function App() {
   const menuItems = createMenuItems({ nodeManager: nodeManager, cursor: cvsCurPos })
 
   return (
-    <div className='app' ref={reactFlowWrapper}>
-      <Toast />
-      <FloatingMenu
-      />
-      {
+    <div className='app flex' ref={reactFlowWrapper}>
+      <div className='border-r fixed left-0 top-0 z-50 flex h-screen w-18 flex-col items-center bg-white py-6 dark:bg-gray-800'>
+        <Toast />
+        <FloatingMenu
+        />
         <ContextMenu
           position={ctxMenuPos}
           isOpen={ctxMenuPos !== undefined}
           onClose={() => setCtxMenuPos(undefined)}
           items={menuItems}
         />
-      }
-      <ReactFlow
-        onContextMenu={onContextMenu}
-        onNodeContextMenu={onNodeContextMenu}
-        nodes={nodeManager.nodes}
-        // edges={edges}
-        nodeTypes={appNodeTypeComponents}
-        onNodesChange={nodeManager.onNodesChange}
-        // onEdgesChange={onEdgesChange}
-        onInit={(instance) => {
-          console.log('flow instance:', instance);
-          setReactFlowInstance(instance);
-          console.log(instance.getZoom());
+        <AsideMenu />
+      </div>
+      <main className='flex-1 h-full'>
+        <ReactFlow
+          onContextMenu={onContextMenu}
+          onNodeContextMenu={onNodeContextMenu}
+          nodeTypes={appNodeTypeComponents}
+          nodes={nodeManager.nodes}
+          onNodesChange={nodeManager.onNodesChange}
+          edges={nodeManager.edges}
+          onEdgesChange={nodeManager.onEdgesChange}
+          onConnect={nodeManager.onConnect}
+          onInit={(instance) => {
+            console.log('flow instance:', instance);
+            setReactFlowInstance(instance);
+            console.log(instance.getZoom());
 
-        }}
-        onClick={
-          () => {
-            setCtxMenuPos(undefined);
+          }}
+          onClick={
+            () => {
+              setCtxMenuPos(undefined);
+            }
           }
-        }
-        onDrag={
-          () => {
-            setCtxMenuPos(undefined);
+          onDrag={
+            () => {
+              setCtxMenuPos(undefined);
+            }
           }
-        }
-        onMove={
-          () => {
-            setCtxMenuPos(undefined);
+          onMove={
+            () => {
+              setCtxMenuPos(undefined);
+            }
           }
-        }
-      >
-        <Background />
-        <Controls />
-        <MiniMap
-          pannable
-        />
+        >
+          <Background />
+          <Controls />
+          <MiniMap
+            pannable
+          />
 
-      </ReactFlow>
+        </ReactFlow>
+      </main>
 
     </div>
   );

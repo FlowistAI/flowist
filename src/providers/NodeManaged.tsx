@@ -1,4 +1,4 @@
-import { useNodesState } from 'reactflow';
+import { useEdgesState, useNodesState } from 'reactflow';
 import { NodeManagerProvider } from '../hooks/NodeManager';
 import { initNodes } from '../constants/initData';
 import { ChatBotNodeService } from '../services/chat-node-service';
@@ -12,6 +12,7 @@ import { QueryBotNodeService } from '../services/query-submanager';
 
 export function NodeManaged({ children }: { children: React.ReactElement; }) {
     const [nodes, setNodes, onNodesChange] = useNodesState(initNodes);
+    const [edges, setEdges, onEdgesChange] = useEdgesState([]);
     /**
      * Chat session state
      */
@@ -48,10 +49,15 @@ export function NodeManaged({ children }: { children: React.ReactElement; }) {
 
     return (<NodeManagerProvider
         options={{
+            subManagers,
+            // node
             nodes,
             setNodes,
             onNodesChange,
-            subManagers
+            // edge
+            edges,
+            setEdges,
+            onEdgesChange,
         }}
     >
         {children}

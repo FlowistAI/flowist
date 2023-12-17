@@ -1,7 +1,7 @@
 import { Node } from "reactflow";
 import { AppNodeTypes } from "../constants/nodeTypes";
 import { generateId } from "../util/misc-util";
-import { Bot, ModelIds as Models, SessionId, User } from "../types/bot-types";
+import { Bot, BotModelProviderType, GoogleGeminiModelIds, GoogleGeminiOfficialServiceSource, OpenAIModelIds as Models, SessionId, User } from "../types/bot-types";
 import { ChatBotNodeData, ChatSession } from "../types/chat-node-types";
 import { BotNodePreset } from "../types/bot-types";
 
@@ -18,13 +18,15 @@ export type ChatBotNodeServiceProps = {
 export class ChatBotNodeService {
     static readonly DefaultBot: Bot = {
         type: 'bot',
-        name: 'Bot',
-        avatar: 'chatgpt3.png',
+        name: 'Gemini Pro',
+        avatar: 'google-ai.png',
         settings: {
-            model: Models.GPT35Turbo,
+            model: GoogleGeminiModelIds.GeminiPro,
             temperature: 0.7,
             maxTokens: 0,
-            prompt: ''
+            prompt: '',
+            provider: BotModelProviderType.GoogleGemini,
+            serviceSource: GoogleGeminiOfficialServiceSource
         },
     }
 

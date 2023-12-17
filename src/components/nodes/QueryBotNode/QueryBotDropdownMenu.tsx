@@ -7,7 +7,7 @@ import SaveAsIcon from '@mui/icons-material/SaveAs';
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { produce } from "immer";
 import { querySessionsState } from "../../../states/query-states";
-import BotSettingsForm from "../_common/BotSettings";
+import BotSettingsForm from "../_common/BotSettingsForm";
 import { BotNodePreset } from "../../../types/bot-types";
 import { useToast } from "../../../hooks/Toast/useToast";
 
@@ -34,6 +34,7 @@ export const QueryBotDropDownMenu: FC<QueryBotDropDownMenuProps> = ({ sessionId 
         setOpen(false);
     }
 
+    const { bot } = session
     return <>
         <Dropdown>
             <MenuButton
@@ -75,7 +76,7 @@ export const QueryBotDropDownMenu: FC<QueryBotDropDownMenuProps> = ({ sessionId 
                 >
                     Bot Settings
                 </Typography>
-                <BotSettingsForm initialValues={session} onSubmit={saveBotSettings} />
+                <BotSettingsForm initialValues={{ bot }} onSubmit={saveBotSettings} />
             </ModalDialog>
         </Modal>
     </>

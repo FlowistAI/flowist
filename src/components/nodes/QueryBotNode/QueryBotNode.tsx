@@ -19,34 +19,9 @@ export function QueryBotNode({ data, selected }: QueryBotNodeProps) {
     const { removeNode } = useNodeManager()
     const session = useRecoilValue(querySessionsState).find(session => session.id === id);
 
-    const initMessages = [
-        {
-            avatar: 'chatgpt3.png',
-            content: 'Hello',
-            isOwn: false,
-        },
-        {
-            avatar: 'user-avatar.jpg',
-            content: 'Hi there!',
-            isOwn: true,
-        },
-    ];
-
-    const [messages, setMessages] = useState(initMessages);
-
-    const handleSendMessage = (message: string) => {
-        const newMessage = {
-            avatar: 'user-avatar.jpg',
-            content: message,
-            isOwn: true,
-        };
-        setMessages([...messages, newMessage]);
-    };
-
     if (!session) {
         return null;
     }
-    const { bot, user } = session
 
     return (
         <div className="chat-bot" onContextMenu={e => {
@@ -72,7 +47,7 @@ export function QueryBotNode({ data, selected }: QueryBotNodeProps) {
                 </button>
             </div>
             <div className="chat-bot__content nowheel cursor-default" >
-                <QueryBot user={user} bot={bot} onQuery={handleSendMessage} />
+                <QueryBot session={session} />
             </div>
             <Handle type="source" position={Position.Bottom}>
                 <div className='-ml-6 pointer-events-none'>

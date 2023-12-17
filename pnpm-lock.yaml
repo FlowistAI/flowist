@@ -23,6 +23,9 @@ dependencies:
   '@fontsource/roboto':
     specifier: ^5.0.8
     version: 5.0.8
+  '@google/generative-ai':
+    specifier: ^0.1.2
+    version: 0.1.2
   '@mui/icons-material':
     specifier: ^5.15.0
     version: 5.15.0(@mui/material@5.15.0)(@types/react@18.2.43)(react@18.2.0)
@@ -35,6 +38,12 @@ dependencies:
   '@primer/octicons-react':
     specifier: ^19.8.0
     version: 19.8.0(react@18.2.0)
+  dexie:
+    specifier: ^3.2.4
+    version: 3.2.4
+  dexie-react-hooks:
+    specifier: ^1.1.7
+    version: 1.1.7(@types/react@18.2.43)(dexie@3.2.4)(react@18.2.0)
   formik:
     specifier: ^2.4.5
     version: 2.4.5(react@18.2.0)
@@ -793,6 +802,11 @@ packages:
       '@fortawesome/fontawesome-svg-core': 1.2.36
       prop-types: 15.8.1
       react: 18.2.0
+    dev: false
+
+  /@google/generative-ai@0.1.2:
+    resolution: {integrity: sha512-54easvKJpqnsW48LcplF/8bnLKvXeYe34rfMMdgqMVZEQmLOLEKZvbif4mFmyVwoMg1/6MPLwD703RLuSJKLJw==}
+    engines: {node: '>=18.0.0'}
     dev: false
 
   /@humanwhocodes/config-array@0.11.13:
@@ -1966,6 +1980,23 @@ packages:
   /deepmerge@2.2.1:
     resolution: {integrity: sha512-R9hc1Xa/NOBi9WRVUWg19rl1UB7Tt4kuPd+thNJgFZoxXsTz7ncaPaeIm+40oSGuP33DfMb4sZt1QIGiJzC4EA==}
     engines: {node: '>=0.10.0'}
+    dev: false
+
+  /dexie-react-hooks@1.1.7(@types/react@18.2.43)(dexie@3.2.4)(react@18.2.0):
+    resolution: {integrity: sha512-Lwv5W0Hk+uOW3kGnsU9GZoR1er1B7WQ5DSdonoNG+focTNeJbHW6vi6nBoX534VKI3/uwHebYzSw1fwY6a7mTw==}
+    peerDependencies:
+      '@types/react': '>=16'
+      dexie: ^3.2 || ^4.0.1-alpha
+      react: '>=16'
+    dependencies:
+      '@types/react': 18.2.43
+      dexie: 3.2.4
+      react: 18.2.0
+    dev: false
+
+  /dexie@3.2.4:
+    resolution: {integrity: sha512-VKoTQRSv7+RnffpOJ3Dh6ozknBqzWw/F3iqMdsZg958R0AS8AnY9x9d1lbwENr0gzeGJHXKcGhAMRaqys6SxqA==}
+    engines: {node: '>=6.0'}
     dev: false
 
   /didyoumean@1.2.2:

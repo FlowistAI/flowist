@@ -8,6 +8,7 @@ import { chatSessionsState } from '../../../states/chat-states';
 import { useRecoilValue } from 'recoil';
 import { useNodeManager } from '../../../hooks/NodeManager';
 import { ChatBotDropDownMenu } from './ChatBotDropdownMenu';
+import { sourceStyle, targetStyle } from '../../../constants/handle-styles';
 
 export type ChatBotNodeProps = {
     data: ChatBotNodeData
@@ -56,7 +57,7 @@ export function ChatBotNode({ data, selected }: ChatBotNodeProps) {
             return true
         }}>
             <NodeResizer minWidth={300} minHeight={200} isVisible={selected} />
-            <Handle type="target" position={Position.Right}>
+            <Handle type="target" position={Position.Right} style={targetStyle}>
                 <div className='ml-2 pointer-events-none'>
                     Input
                 </div>
@@ -74,7 +75,7 @@ export function ChatBotNode({ data, selected }: ChatBotNodeProps) {
             <div className="chat-bot__content nowheel cursor-default" >
                 <Chat user={user} bot={bot} messages={messages} onSendMessage={handleSendMessage} />
             </div>
-            <Handle type="source" position={Position.Left}>
+            <Handle type="source" position={Position.Left} style={sourceStyle}>
                 <div className='-ml-14 pointer-events-none'>
                     Output
                 </div>

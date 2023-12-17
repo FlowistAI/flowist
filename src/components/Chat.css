@@ -88,15 +88,6 @@
   outline: none;
 }
 
-.message-input button {
-  padding: 0.5rem 1rem;
-  background-color: #4299e1;
-  color: white;
-  border: none;
-  border-radius: 0.75rem;
-  cursor: pointer;
-}
-
 .messages::-webkit-scrollbar {
   width: 0.5rem;
 }
