@@ -5,9 +5,9 @@ import { ChatMessage, ChatSession } from "../types/chat-node-types";
 import { Button, Textarea, Tooltip } from '@mui/joy';
 import { useSetRecoilState } from 'recoil';
 import { addMessageFnCreater, chatSessionsState, updateMessageFnCreater } from '../states/chat-states';
-import { useGoogleAIChat } from '../hooks/GenerativeAI/GoogleAI';
+import { useGoogleAIChat } from '../hooks/GenerativeAI/useGoogleAI';
 import { generateUUID } from '../util/id-generator';
-import { useOpenAIChat } from '../hooks/GenerativeAI/OpenAI';
+import { useOpenAIChat } from '../hooks/GenerativeAI/useOpenAI';
 
 export interface AvatarProps {
     src: string;

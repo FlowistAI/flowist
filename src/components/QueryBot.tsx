@@ -4,10 +4,10 @@ import { BotInfo } from './Chat';
 import { Button } from '@mui/joy';
 import { QuerySession } from '../types/query-node-types';
 import { TextArea } from './TextArea';
-import useGoogleAI from '../hooks/GenerativeAI/GoogleAI';
+import useGoogleAI from '../hooks/GenerativeAI/useGoogleAI';
 import { replacePrompt } from '../util/misc.util';
 import { BotModelProviderType } from '../types/bot-types';
-import useOpenAI from '../hooks/GenerativeAI/OpenAI';
+import useOpenAI from '../hooks/GenerativeAI/useOpenAI';
 
 
 interface ChatProps {
