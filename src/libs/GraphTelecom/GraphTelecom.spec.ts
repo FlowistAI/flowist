@@ -1,4 +1,4 @@
-import { CommunicationNode, Telecommunicator } from './GraphTelecom';
+import { CommunicationNode, GraphTelecom } from './GraphTelecom';
 
 describe('CommunicationNode', () => {
     let node: CommunicationNode;
@@ -27,12 +27,12 @@ describe('CommunicationNode', () => {
 });
 
 describe('Telecommunicator', () => {
-    let telecommunicator: Telecommunicator;
+    let telecommunicator: GraphTelecom;
     let node1: CommunicationNode;
     let node2: CommunicationNode;
 
     beforeEach(() => {
-        telecommunicator = new Telecommunicator();
+        telecommunicator = new GraphTelecom();
         node1 = new CommunicationNode('node1', jest.fn());
         node2 = new CommunicationNode('node2', jest.fn());
         telecommunicator.registerNode(node1);

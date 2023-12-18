@@ -114,7 +114,7 @@ type CommunicateMsg = { from: NodePortId; to: NodePortId; message: Message };
 type PortListener = (message: CommunicateMsg) => void;
 type SourceTargetId = string; // sourceNodeId:sourcePortId-targetNodeId:targetPortId
 
-export class Telecommunicator {
+export class GraphTelecom {
     private nodes: Map<NodeId, CommunicationNode>;
     private eventEmitter: EventEmitter<CommunicateMsg>;
     private portListeners: Map<SourceTargetId, PortListener> = new Map();
@@ -250,5 +250,3 @@ export class Telecommunicator {
     }
 
 }
-
-
