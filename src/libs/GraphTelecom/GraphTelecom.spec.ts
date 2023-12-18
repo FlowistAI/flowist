@@ -1,4 +1,4 @@
-import { CommunicationNode, Telecommunicator } from './Telecommunicator';
+import { CommunicationNode, Telecommunicator } from './GraphTelecom';
 
 describe('CommunicationNode', () => {
     let node: CommunicationNode;
@@ -85,5 +85,15 @@ describe('Telecommunicator', () => {
         expect(node2.onMessage).toHaveBeenCalledTimes(1);
         expect(node1.onMessage).toHaveBeenCalledTimes(0);
 
+        // remove connection, should not send message
+        telecommunicator.disconnect('node1', 'output1', 'node2', 'input1');
+        node1.sendMessage('output1', message);
+        expect(node2.onMessage).toHaveBeenCalledTimes(1);
+    })
+
+    test('should not disconnect non-existing connection', () => {
+        expect(() => {
+            telecommunicator.disconnect('node1', 'output1', 'node2', 'input1');
+        }).toThrow('No listener for output port node1:output1 and input port node2:input1');
     })
 });
