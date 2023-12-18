@@ -64,7 +64,7 @@ const BotSettingsForm: FC<BotSettingsFormProps> = ({ initialValues, onSubmit }) 
                     id="bot-avatar"
                     name="bot.avatar"
                     value={formik.values.bot.avatar}
-                    onChange={formik.handleChange}
+                    onChange={(e, newValue) => (formik.setFieldValue('bot.avatar', newValue))} // formik.handleChange}
                 >
                     {botAvatarOptions.map((option) => (
                         <Option key={option.value} value={option.value}>
@@ -130,7 +130,7 @@ const BotSettingsForm: FC<BotSettingsFormProps> = ({ initialValues, onSubmit }) 
                 <InputLabel htmlFor="bot-key">Key</InputLabel>
                 <Input
                     id="bot-key"
-                    name="bot.settings.serviceSource.key"
+                    name="bot.settings.serviceSource.apiKey"
                     value={formik.values.bot.settings.serviceSource.apiKey}
                     onChange={formik.handleChange}
                 />
@@ -141,9 +141,17 @@ const BotSettingsForm: FC<BotSettingsFormProps> = ({ initialValues, onSubmit }) 
                 <Input
                     id="bot-temperature"
                     name="bot.settings.temperature"
+                    slotProps={{
+                        input: {
+                            min: 0,
+                            max: 1,
+                            step: 0.01,
+                        }
+                    }}
                     type="number"
                     value={formik.values.bot.settings.temperature}
                     onChange={formik.handleChange}
+
                 />
             </FormControl>
 

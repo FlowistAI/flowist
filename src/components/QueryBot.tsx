@@ -23,11 +23,11 @@ const QueryBot: React.FC<ChatProps> = ({ session, onQueryDone, input, setInput }
     const [output, setOutput] = React.useState<string>('');
     const AIHook = session.bot.settings.serviceSource.type === BotModelProviderType.OpenAI ? useOpenAI : useGoogleAI;
 
-    const { output: modelOutput, query: onQuery } = AIHook({
-        apiKey: session.bot.settings.serviceSource.apiKey,
-        model: session.bot.settings.model,
-        onDone: onQueryDone ?? (() => { }),
-    })
+    const { output: modelOutput, query: onQuery } = AIHook(
+        {
+            botSettings: bot.settings,
+            onDone: onQueryDone ?? (() => { }),
+        })
 
     React.useEffect(() => {
         setOutput(modelOutput);

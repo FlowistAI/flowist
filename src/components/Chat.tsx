@@ -139,8 +139,7 @@ const Chat: React.FC<ChatProps> = ({ session, input, setInput, onReplyDone }) =>
     const AIHook = session.bot.settings.serviceSource.type === BotModelProviderType.OpenAI ? useGoogleAIChat : useOpenAIChat;
 
     const { send } = AIHook({
-        apiKey: bot.settings.serviceSource.apiKey,
-        model: bot.settings.model,
+        botSettings: bot.settings,
         historyMessages: messages,
         onResponseChunk: (chunk: string) => {
             const botMessageId = botMessageIdRef.current;

@@ -1,5 +1,6 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { useState, useMemo, useCallback, useEffect } from 'react';
+import { BotSettings } from '../../types/bot-types';
 
 export type GoogleAIHook = {
     output: string;
@@ -7,12 +8,13 @@ export type GoogleAIHook = {
 };
 
 export type GoogleAIHookOptions = {
-    apiKey: string;
-    model: string,
+    botSettings: BotSettings
     onDone: (s: string) => void;
 };
 
-export const useGoogleAI: (options: GoogleAIHookOptions) => GoogleAIHook = ({ apiKey, model, onDone }) => {
+export const useGoogleAI: (options: GoogleAIHookOptions) => GoogleAIHook = ({ botSettings, onDone }) => {
+    const model = botSettings.model
+    const apiKey = botSettings.serviceSource.apiKey;
     const [output, setOutput] = useState('');
     const [streamEnded, setStreamEnded] = useState(false);
     // Initialize the AI model using useMemo so it's not recreated on every render
@@ -61,8 +63,7 @@ export type HistoryMessage = {
 };
 
 export type GoogleAIChatHookOptions = {
-    apiKey: string;
-    model: string
+    botSettings: BotSettings
     historyMessages: HistoryMessage[];
     onResponseChunk: (chunk: string) => void;
     onDone: () => void;
@@ -72,8 +73,9 @@ export type GoogleAIChatHook = {
     send: (msg: string) => Promise<void>;
 };
 
-export const useGoogleAIChat: (options: GoogleAIChatHookOptions) => GoogleAIChatHook = ({ apiKey, model, historyMessages, onResponseChunk, onDone }) => {
-
+export const useGoogleAIChat: (options: GoogleAIChatHookOptions) => GoogleAIChatHook = ({ botSettings, historyMessages, onResponseChunk, onDone }) => {
+    const model = botSettings.model
+    const apiKey = botSettings.serviceSource.apiKey;
     // Initialize the AI model using useMemo so it's not recreated on every render
     const generativeModel = useMemo(() => {
         const genAIInstance = new GoogleGenerativeAI(apiKey);

@@ -1,5 +1,6 @@
 import OpenAI from 'openai';
 import { useState, useMemo, useCallback, useEffect } from 'react';
+import { BotSettings } from '../../types/bot-types';
 
 export type OpenAIHook = {
     output: string;
@@ -7,16 +8,18 @@ export type OpenAIHook = {
 };
 
 export type OpenAIHookOptions = {
-    apiKey: string;
-    model: string,
+    botSettings: BotSettings
     onDone: (s: string) => void;
 };
 
-export const useOpenAI: (options: OpenAIHookOptions) => OpenAIHook = ({ apiKey, model, onDone }) => {
+export const useOpenAI: (options: OpenAIHookOptions) => OpenAIHook = ({ botSettings, onDone }) => {
+    const model = botSettings.model
+    const apiKey = botSettings.serviceSource.apiKey;
+    const baseURL = botSettings.serviceSource.endpoint;
     const [output, setOutput] = useState('');
     const [streamEnded, setStreamEnded] = useState(false);
     // Initialize the AI model using useMemo so it's not recreated on every render
-    const client = useMemo(() => new OpenAI({ apiKey }), [apiKey]);
+    const client = useMemo(() => new OpenAI({ apiKey, baseURL, dangerouslyAllowBrowser: true }), [apiKey, baseURL]);
 
     useEffect(() => {
         if (streamEnded) {
@@ -62,8 +65,7 @@ export type HistoryMessage = {
 };
 
 export type OpenAIChatHookOptions = {
-    apiKey: string;
-    model: string
+    botSettings: BotSettings
     historyMessages: HistoryMessage[];
     onResponseChunk: (chunk: string) => void;
     onDone: () => void;
@@ -73,11 +75,11 @@ export type OpenAIChatHook = {
     send: (msg: string) => Promise<void>;
 };
 
-export const useOpenAIChat: (options: OpenAIChatHookOptions) => OpenAIChatHook = ({ apiKey, model, historyMessages, onResponseChunk, onDone }) => {
-
-    // Initialize the AI model using useMemo so it's not recreated on every render
-    const client = useMemo(() => new OpenAI({ apiKey }), [apiKey]);
-
+export const useOpenAIChat: (options: OpenAIChatHookOptions) => OpenAIChatHook = ({ botSettings, historyMessages, onResponseChunk, onDone }) => {
+    const model = botSettings.model
+    const apiKey = botSettings.serviceSource.apiKey;
+    const baseURL = botSettings.serviceSource.endpoint;
+    const client = useMemo(() => new OpenAI({ apiKey, baseURL, dangerouslyAllowBrowser: true }), [apiKey, baseURL]);
 
     const send = useCallback(async (msg: string) => {
         try {
