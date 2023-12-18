@@ -11,7 +11,7 @@ export type GraphTelecomHookOptions = {
     workspaceId: string
 }
 
-export const useGraphTelecom: (_: GraphTelecomHookOptions) => GraphTelecom = ({ workspaceId }) => {
+export function useGraphTelecom({ workspaceId }: GraphTelecomHookOptions) {
     const graphTelecom = useRecoilValue(graphTelecomStateFamily(workspaceId))
     return graphTelecom
 }

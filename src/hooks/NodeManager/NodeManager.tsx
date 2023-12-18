@@ -3,10 +3,24 @@ import { Dispatch, SetStateAction } from "react";
 import { Connection, Edge, EdgeChange, MarkerType, Node, NodeChange } from "reactflow";
 import { AppNodeType, AppNodeTypes } from "../../constants/nodeTypes";
 import { SubManager } from "./SubManager";
+import { CommunicationNode, GraphTelecom, ParsedSourceTargetId, SignalHandler, createSourceTargetId, parseSourceTargetId } from "../../libs/GraphTelecom/GraphTelecom";
 
 export type NodeAddHandler = (node: Node) => void;
 export type EdgeAddHandler = (edge: Edge) => void;
 type OnChange<ChangesType> = (changes: ChangesType[]) => void;
+
+export type PortDefinition = {
+    input: {
+        [key: string]: {
+            id: string
+        }
+    },
+    output: {
+        [key: string]: {
+            id: string
+        }
+    }
+}
 
 export type NodeManagerOptions<NodeType extends AppNodeType, NodeData = any> = {
     // node
@@ -17,25 +31,35 @@ export type NodeManagerOptions<NodeType extends AppNodeType, NodeData = any> = {
     edges: Edge[];
     setEdges: Dispatch<SetStateAction<Edge[]>>;
     onEdgesChange: OnChange<EdgeChange>;
-    // sub managers
+    // misc
     subManagers: Record<NodeType, SubManager<NodeType, NodeData>>;
+    telecom: GraphTelecom
+    portDefs: Record<NodeType, PortDefinition>
+
 };
 
 export type AddNodeOptions<NodeType extends AppNodeType, NodeData = any, Preset = any> = {
     type: NodeType
     preset?: Preset
     data?: Partial<Node<NodeData, NodeType>>
+    onSignal?: SignalHandler
 }
 
 export type NodeManagerSnapshot = ReturnType<NodeManager['snapshot']>;
 
 export class NodeManager {
     private subManagers;
+    private telecom;
+    private portDefs;
+
     private nodeTypes: Record<string, AppNodeType> = {};
     private edgeTypes: Record<string, string> = {};
 
+    // add a raw node to the original node list
     private _addNode: NodeAddHandler;
+    // remove a raw node from the original node list
     private _removeNode: (nodeId: string) => void;
+
     private _nodes: Node[];
     get nodes() {
         return this._nodes;
@@ -53,6 +77,8 @@ export class NodeManager {
 
     private constructor(options: NodeManagerOptions<AppNodeTypes>) {
         this.subManagers = options.subManagers;
+        this.telecom = options.telecom;
+        this.portDefs = options.portDefs;
 
         this._addNode = (node: Node) => {
             options.setNodes((nodes) => nodes.concat(node));
@@ -143,6 +169,11 @@ export class NodeManager {
         }
         const node = subManager.createNode(options);
         this.nodeTypes[node.id] = options.type;
+        this.telecom.registerNode(CommunicationNode.fromDefinition({
+            id: node.id,
+            onSignal: options.onSignal ?? (() => { throw new Error("onSignal is not defined") }),
+            ports: { ...this.portDefs[options.type] }
+        }))
         this._addNode(node);
     }
 
@@ -185,21 +216,37 @@ export class NodeManager {
         if (!edge) {
             return;
         }
+        this.telecom.connect(edge.source, edge.sourceHandle!, edge.target, edge.targetHandle!); // it throws
         this.addEdge(edge);
     }
 
+    onDisconnect(id: string) {
+        const edge = this.edges.find(edge => edge.id === id);
+        if (!edge) {
+            throw new Error(`edge ${id} not found`);
+        }
+        this.telecom.disconnect(edge.source, edge.sourceHandle!, edge.target, edge.targetHandle!); // it throws
+        this.removeEdge(id);
+    }
+
+
     createEdge(connection: Connection): Edge | undefined {
-        if (!connection.source || !connection.target) {
-            console.warn('connection source or target is undefined', connection);
+        const id = createSourceTargetId(connection.source, connection.sourceHandle, connection.target, connection.targetHandle);
+        let parsed: ParsedSourceTargetId
+        try {
+            parsed = parseSourceTargetId(id);
+        } catch (error) {
+            console.warn(error);
             return undefined;
         }
+        const [source, sourceHandle, target, targetHandle] = parsed;
 
         return {
-            id: `${connection.source}-${connection.target}`,
-            source: connection.source,
-            target: connection.target,
-            sourceHandle: connection.sourceHandle,
-            targetHandle: connection.targetHandle,
+            id,
+            source,
+            target,
+            sourceHandle,
+            targetHandle,
             type: 'smoothstep',
             markerEnd: {
                 type: MarkerType.ArrowClosed,
@@ -213,5 +260,4 @@ export class NodeManager {
             },
         };
     }
-
 }

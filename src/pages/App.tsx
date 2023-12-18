@@ -4,7 +4,7 @@ import 'reactflow/dist/style.css';
 import './App.css';
 import { FloatingMenu } from '../components/FloatingMenu';
 import { Optional } from '../types/types';
-import { appNodeTypeComponents } from '../constants/nodeTypes';
+import { COMPONENT_BY_NODE_TYPE } from '../constants/nodeTypes';
 import { useNodeManager } from '../hooks/NodeManager';
 import { useRecoilState } from 'recoil';
 import { ReactFlowInstanceState } from '../states/react-flow';
@@ -63,7 +63,7 @@ function App() {
         <ReactFlow
           onContextMenu={onContextMenu}
           onNodeContextMenu={onNodeContextMenu}
-          nodeTypes={appNodeTypeComponents}
+          nodeTypes={COMPONENT_BY_NODE_TYPE}
           nodes={nodeManager.nodes}
           onNodesChange={nodeManager.onNodesChange}
           edges={nodeManager.edges}

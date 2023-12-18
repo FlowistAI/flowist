@@ -3,12 +3,13 @@ import { NodeManagerProvider } from '../hooks/NodeManager';
 import { initNodes } from '../constants/initData';
 import { ChatBotNodeService } from '../services/chat-node-service';
 import { useRecoilState } from 'recoil';
-import { AppNodeTypes } from '../constants/nodeTypes';
+import { AppNodeTypes, PORT_DEFINITIONS } from '../constants/nodeTypes';
 import { chatSessionsState } from '../states/chat-states';
 import { useMemo } from 'react';
 import { SubManager } from "../hooks/NodeManager/SubManager";
 import { querySessionsState } from '../states/query-states';
 import { QueryBotNodeService } from '../services/query-submanager';
+import { useGraphTelecom } from '../hooks/GraphTelecom/useGraphTelecom';
 
 export function NodeManaged({ children }: { children: React.ReactElement; }) {
     const [nodes, setNodes, onNodesChange] = useNodesState(initNodes);
@@ -57,9 +58,12 @@ export function NodeManaged({ children }: { children: React.ReactElement; }) {
         [AppNodeTypes.QueryBot]: queryService,
     }), [chatService, queryService]);
 
+    const graphTelecom = useGraphTelecom({ workspaceId: 'singleton' })
     return (<NodeManagerProvider
         options={{
             subManagers,
+            portDefs: PORT_DEFINITIONS,
+            telecom: graphTelecom,
             // node
             nodes,
             setNodes,
