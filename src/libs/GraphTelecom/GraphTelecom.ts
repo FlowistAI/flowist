@@ -4,41 +4,42 @@ import { Nullable } from "../../types/types";
 type Handler<T> = (value?: T) => void;
 
 export class EventEmitter<T> {
-    private eventNameToHandlers: { [event in keyof T]?: Set<Handler<T[event]>> }
+    private handlersMap: Map<keyof T, Set<Handler<T[keyof T]>>>;
 
     constructor() {
-        this.eventNameToHandlers = {};
+        this.handlersMap = new Map();
     }
 
     emit<K extends keyof T>(eventName: K, value?: T[K]): void {
-        const handlers = this.eventNameToHandlers[eventName];
+        const handlers = this.handlersMap.get(eventName);
         if (!handlers) {
-            // throw new Error(`No handlers for event ${String(eventName)}`);
-            return
+            return;
         }
         handlers.forEach(h => h(value));
     }
 
-    on<K extends keyof T>(eventName: K, callback: Handler<T[K]>): void {
-        let handlers = this.eventNameToHandlers[eventName];
+    on<K extends keyof T>(eventName: K, callback: Handler<T[keyof T]>): void {
+        let handlers = this.handlersMap.get(eventName);
         if (!handlers) {
-            this.eventNameToHandlers[eventName] = handlers = new Set();
+            handlers = new Set();
+            this.handlersMap.set(eventName, handlers);
         }
         handlers.add(callback);
     }
 
-    off<K extends keyof T>(eventName: K, callback: Handler<T[K]>): void {
-        const handlers = this.eventNameToHandlers[eventName];
+    off<K extends keyof T>(eventName: K, callback: Handler<T[keyof T]>): void {
+        const handlers = this.handlersMap.get(eventName);
         if (!handlers) {
             throw new Error(`No handlers for event ${String(eventName)}`);
         }
 
         handlers.delete(callback);
         if (handlers.size === 0) {
-            delete this.eventNameToHandlers[eventName];
+            this.handlersMap.delete(eventName);
         }
     }
 }
+
 /**
  * There are nodes in the graph, each nodes has ports including input and output ports.
  * A node can send event to its output ports, and receive event from its input ports, 
@@ -91,6 +92,12 @@ export class CommunicationNode {
             this.eventEmitter.emit(port, data);
         }
         this._sendSignal = () => { throw new Error('sendSignal not ready') };
+        // this.setHandler.bind(this);
+        // this.resethandler.bind(this);
+        // bind all methods
+        Object.getOwnPropertyNames(CommunicationNode.prototype)
+            .filter(prop => typeof ((this as any)[prop] as any) === 'function')
+            .forEach(prop => (this as any)[prop] = ((this as any)[prop] as any).bind(this));
     }
 
     setHandler(port: string, handler: (data: any) => void) {
@@ -143,6 +150,7 @@ export class CommunicationNode {
         const outputPort = this.outputPorts.find(port => port.id === outputPortId);
         if (outputPort) {
             // Emit a signal event with the output port ID and signal
+            console.log(`Node ${this.id} sending signal from port ${outputPort.id}`, signal);
             this._sendSignal(outputPort.id, signal);
         } else {
             throw new Error(`Output port ${outputPortId} not found in node ${this.id}`);
@@ -205,6 +213,8 @@ export class GraphTelecom {
             const outputNodePortId = `${node.id}:${outputPortId}`;
             const connectionInfo = this.getConnectionInfo(node.id);
             Object.entries(connectionInfo.outgoing).forEach(([targetNodeId, targetPortId]) => {
+                console.log('GraphTelecom send signal', { from: outputNodePortId, to: `${targetNodeId}:${targetPortId}`, signal });
+
                 const inputNodePortId = `${targetNodeId}:${targetPortId}`;
                 this.eventEmitter.emit('signal', { from: outputNodePortId, to: inputNodePortId, signal });
             });
@@ -251,6 +261,8 @@ export class GraphTelecom {
         const inputNodePortId = `${inputNodeId}:${inputPortId}`;
 
         const listener: PortListener = ({ from, to, signal }) => {
+            console.log('GraphTelecom receive signal', { from, to, signal });
+
             if (!from || !to) {
                 throw new Error(`Invalid signal: ${JSON.stringify({ from, to, signal })}`);
             }

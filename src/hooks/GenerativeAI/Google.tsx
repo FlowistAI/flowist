@@ -1,5 +1,5 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 
 export type GoogleAIHook = {
     output: string;
@@ -9,12 +9,12 @@ export type GoogleAIHook = {
 export type GoogleAIHookOptions = {
     apiKey: string;
     model: string,
-    onDone: () => void;
+    onDone: (s: string) => void;
 };
 
 export const useGoogleAI: (options: GoogleAIHookOptions) => GoogleAIHook = ({ apiKey, model, onDone }) => {
     const [output, setOutput] = useState('');
-
+    const [streamEnded, setStreamEnded] = useState(false);
     // Initialize the AI model using useMemo so it's not recreated on every render
     const generativeModel = useMemo(() => {
         const genAIInstance = new GoogleGenerativeAI(apiKey);
@@ -22,11 +22,17 @@ export const useGoogleAI: (options: GoogleAIHookOptions) => GoogleAIHook = ({ ap
         return generativeModel;
     }, [apiKey, model]);
 
+    useEffect(() => {
+        if (streamEnded) {
+            onDone(output);
+        }
+    }, [onDone, output, streamEnded]);
 
     // useCallback ensures that the same function is used unless dependencies change
     const query = useCallback(async (query: string) => {
         try {
             setOutput('');
+            setStreamEnded(false);
             const { totalTokens } = await generativeModel.countTokens(query);
             console.log('totalTokens', totalTokens);
 
@@ -37,11 +43,12 @@ export const useGoogleAI: (options: GoogleAIHookOptions) => GoogleAIHook = ({ ap
                 setOutput((prev) => prev + chunkText);
             }
 
-            onDone();
         } catch (error) {
             console.error('Error querying the model:', error);
+        } finally {
+            setStreamEnded(true)
         }
-    }, [generativeModel, onDone]);
+    }, [generativeModel]);
 
     return { output, query };
 };

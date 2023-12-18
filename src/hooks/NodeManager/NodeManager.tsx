@@ -106,6 +106,9 @@ export class NodeManager {
         this.addEdge = this.addEdge.bind(this);
         this.onConnect = this.onConnect.bind(this);
         this.createEdge = this.createEdge.bind(this);
+        this.onDisconnect = this.onDisconnect.bind(this);
+        this.getCommunicationNode = this.getCommunicationNode.bind(this);
+
 
     }
 
@@ -171,7 +174,6 @@ export class NodeManager {
         this.nodeTypes[node.id] = options.type;
         this.telecom.registerNode(CommunicationNode.fromDefinition({
             id: node.id,
-            onSignal: options.onSignal ?? (() => { throw new Error("onSignal is not defined") }),
             ports: { ...this.portDefs[options.type] }
         }))
         this._addNode(node);

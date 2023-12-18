@@ -7,7 +7,7 @@ import { useRecoilValue } from 'recoil';
 import { useNodeManager } from '../../../hooks/NodeManager';
 import { QueryBotDropDownMenu } from './QueryBotDropdownMenu';
 import QueryBot from '../../QueryBot';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 export type QueryBotNodeProps = {
     data: QueryBotNodeData
@@ -19,23 +19,27 @@ export function QueryBotNode({ data, selected }: QueryBotNodeProps) {
     const { removeNode, getCommunicationNode } = useNodeManager()
     const { signal, setHandler, resethandler } = getCommunicationNode(id)
     const session = useRecoilValue(querySessionsState).find(session => session.id === id);
-
-    if (!session) {
-        return null;
-    }
+    const [input, setInput] = useState<string>('')
 
     const onQueryDone = (output: string) => {
+        console.log('node', id, 'query done with output', output);
+
         signal('output', output)
     }
 
     useEffect(() => {
         const handler = (input: string) => {
+            console.log('node', id, 'recevied input', input);
 
+            setInput(input)
         }
         setHandler('input', handler)
         return () => resethandler('input', handler)
-    }, [resethandler, setHandler])
+    }, [id, resethandler, setHandler])
 
+    if (!session) {
+        return null;
+    }
 
     return (
         <div className="chat-bot" onContextMenu={e => {
@@ -49,7 +53,7 @@ export function QueryBotNode({ data, selected }: QueryBotNodeProps) {
             return true
         }}>
             <NodeResizer minWidth={300} minHeight={200} isVisible={selected} />
-            <Handle type="target" position={Position.Top}>
+            <Handle type="target" position={Position.Top} id='input'>
                 <div className='-ml-6 -mt-6 pointer-events-none'>
                     Input
                 </div>
@@ -65,9 +69,9 @@ export function QueryBotNode({ data, selected }: QueryBotNodeProps) {
                 </button>
             </div>
             <div className="chat-bot__content nowheel cursor-default" >
-                <QueryBot session={session} onQueryDone={onQueryDone} />
+                <QueryBot input={input} setInput={setInput} session={session} onQueryDone={onQueryDone} />
             </div>
-            <Handle type="source" position={Position.Bottom}>
+            <Handle type="source" position={Position.Bottom} id='output'>
                 <div className='-ml-6 pointer-events-none'>
                     Output
                 </div>
