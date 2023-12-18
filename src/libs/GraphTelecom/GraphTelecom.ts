@@ -1,3 +1,5 @@
+import { Nullable } from "../../types/types";
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 type Handler<T> = (value?: T) => void;
 
@@ -46,7 +48,7 @@ export class EventEmitter<T> {
  * Channels are the connections between nodes, and they are one-way.
  */
 
-type Message = any; // Define Message type as needed
+type Signal = any; // Define Signal type as needed
 
 interface CommunicationPort {
     id: string;
@@ -54,27 +56,57 @@ interface CommunicationPort {
     type: 'input' | 'output';
 }
 
+export type SignalHandler = (portId: string, signal: Signal) => void;
+
+export type CommunicationNodeDefinition = {
+    id: string;
+    onSignal: SignalHandler;
+    ports: {
+        input: {
+            [key: string]: {
+                id: string
+            }
+        },
+        output: {
+            [key: string]: {
+                id: string
+            }
+        }
+    }
+};
+
 export class CommunicationNode {
     id: string;
     inputPorts: CommunicationPort[];
     outputPorts: CommunicationPort[];
-    onMessage: (portId: string, message: Message) => void;
-    _sendMessage: (outputPortId: string, message: Message) => void;
+    onSignal: SignalHandler;
+    _sendSignal: (outputPortId: string, signal: Signal) => void;
 
-    constructor(id: string, onMessage: (portId: string, message: Message) => void) {
+    constructor(id: string, onSignal: SignalHandler) {
         this.id = id;
         this.inputPorts = [];
         this.outputPorts = [];
-        this.onMessage = onMessage;
-        this._sendMessage = () => { throw new Error('sendMessage not ready') };
+        this.onSignal = onSignal;
+        this._sendSignal = () => { throw new Error('sendSignal not ready') };
     }
 
-    setUp(sendMessage: (outputPortId: string, message: Message) => void) {
-        this._sendMessage = sendMessage;
+    static fromDefinition(definition: CommunicationNodeDefinition): CommunicationNode {
+        const node = new CommunicationNode(definition.id, definition.onSignal);
+        Object.entries(definition.ports.input).forEach(([portId]) => {
+            node.addInputPort(portId);
+        });
+        Object.entries(definition.ports.output).forEach(([portId]) => {
+            node.addOutputPort(portId);
+        });
+        return node;
+    }
+
+    setUp(sendSignal: (outputPortId: string, signal: Signal) => void) {
+        this._sendSignal = sendSignal;
     }
 
     tearDown() {
-        this._sendMessage = () => { throw new Error('sendMessage not ready') };
+        this._sendSignal = () => { throw new Error('sendSignal not ready') };
     }
 
     addInputPort(portId: string): void {
@@ -95,12 +127,12 @@ export class CommunicationNode {
         this.outputPorts.push(port);
     }
 
-    sendMessage(outputPortId: string, message: Message): void {
+    sendSignal(outputPortId: string, signal: Signal): void {
         // Find the output port with the given ID
         const outputPort = this.outputPorts.find(port => port.id === outputPortId);
         if (outputPort) {
-            // Emit a message event with the output port ID and message
-            this._sendMessage(outputPort.id, message);
+            // Emit a signal event with the output port ID and signal
+            this._sendSignal(outputPort.id, signal);
         } else {
             throw new Error(`Output port ${outputPortId} not found in node ${this.id}`);
         }
@@ -110,9 +142,31 @@ export class CommunicationNode {
 type NodeId = string;
 type PortId = string;
 type NodePortId = string; // nodeId:portId
-type CommunicateMsg = { from: NodePortId; to: NodePortId; message: Message };
-type PortListener = (message: CommunicateMsg) => void;
+type CommunicateMsg = { from: NodePortId; to: NodePortId; signal: Signal };
+type PortListener = (signal: CommunicateMsg) => void;
 type SourceTargetId = string; // sourceNodeId:sourcePortId-targetNodeId:targetPortId
+export type ParsedSourceTargetId = [NodeId, PortId, NodeId, PortId];
+
+export function createSourceTargetId(
+    sourceNodeId?: Nullable<string>, sourcePortId?: Nullable<string>,
+    targetNodeId?: Nullable<string>, targetPortId?: Nullable<string>
+): SourceTargetId {
+    return `${sourceNodeId ?? ''}:${sourcePortId ?? ''}-${targetNodeId ?? ''}:${targetPortId ?? ''}`;
+}
+
+export function parseSourceTargetId(sourceTargetId: SourceTargetId) {
+    const r = sourceTargetId.split('-').map(s => s.split(':')).flat()
+    if (r.length !== 4) {
+        throw new Error(`Invalid length of sourceTargetId: ${sourceTargetId}`);
+    }
+
+    if (r.some(s => s === '')) {
+        throw new Error(`Invalid partial empty sourceTargetId: ${sourceTargetId}`);
+    }
+
+    return r as [string, string, string, string];
+
+}
 
 export class GraphTelecom {
     private nodes: Map<NodeId, CommunicationNode>;
@@ -126,15 +180,18 @@ export class GraphTelecom {
 
     registerNode(node: CommunicationNode): void {
         this.nodes.set(node.id, node);
-        node.setUp((outputPortId, message) => {
+
+        // setup a listener for each input port, will be called when a signal is sent to the port
+        node.setUp((outputPortId, signal) => {
             const outputNodePortId = `${node.id}:${outputPortId}`;
             const connectionInfo = this.getConnectionInfo(node.id);
             Object.entries(connectionInfo.outgoing).forEach(([targetNodeId, targetPortId]) => {
                 const inputNodePortId = `${targetNodeId}:${targetPortId}`;
-                this.eventEmitter.emit('message', { from: outputNodePortId, to: inputNodePortId, message });
+                this.eventEmitter.emit('signal', { from: outputNodePortId, to: inputNodePortId, signal });
             });
         });
     }
+
     unregisterNode(nodeId: string): void {
         const node = this.nodes.get(nodeId);
         if (!node) {
@@ -145,7 +202,7 @@ export class GraphTelecom {
             const listenerKey = `${nodeId}:${port.id}`;
             const listener = this.portListeners.get(listenerKey);
             if (listener) {
-                this.eventEmitter.off('message', listener);
+                this.eventEmitter.off('signal', listener);
                 this.portListeners.delete(listenerKey);
             }
         });
@@ -153,7 +210,7 @@ export class GraphTelecom {
         node.outputPorts.forEach(port => {
             this.portListeners.forEach((listener, key) => {
                 if (key.startsWith(`${nodeId}:${port.id}-`)) {
-                    this.eventEmitter.off('message', listener);
+                    this.eventEmitter.off('signal', listener);
                     this.portListeners.delete(key);
                 }
             });
@@ -174,17 +231,17 @@ export class GraphTelecom {
         const outputNodePortId = `${outputNodeId}:${outputPortId}`;
         const inputNodePortId = `${inputNodeId}:${inputPortId}`;
 
-        const listener: PortListener = ({ from, to, message }) => {
+        const listener: PortListener = ({ from, to, signal }) => {
             if (!from || !to) {
-                throw new Error(`Invalid message: ${JSON.stringify({ from, to, message })}`);
+                throw new Error(`Invalid signal: ${JSON.stringify({ from, to, signal })}`);
             }
             if (from === outputNodePortId && to === inputNodePortId) {
-                inputNode.onMessage(inputPortId, message);
+                inputNode.onSignal(inputPortId, signal);
             }
         };
 
         this.portListeners.set(`${outputNodePortId}-${inputNodePortId}`, listener);
-        this.eventEmitter.on('message', listener);
+        this.eventEmitter.on('signal', listener);
     }
 
     disconnect(outputNodeId: string, outputPortId: string, inputNodeId: string, inputPortId: string): void {
@@ -202,7 +259,7 @@ export class GraphTelecom {
         if (!listener) {
             throw new Error(`No listener for output port ${outputNodePortId} and input port ${inputNodePortId}`);
         }
-        this.eventEmitter.off('message', listener);
+        this.eventEmitter.off('signal', listener);
         this.portListeners.delete(`${outputNodePortId}-${inputNodePortId}`);
     }
 

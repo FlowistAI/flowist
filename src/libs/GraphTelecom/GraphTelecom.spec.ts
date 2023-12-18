@@ -2,11 +2,11 @@ import { CommunicationNode, GraphTelecom } from './GraphTelecom';
 
 describe('CommunicationNode', () => {
     let node: CommunicationNode;
-    let onMessageMock: jest.Mock;
+    let onSignalMock: jest.Mock;
 
     beforeEach(() => {
-        onMessageMock = jest.fn();
-        node = new CommunicationNode('node1', onMessageMock);
+        onSignalMock = jest.fn();
+        node = new CommunicationNode('node1', onSignalMock);
     });
 
     test('addInputPort should add a new input port', () => {
@@ -19,9 +19,9 @@ describe('CommunicationNode', () => {
         expect(node.outputPorts).toEqual([{ id: 'output1', nodeId: 'node1', type: 'output' }]);
     });
 
-    test('sendMessage should throw an error if the output port is not found', () => {
+    test('sendSignal should throw an error if the output port is not found', () => {
         expect(() => {
-            node.sendMessage('output1', { text: 'Hello' });
+            node.sendSignal('output1', { text: 'Hello' });
         }).toThrowError('Output port output1 not found in node node1');
     });
 });
@@ -75,20 +75,20 @@ describe('Telecommunicator', () => {
         }).toThrow('Node node3 not found in the graph');
     });
 
-    test('should send a message from one node to another', () => {
+    test('should send a signal from one node to another', () => {
         node1.addOutputPort('output1');
         node2.addInputPort('input1');
         telecommunicator.connect('node1', 'output1', 'node2', 'input1');
-        const message = { text: 'Hello' };
-        node1.sendMessage('output1', message);
-        expect(node2.onMessage).toHaveBeenCalledWith('input1', message);
-        expect(node2.onMessage).toHaveBeenCalledTimes(1);
-        expect(node1.onMessage).toHaveBeenCalledTimes(0);
+        const signal = { text: 'Hello' };
+        node1.sendSignal('output1', signal);
+        expect(node2.onSignal).toHaveBeenCalledWith('input1', signal);
+        expect(node2.onSignal).toHaveBeenCalledTimes(1);
+        expect(node1.onSignal).toHaveBeenCalledTimes(0);
 
-        // remove connection, should not send message
+        // remove connection, should not send signal
         telecommunicator.disconnect('node1', 'output1', 'node2', 'input1');
-        node1.sendMessage('output1', message);
-        expect(node2.onMessage).toHaveBeenCalledTimes(1);
+        node1.sendSignal('output1', signal);
+        expect(node2.onSignal).toHaveBeenCalledTimes(1);
     })
 
     test('should not disconnect non-existing connection', () => {
