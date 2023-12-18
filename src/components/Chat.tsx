@@ -1,12 +1,13 @@
 import React, { useRef, useEffect, useCallback } from 'react';
 import './Chat.css';
-import { Bot } from '../types/bot-types';
+import { Bot, BotModelProviderType } from '../types/bot-types';
 import { ChatMessage, ChatSession } from "../types/chat-node-types";
 import { Button, Textarea, Tooltip } from '@mui/joy';
 import { useSetRecoilState } from 'recoil';
 import { addMessageFnCreater, chatSessionsState, updateMessageFnCreater } from '../states/chat-states';
-import { useGoogleChatAI } from '../hooks/GenerativeAI/Google';
-import { generateId } from '../util/id-generator';
+import { useGoogleAIChat } from '../hooks/GenerativeAI/GoogleAI';
+import { generateUUID } from '../util/id-generator';
+import { useOpenAIChat } from '../hooks/GenerativeAI/OpenAI';
 
 export interface AvatarProps {
     src: string;
@@ -82,15 +83,20 @@ export const MessageList: React.FC<MessageListProps> = ({ messages }) => {
 
 export interface MessageInputProps {
     onSendMessage?: (message: string) => void;
+    input?: string;
+    setInput?: (input: string) => void;
 }
 
-export const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage }) => {
+export const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage, input: inputOut, setInput: setInputOut }) => {
     const [input, setInput] = React.useState('');
 
     const handleSend = () => {
-        if (input.trim()) {
-            onSendMessage?.(input);
-            setInput('');
+        const realInput = inputOut ?? input
+        console.log('send ', realInput);
+
+        if (realInput.trim()) {
+            onSendMessage?.(realInput);
+            (setInputOut ?? setInput)('');
         }
     };
 
@@ -100,8 +106,8 @@ export const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage }) => 
                 sx={{ flex: 1 }}
                 placeholder="Write your message (Ctrl+Enter to submit)"
                 maxRows={10}
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
+                value={inputOut ?? input}
+                onChange={(e) => (setInputOut ?? setInput)(e.target.value)}
                 onKeyUp={(e) => {
                     // ctrl + enter
                     if (e.ctrlKey && e.key === 'Enter') {
@@ -118,16 +124,21 @@ export const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage }) => 
 
 export interface ChatProps {
     session: ChatSession
+    input: string
+    setInput: (input: string) => void
+    onReplyDone?: (output: string) => void
 }
 
-const Chat: React.FC<ChatProps> = ({ session }) => {
+const Chat: React.FC<ChatProps> = ({ session, input, setInput, onReplyDone }) => {
     const { bot, user, messages } = session;
     const setSessions = useSetRecoilState(chatSessionsState);
     const addMessage = addMessageFnCreater(setSessions);
     const updateMessage = updateMessageFnCreater(setSessions);
     const botMessageIdRef = useRef<string | undefined>();
 
-    const { send } = useGoogleChatAI({
+    const AIHook = session.bot.settings.serviceSource.type === BotModelProviderType.OpenAI ? useGoogleAIChat : useOpenAIChat;
+
+    const { send } = AIHook({
         apiKey: bot.settings.serviceSource.apiKey,
         model: bot.settings.model,
         historyMessages: messages,
@@ -140,15 +151,22 @@ const Chat: React.FC<ChatProps> = ({ session }) => {
             updateMessage(session.id, botMessageId, (prev) => prev + chunk);
         },
         onDone: () => {
+            const msgId = botMessageIdRef.current;
+            const msgContent = messages.find(msg => msg.id === msgId)?.content;
             botMessageIdRef.current = undefined;
+            if (msgContent) {
+                onReplyDone?.(msgContent);
+            }
         }
     });
 
     const onSendMessage = useCallback(async (message: string) => {
+        console.log('on send message', message);
+
         // add user message to the list
-        addMessage(session.id, { id: generateId(), content: message, isUser: true, avatar: user.avatar });
+        addMessage(session.id, { id: generateUUID(), content: message, isUser: true, avatar: user.avatar });
         // add bot message to the list and store the id in the ref
-        const id = generateId();
+        const id = generateUUID();
         botMessageIdRef.current = id;
         addMessage(session.id, { id, content: '', isUser: false, avatar: bot.avatar });
         // send message to the bot
@@ -159,7 +177,7 @@ const Chat: React.FC<ChatProps> = ({ session }) => {
         <div className="chat">
             <BotInfo bot={bot} />
             <MessageList messages={messages} />
-            <MessageInput onSendMessage={onSendMessage} />
+            <MessageInput onSendMessage={onSendMessage} input={input} setInput={setInput} />
         </div>
     );
 };

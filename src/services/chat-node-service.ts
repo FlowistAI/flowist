@@ -1,10 +1,10 @@
 import { Node } from "reactflow";
 import { AppNodeTypes } from "../constants/nodeTypes";
-import { generateId } from "../util/id-generator";
 import { Bot, BotModelProviderType, GoogleGeminiModelIds, GoogleGeminiOfficialServiceSource, SessionId, User } from "../types/bot-types";
 import { ChatBotNodeData, ChatSession } from "../types/chat-node-types";
 import { BotNodePreset } from "../types/bot-types";
 import { SubManager } from "../hooks/NodeManager/SubManager";
+import { NodeIdGenerator } from "../util/id-generator";
 
 export type CreateNodeOptions = {
     preset?: BotNodePreset
@@ -15,6 +15,7 @@ export type ChatBotNodeServiceProps = {
     sessionCreateHandler: (sess: ChatSession) => void
     sessionDestroyHandler: (sessId: SessionId) => void
     sessionsGetter: () => ChatSession[]
+    idGeneratorGetter: () => NodeIdGenerator
 }
 
 export class ChatBotNodeService implements SubManager<AppNodeTypes.ChatBot> {
@@ -41,15 +42,18 @@ export class ChatBotNodeService implements SubManager<AppNodeTypes.ChatBot> {
     sessionCreateHandler: (sess: ChatSession) => void
     sessionDestroyHandler: (sessId: SessionId) => void
     sessionsGetter: () => ChatSession[]
+    idGeneratorGetter: () => NodeIdGenerator
 
     constructor({
         sessionCreateHandler,
         sessionDestroyHandler,
         sessionsGetter,
+        idGeneratorGetter,
     }: ChatBotNodeServiceProps) {
         this.sessionCreateHandler = sessionCreateHandler
         this.sessionDestroyHandler = sessionDestroyHandler
         this.sessionsGetter = sessionsGetter
+        this.idGeneratorGetter = idGeneratorGetter
     }
 
     createNode({ preset, data }: CreateNodeOptions) {
@@ -72,7 +76,7 @@ export class ChatBotNodeService implements SubManager<AppNodeTypes.ChatBot> {
 
     private addSession(user?: User, preset?: BotNodePreset): ChatSession {
         const sess = {
-            id: generateId(),
+            id: this.idGeneratorGetter().next(),
             bot: preset?.bot ?? ChatBotNodeService.DefaultBot,
             user: user ?? ChatBotNodeService.DefaultUser,
             messages: [],

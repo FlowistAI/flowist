@@ -4,8 +4,10 @@ import { BotInfo } from './Chat';
 import { Button } from '@mui/joy';
 import { QuerySession } from '../types/query-node-types';
 import { TextArea } from './TextArea';
-import useGoogleAI from '../hooks/GenerativeAI/Google';
+import useGoogleAI from '../hooks/GenerativeAI/GoogleAI';
 import { replacePrompt } from '../util/misc.util';
+import { BotModelProviderType } from '../types/bot-types';
+import useOpenAI from '../hooks/GenerativeAI/OpenAI';
 
 
 interface ChatProps {
@@ -19,11 +21,9 @@ const QueryBot: React.FC<ChatProps> = ({ session, onQueryDone, input, setInput }
 
     const bot = session.bot;
     const [output, setOutput] = React.useState<string>('');
+    const AIHook = session.bot.settings.serviceSource.type === BotModelProviderType.OpenAI ? useOpenAI : useGoogleAI;
 
-    console.log('output', output);
-
-
-    const { output: modelOutput, query: onQuery } = useGoogleAI({
+    const { output: modelOutput, query: onQuery } = AIHook({
         apiKey: session.bot.settings.serviceSource.apiKey,
         model: session.bot.settings.model,
         onDone: onQueryDone ?? (() => { }),

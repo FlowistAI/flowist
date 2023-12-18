@@ -4,6 +4,7 @@ import { Connection, Edge, EdgeChange, MarkerType, Node, NodeChange } from "reac
 import { AppNodeType, AppNodeTypes } from "../../constants/nodeTypes";
 import { SubManager } from "./SubManager";
 import { CommunicationNode, GraphTelecom, ParsedSourceTargetId, SignalHandler, createSourceTargetId, parseSourceTargetId } from "../../libs/GraphTelecom/GraphTelecom";
+import { NodeIdGenerator } from "../../util/id-generator";
 
 export type NodeAddHandler = (node: Node) => void;
 export type EdgeAddHandler = (edge: Edge) => void;
@@ -35,6 +36,8 @@ export type NodeManagerOptions<NodeType extends AppNodeType, NodeData = any> = {
     subManagers: Record<NodeType, SubManager<NodeType, NodeData>>;
     telecom: GraphTelecom
     portDefs: Record<NodeType, PortDefinition>
+    idGeneratorGetter: () => NodeIdGenerator
+    idGeneratorSetter: (setter: (prev: NodeIdGenerator) => NodeIdGenerator) => void
 
 };
 
@@ -56,9 +59,9 @@ export class NodeManager {
     private edgeTypes: Record<string, string> = {};
 
     // add a raw node to the original node list
-    private _addNode: NodeAddHandler;
+    private _addNodeToFlow: NodeAddHandler;
     // remove a raw node from the original node list
-    private _removeNode: (nodeId: string) => void;
+    private _removeNodeFromFlow: (nodeId: string) => void;
 
     private _nodes: Node[];
     get nodes() {
@@ -75,15 +78,22 @@ export class NodeManager {
     public readonly onNodesChange: OnChange<NodeChange>;
     public readonly onEdgesChange: OnChange<EdgeChange>;
 
+    private idGeneratorGetter: () => NodeIdGenerator;
+    private idGeneratorSetter: (setter: (prev: NodeIdGenerator) => NodeIdGenerator) => void;
+
     private constructor(options: NodeManagerOptions<AppNodeTypes>) {
         this.subManagers = options.subManagers;
         this.telecom = options.telecom;
         this.portDefs = options.portDefs;
+        this.idGeneratorGetter = options.idGeneratorGetter;
+        this.idGeneratorSetter = options.idGeneratorSetter;
 
-        this._addNode = (node: Node) => {
+
+        this._addNodeToFlow = (node: Node) => {
             options.setNodes((nodes) => nodes.concat(node));
         }
-        this._removeNode = (nodeId: string) => {
+
+        this._removeNodeFromFlow = (nodeId: string) => {
             options.setNodes((nodes) => nodes.filter(node => node.id !== nodeId));
         }
 
@@ -108,7 +118,8 @@ export class NodeManager {
         this.createEdge = this.createEdge.bind(this);
         this.onDisconnect = this.onDisconnect.bind(this);
         this.getCommunicationNode = this.getCommunicationNode.bind(this);
-
+        this.snapshot = this.snapshot.bind(this);
+        this.restore = this.restore.bind(this);
 
     }
 
@@ -117,16 +128,20 @@ export class NodeManager {
         if (!prev) {
             return manager;
         }
+
         if (!prev.nodeTypes) {
             throw new Error('prev.nodeMap is undefined');
         }
+
         manager.nodeTypes = prev.nodeTypes;
         manager.edgeTypes = prev.edgeTypes;
         return manager;
     }
 
     snapshot() {
+        console.log('idgen snapshot', this.idGeneratorGetter().index);
         return {
+            idGenerator: { index: this.idGeneratorGetter().index },
             nodeMap: Object.fromEntries(this.nodes.map(node => [node.id, node])),
             edgeMap: Object.fromEntries(this.edges.map(edge => [edge.id, edge])),
             partitions: {
@@ -138,6 +153,9 @@ export class NodeManager {
     }
 
     restore(snapshot: NodeManagerSnapshot) {
+        console.log('idgen restore', snapshot.idGenerator.index);
+
+        this.idGeneratorSetter(() => new NodeIdGenerator(snapshot.idGenerator.index));
         console.log('NodeManagerrestore', snapshot);
         if (this.nodes.length > 0) {
             throw new Error('already initialized');
@@ -148,13 +166,25 @@ export class NodeManager {
             if (!subManager) {
                 throw new Error(`factory for node type ${type} not found`);
             }
+
             subManager.restore(partition);
         });
 
         const { nodeMap, edgeMap } = snapshot;
 
         Object.values(nodeMap).forEach((node) => {
-            this._addNode(node);
+            if (!node.type) {
+                throw new Error('node.type is undefined');
+            }
+
+            if (!(Object.values(AppNodeTypes).includes(node.type as AppNodeTypes))) {
+                throw new Error(`node.type ${node.type} is not a valid AppNodeTypes`);
+            }
+
+            const type = node.type as AppNodeTypes;
+            this._addNodeToTypeMap(node.id, type);
+            this._addNodeToTeleGraph(node.id, type);
+            this._addNodeToFlow(node);
         });
 
         Object.values(edgeMap).forEach((edge) => {
@@ -162,7 +192,7 @@ export class NodeManager {
         });
     }
 
-    addNode(options: AddNodeOptions<AppNodeTypes>) {
+    public addNode(options: AddNodeOptions<AppNodeTypes>) {
         if (options.type === undefined) {
             throw new Error('options.type is undefined');
         }
@@ -171,15 +201,27 @@ export class NodeManager {
             throw new Error(`factory for node type ${options.type} not found`);
         }
         const node = subManager.createNode(options);
-        this.nodeTypes[node.id] = options.type;
-        this.telecom.registerNode(CommunicationNode.fromDefinition({
-            id: node.id,
-            ports: { ...this.portDefs[options.type] }
-        }))
-        this._addNode(node);
+        this._addNodeToTypeMap(node.id, options.type);
+        this._addNodeToTeleGraph(node.id, options.type);
+        this._addNodeToFlow(node);
     }
 
-    removeNode(nodeId: string) {
+    private _addNodeToTeleGraph(id: string, type: AppNodeType) {
+        this.telecom.registerNode(CommunicationNode.fromDefinition({
+            id: id,
+            ports: { ...this.portDefs[type] }
+        }))
+    }
+
+    private _addNodeToTypeMap(id: string, type: AppNodeType) {
+        this.nodeTypes[id] = type;
+    }
+
+    private _removeNodeFromTypeMap(id: string) {
+        delete this.nodeTypes[id];
+    }
+
+    public removeNode(nodeId: string) {
         const type = this.nodeTypes[nodeId];
         if (type === undefined) {
             throw new Error(`node ${nodeId} has no type`);
@@ -189,8 +231,13 @@ export class NodeManager {
             throw new Error(`factory for node type ${type} not found`);
         }
         subManager.destroyNode(nodeId);
-        delete this.nodeTypes[nodeId];
-        this._removeNode(nodeId);
+        this._removeNodeFromTypeMap(nodeId);
+        this._removeNodeFromTeleGraph(nodeId);
+        this._removeNodeFromFlow(nodeId);
+    }
+
+    private _removeNodeFromTeleGraph(id: string) {
+        this.telecom.unregisterNode(id)
     }
 
     private addEdge(edge: Edge) {

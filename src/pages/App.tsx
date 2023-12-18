@@ -72,8 +72,6 @@ function App() {
           onInit={(instance) => {
             console.log('flow instance:', instance);
             setReactFlowInstance(instance);
-            console.log(instance.getZoom());
-
           }}
           onClick={
             () => {

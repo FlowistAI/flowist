@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { generateId } from "../util/id-generator";
+import { generateUUID } from "../util/id-generator";
 
 export type Todo = {
     id: string;
@@ -26,7 +26,7 @@ export const TodoList: React.FC = () => {
             return;
         }
         const todo: Todo = {
-            id: generateId(),
+            id: generateUUID(),
             content: newTodo,
             completed: false,
         };

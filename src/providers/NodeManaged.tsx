@@ -5,20 +5,20 @@ import { ChatBotNodeService } from '../services/chat-node-service';
 import { useRecoilState } from 'recoil';
 import { AppNodeTypes, PORT_DEFINITIONS } from '../constants/nodeTypes';
 import { chatSessionsState } from '../states/chat-states';
-import { useMemo } from 'react';
 import { SubManager } from "../hooks/NodeManager/SubManager";
 import { querySessionsState } from '../states/query-states';
 import { QueryBotNodeService } from '../services/query-submanager';
 import { useGraphTelecom } from '../hooks/GraphTelecom/useGraphTelecom';
+import { NodeIdGenerator } from '../util/id-generator';
+import { useMemo, useState } from 'react';
 
 export function NodeManaged({ children }: { children: React.ReactElement; }) {
     const [nodes, setNodes, onNodesChange] = useNodesState(initNodes);
     const [edges, setEdges, onEdgesChange] = useEdgesState([]);
-
+    const [idGenerator, setIdGenerator] = useState<NodeIdGenerator>(new NodeIdGenerator());
     /**
      * Chat session state
      */
-
     const [chatSessions, setChatSessions] = useRecoilState(chatSessionsState);
     const chatService = useMemo(() => new ChatBotNodeService({
         sessionCreateHandler: (session) => {
@@ -29,8 +29,9 @@ export function NodeManaged({ children }: { children: React.ReactElement; }) {
         },
         sessionsGetter: () => {
             return chatSessions;
-        }
-    }), [chatSessions, setChatSessions]);
+        },
+        idGeneratorGetter: () => idGenerator
+    }), [chatSessions, idGenerator, setChatSessions]);
 
     /**
      * Query session state
@@ -46,8 +47,9 @@ export function NodeManaged({ children }: { children: React.ReactElement; }) {
         },
         sessionsGetter: () => {
             return querySessions;
-        }
-    }), [querySessions, setQuerySessions]);
+        },
+        idGeneratorGetter: () => idGenerator
+    }), [idGenerator, querySessions, setQuerySessions]);
 
     /**
      * Sub managers
@@ -64,6 +66,8 @@ export function NodeManaged({ children }: { children: React.ReactElement; }) {
             subManagers,
             portDefs: PORT_DEFINITIONS,
             telecom: graphTelecom,
+            idGeneratorGetter: () => idGenerator,
+            idGeneratorSetter: setIdGenerator,
             // node
             nodes,
             setNodes,

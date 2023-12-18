@@ -8,6 +8,7 @@ import { useRecoilValue } from 'recoil';
 import { useNodeManager } from '../../../hooks/NodeManager';
 import { ChatBotDropDownMenu } from './ChatBotDropdownMenu';
 import { sourceStyle, targetStyle } from '../../../constants/handle-styles';
+import { useEffect, useState } from 'react';
 
 export type ChatBotNodeProps = {
     data: ChatBotNodeData
@@ -16,8 +17,22 @@ export type ChatBotNodeProps = {
 
 export function ChatBotNode({ data, selected }: ChatBotNodeProps) {
     const { id } = data
-    const { removeNode } = useNodeManager()
+    const { removeNode, getCommunicationNode } = useNodeManager()
     const session = useRecoilValue(chatSessionsState).find(session => session.id === id);
+    const { signal, handle } = getCommunicationNode(id)
+    const [input, setInput] = useState<string>('')
+
+    useEffect(() => {
+        return handle('input', (value: string) => {
+            console.log('node', id, 'recevied input', value);
+            setInput(value)
+        })
+    }, [id, handle])
+
+    const onReplyDone = (output: string) => {
+        console.log('node', id, 'reply done', output);
+        signal('output', output)
+    }
 
     if (!session) {
         return null;
@@ -33,7 +48,7 @@ export function ChatBotNode({ data, selected }: ChatBotNodeProps) {
             e.stopPropagation()
         }}>
             <NodeResizer minWidth={300} minHeight={200} isVisible={selected} />
-            <Handle type="target" position={Position.Right} style={targetStyle}>
+            <Handle type="target" position={Position.Right} style={targetStyle} id="input">
                 <div className='ml-2 pointer-events-none'>
                     Input
                 </div>
@@ -49,9 +64,9 @@ export function ChatBotNode({ data, selected }: ChatBotNodeProps) {
                 </button>
             </div>
             <div className="chat-bot__content nowheel cursor-default" >
-                <Chat session={session} />
+                <Chat session={session} input={input} setInput={setInput} onReplyDone={onReplyDone} />
             </div>
-            <Handle type="source" position={Position.Left} style={sourceStyle}>
+            <Handle type="source" position={Position.Left} style={sourceStyle} id="output">
                 <div className='-ml-14 pointer-events-none'>
                     Output
                 </div>

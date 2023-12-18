@@ -1,11 +1,11 @@
 import { Node } from "reactflow";
 import { AppNodeTypes } from "../constants/nodeTypes";
-import { generateId } from "../util/id-generator";
 import { Bot, SessionId, User } from "../types/bot-types";
 import { QueryBotNodeData, QuerySession } from "../types/query-node-types";
 import { BotNodePreset } from "../types/bot-types";
 import { ChatBotNodeService } from "./chat-node-service";
 import { SubManager } from "../hooks/NodeManager/SubManager";
+import { NodeIdGenerator } from "../util/id-generator";
 
 export type CreateNodeOptions = {
     preset?: BotNodePreset
@@ -20,6 +20,7 @@ export type QueryBotNodeServiceProps = {
     sessionCreateHandler: (sess: QuerySession) => void
     sessionDestroyHandler: (sessId: SessionId) => void
     sessionsGetter: () => QuerySession[]
+    idGeneratorGetter: () => NodeIdGenerator
 }
 
 export class QueryBotNodeService implements SubManager<AppNodeTypes.QueryBot> {
@@ -30,15 +31,18 @@ export class QueryBotNodeService implements SubManager<AppNodeTypes.QueryBot> {
     sessionCreateHandler: (sess: QuerySession) => void
     sessionDestroyHandler: (sessId: SessionId) => void
     sessionsGetter: () => QuerySession[]
+    idGeneratorGetter: () => NodeIdGenerator
 
     constructor({
         sessionCreateHandler,
         sessionDestroyHandler,
         sessionsGetter,
+        idGeneratorGetter,
     }: QueryBotNodeServiceProps) {
         this.sessionCreateHandler = sessionCreateHandler
         this.sessionDestroyHandler = sessionDestroyHandler
         this.sessionsGetter = sessionsGetter
+        this.idGeneratorGetter = idGeneratorGetter
     }
 
     createNode({ preset, data }: CreateNodeOptions) {
@@ -61,7 +65,7 @@ export class QueryBotNodeService implements SubManager<AppNodeTypes.QueryBot> {
 
     private addSession(user?: User, preset?: BotNodePreset): QuerySession {
         const sess = {
-            id: generateId(),
+            id: this.idGeneratorGetter().next(),
             bot: preset?.bot ?? QueryBotNodeService.DefaultBot,
             user: user ?? QueryBotNodeService.DefaultUser,
             input: '',

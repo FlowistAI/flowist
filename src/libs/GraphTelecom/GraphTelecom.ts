@@ -104,6 +104,13 @@ export class CommunicationNode {
         this.eventEmitter.on(port, handler);
     }
 
+    handle(port: string, handler: (data: any) => void) {
+        this.eventEmitter.on(port, handler);
+        return () => {
+            this.eventEmitter.off(port, handler);
+        }
+    }
+
     resethandler(port: string, handler: (data: any) => void) {
         this.eventEmitter.off(port, handler);
     }
@@ -180,7 +187,9 @@ export function parseSourceTargetId(sourceTargetId: SourceTargetId) {
     }
 
     if (r.some(s => s === '')) {
-        throw new Error(`Invalid partial empty sourceTargetId: ${sourceTargetId}`);
+        throw new Error(`Invalid partial empty sourceTargetId: ${sourceTargetId}`
+            + ' do you forget to set port id?'
+        );
     }
 
     return r as [string, string, string, string];

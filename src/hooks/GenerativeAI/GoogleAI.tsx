@@ -60,7 +60,7 @@ export type HistoryMessage = {
     isUser: boolean;
 };
 
-export type GoogleChatAIHookOptions = {
+export type GoogleAIChatHookOptions = {
     apiKey: string;
     model: string
     historyMessages: HistoryMessage[];
@@ -68,11 +68,11 @@ export type GoogleChatAIHookOptions = {
     onDone: () => void;
 };
 
-export type GoogleChatAIHook = {
+export type GoogleAIChatHook = {
     send: (msg: string) => Promise<void>;
 };
 
-export const useGoogleChatAI: (options: GoogleChatAIHookOptions) => GoogleChatAIHook = ({ apiKey, model, historyMessages, onResponseChunk, onDone }) => {
+export const useGoogleAIChat: (options: GoogleAIChatHookOptions) => GoogleAIChatHook = ({ apiKey, model, historyMessages, onResponseChunk, onDone }) => {
 
     // Initialize the AI model using useMemo so it's not recreated on every render
     const generativeModel = useMemo(() => {

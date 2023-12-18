@@ -1,8 +1,23 @@
-export class IdGenerator {
-    private index: number;
+import { v4 as uuidv4 } from 'uuid';
 
-    constructor() {
-        this.index = 0;
+/**
+ * A simple id generator, which generates id in the form of
+ *  A, B, C, ..., Z, AA, AB, AC, ..., AZ, BA, BB, BC, ... like Excel
+ * 
+ */
+export class NodeIdGenerator {
+    private _index: number;
+
+    get index() {
+        return this._index;
+    }
+
+    private set index(value: number) {
+        this._index = value;
+    }
+
+    constructor(initialIndex?: number) {
+        this._index = initialIndex ?? 0;
     }
 
     public next(): string {
@@ -19,6 +34,5 @@ export class IdGenerator {
     }
 }
 
-export const idGenerator = new IdGenerator();
-
-export const generateId = () => idGenerator.next();
+// for business realated id
+export const generateUUID = () => uuidv4();
