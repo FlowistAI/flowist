@@ -8,10 +8,11 @@ export type GoogleAIHook = {
 
 export type GoogleAIHookOptions = {
     apiKey: string;
-    model: string
+    model: string,
+    onDone: () => void;
 };
 
-export const useGoogleAI: (options: GoogleAIHookOptions) => GoogleAIHook = ({ apiKey, model }) => {
+export const useGoogleAI: (options: GoogleAIHookOptions) => GoogleAIHook = ({ apiKey, model, onDone }) => {
     const [output, setOutput] = useState('');
 
     // Initialize the AI model using useMemo so it's not recreated on every render
@@ -35,10 +36,12 @@ export const useGoogleAI: (options: GoogleAIHookOptions) => GoogleAIHook = ({ ap
                 console.log(chunkText);
                 setOutput((prev) => prev + chunkText);
             }
+
+            onDone();
         } catch (error) {
             console.error('Error querying the model:', error);
         }
-    }, [generativeModel]);
+    }, [generativeModel, onDone]);
 
     return { output, query };
 };

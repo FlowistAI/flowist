@@ -10,15 +10,17 @@ import { replacePrompt } from '../util/misc.util';
 
 interface ChatProps {
     session: QuerySession
+    onQueryDone?: (output: string) => void
 }
 
-const QueryBot: React.FC<ChatProps> = ({ session }) => {
+const QueryBot: React.FC<ChatProps> = ({ session, onQueryDone }) => {
 
     const [input, setInput] = React.useState<string>('');
     const bot = session.bot;
     const { output: modelOutput, query: onQuery } = useGoogleAI({
         apiKey: session.bot.settings.serviceSource.apiKey,
         model: session.bot.settings.model,
+        onDone: () => { onQueryDone?.(modelOutput) }
     })
 
     const [output, setOutput] = React.useState<string>(modelOutput);

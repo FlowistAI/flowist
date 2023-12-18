@@ -21,7 +21,7 @@ describe('CommunicationNode', () => {
 
     test('sendSignal should throw an error if the output port is not found', () => {
         expect(() => {
-            node.sendSignal('output1', { text: 'Hello' });
+            node.signal('output1', { text: 'Hello' });
         }).toThrowError('Output port output1 not found in node node1');
     });
 });
@@ -80,14 +80,14 @@ describe('Telecommunicator', () => {
         node2.addInputPort('input1');
         telecommunicator.connect('node1', 'output1', 'node2', 'input1');
         const signal = { text: 'Hello' };
-        node1.sendSignal('output1', signal);
+        node1.signal('output1', signal);
         expect(node2.onSignal).toHaveBeenCalledWith('input1', signal);
         expect(node2.onSignal).toHaveBeenCalledTimes(1);
         expect(node1.onSignal).toHaveBeenCalledTimes(0);
 
         // remove connection, should not send signal
         telecommunicator.disconnect('node1', 'output1', 'node2', 'input1');
-        node1.sendSignal('output1', signal);
+        node1.signal('output1', signal);
         expect(node2.onSignal).toHaveBeenCalledTimes(1);
     })
 

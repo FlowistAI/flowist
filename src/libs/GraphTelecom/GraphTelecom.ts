@@ -13,7 +13,8 @@ export class EventEmitter<T> {
     emit<K extends keyof T>(eventName: K, value?: T[K]): void {
         const handlers = this.eventNameToHandlers[eventName];
         if (!handlers) {
-            throw new Error(`No handlers for event ${String(eventName)}`);
+            // throw new Error(`No handlers for event ${String(eventName)}`);
+            return
         }
         handlers.forEach(h => h(value));
     }
@@ -60,7 +61,6 @@ export type SignalHandler = (portId: string, signal: Signal) => void;
 
 export type CommunicationNodeDefinition = {
     id: string;
-    onSignal: SignalHandler;
     ports: {
         input: {
             [key: string]: {
@@ -80,18 +80,29 @@ export class CommunicationNode {
     inputPorts: CommunicationPort[];
     outputPorts: CommunicationPort[];
     onSignal: SignalHandler;
+    eventEmitter: EventEmitter<any> = new EventEmitter(); // todo: use generic type
     _sendSignal: (outputPortId: string, signal: Signal) => void;
 
-    constructor(id: string, onSignal: SignalHandler) {
+    constructor(id: string) {
         this.id = id;
         this.inputPorts = [];
         this.outputPorts = [];
-        this.onSignal = onSignal;
+        this.onSignal = (port, data) => {
+            this.eventEmitter.emit(port, data);
+        }
         this._sendSignal = () => { throw new Error('sendSignal not ready') };
     }
 
+    setHandler(port: string, handler: (data: any) => void) {
+        this.eventEmitter.on(port, handler);
+    }
+
+    resethandler(port: string, handler: (data: any) => void) {
+        this.eventEmitter.off(port, handler);
+    }
+
     static fromDefinition(definition: CommunicationNodeDefinition): CommunicationNode {
-        const node = new CommunicationNode(definition.id, definition.onSignal);
+        const node = new CommunicationNode(definition.id);
         Object.entries(definition.ports.input).forEach(([portId]) => {
             node.addInputPort(portId);
         });
@@ -127,7 +138,7 @@ export class CommunicationNode {
         this.outputPorts.push(port);
     }
 
-    sendSignal(outputPortId: string, signal: Signal): void {
+    signal(outputPortId: string, signal: Signal): void {
         // Find the output port with the given ID
         const outputPort = this.outputPorts.find(port => port.id === outputPortId);
         if (outputPort) {
@@ -176,6 +187,14 @@ export class GraphTelecom {
     constructor() {
         this.nodes = new Map();
         this.eventEmitter = new EventEmitter();
+    }
+
+    getNode(nodeId: string): CommunicationNode {
+        const node = this.nodes.get(nodeId);
+        if (!node) {
+            throw new Error(`Node ${nodeId} not found in the graph`);
+        }
+        return node;
     }
 
     registerNode(node: CommunicationNode): void {

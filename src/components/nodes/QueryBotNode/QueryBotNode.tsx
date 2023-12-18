@@ -7,6 +7,7 @@ import { useRecoilValue } from 'recoil';
 import { useNodeManager } from '../../../hooks/NodeManager';
 import { QueryBotDropDownMenu } from './QueryBotDropdownMenu';
 import QueryBot from '../../QueryBot';
+import { useEffect } from 'react';
 
 export type QueryBotNodeProps = {
     data: QueryBotNodeData
@@ -15,12 +16,26 @@ export type QueryBotNodeProps = {
 
 export function QueryBotNode({ data, selected }: QueryBotNodeProps) {
     const { id } = data
-    const { removeNode } = useNodeManager()
+    const { removeNode, getCommunicationNode } = useNodeManager()
+    const { signal, setHandler, resethandler } = getCommunicationNode(id)
     const session = useRecoilValue(querySessionsState).find(session => session.id === id);
 
     if (!session) {
         return null;
     }
+
+    const onQueryDone = (output: string) => {
+        signal('output', output)
+    }
+
+    useEffect(() => {
+        const handler = (input: string) => {
+
+        }
+        setHandler('input', handler)
+        return () => resethandler('input', handler)
+    }, [resethandler, setHandler])
+
 
     return (
         <div className="chat-bot" onContextMenu={e => {
@@ -50,7 +65,7 @@ export function QueryBotNode({ data, selected }: QueryBotNodeProps) {
                 </button>
             </div>
             <div className="chat-bot__content nowheel cursor-default" >
-                <QueryBot session={session} />
+                <QueryBot session={session} onQueryDone={onQueryDone} />
             </div>
             <Handle type="source" position={Position.Bottom}>
                 <div className='-ml-6 pointer-events-none'>

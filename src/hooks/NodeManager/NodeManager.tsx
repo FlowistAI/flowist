@@ -72,8 +72,8 @@ export class NodeManager {
         return this._edges;
     }
 
-    onNodesChange: OnChange<NodeChange>;
-    onEdgesChange: OnChange<EdgeChange>;
+    public readonly onNodesChange: OnChange<NodeChange>;
+    public readonly onEdgesChange: OnChange<EdgeChange>;
 
     private constructor(options: NodeManagerOptions<AppNodeTypes>) {
         this.subManagers = options.subManagers;
@@ -191,7 +191,7 @@ export class NodeManager {
         this._removeNode(nodeId);
     }
 
-    addEdge(edge: Edge) {
+    private addEdge(edge: Edge) {
         if (edge.type === undefined) {
             throw new Error('edge.type is undefined');
         }
@@ -199,7 +199,7 @@ export class NodeManager {
         this._addEdge(edge);
     }
 
-    removeEdge(edgeId: string) {
+    private removeEdge(edgeId: string) {
         const edge = this.edgeTypes[edgeId];
         if (!edge) {
             throw new Error(`edge ${edgeId} not found`);
@@ -229,8 +229,11 @@ export class NodeManager {
         this.removeEdge(id);
     }
 
+    getCommunicationNode(id: string) {
+        return this.telecom.getNode(id);
+    }
 
-    createEdge(connection: Connection): Edge | undefined {
+    private createEdge(connection: Connection): Edge | undefined {
         const id = createSourceTargetId(connection.source, connection.sourceHandle, connection.target, connection.targetHandle);
         let parsed: ParsedSourceTargetId
         try {
