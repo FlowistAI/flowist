@@ -1,13 +1,8 @@
 import './Chat.css';
-import React, { useRef, useEffect, useCallback } from 'react';
-import { Bot, BotModelProviderType } from '../types/bot-types';
-import { ChatMessage, ChatSession } from "../types/chat-node-types";
+import React, { useRef, useEffect } from 'react';
+import { Bot } from '../types/bot-types';
+import { ChatMessage } from "../types/chat-node-types";
 import { Button, Textarea, Tooltip } from '@mui/joy';
-import { useSetRecoilState } from 'recoil';
-import { addMessageFnCreater, chatSessionsState, updateMessageFnCreater } from '../states/chat-states';
-import { useGoogleAIChat } from '../hooks/GenerativeAI/useGoogleAI';
-import { generateUUID } from '../util/id-generator';
-import { useOpenAIChat } from '../hooks/GenerativeAI/useOpenAI';
 
 export interface AvatarProps {
     src: string;
@@ -88,15 +83,18 @@ export interface MessageInputProps {
 }
 
 export const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage, input: inputOut, setInput: setInputOut }) => {
-    const [input, setInput] = React.useState('');
+    const [inputInner, setInputInner] = React.useState('');
+    console.log('inputOut', inputOut, 'inputInner', inputInner);
+
+    const realInput = inputOut ?? inputInner
+    const realSetInput = setInputOut ?? setInputInner
 
     const handleSend = () => {
-        const realInput = inputOut ?? input
         console.log('send ', realInput);
 
         if (realInput.trim()) {
             onSendMessage?.(realInput);
-            (setInputOut ?? setInput)('');
+            realSetInput('');
         }
     };
 
@@ -106,8 +104,8 @@ export const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage, input
                 sx={{ flex: 1 }}
                 placeholder="Write your message (Ctrl+Enter to submit)"
                 maxRows={10}
-                value={inputOut ?? input}
-                onChange={(e) => (setInputOut ?? setInput)(e.target.value)}
+                value={realInput}
+                onChange={(e) => realSetInput(e.target.value)}
                 onKeyUp={(e) => {
                     // ctrl + enter
                     if (e.ctrlKey && e.key === 'Enter') {

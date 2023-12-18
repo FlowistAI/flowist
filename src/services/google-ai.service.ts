@@ -19,10 +19,7 @@ export class GoogleAIService implements LLMService {
         const generativeModel = genAIInstance.getGenerativeModel({ model });
 
         const chat = generativeModel.startChat({
-            history: [{
-                role: 'user',
-                parts: input
-            }],
+            history: [],
             generationConfig: {}
         });
 
@@ -30,12 +27,13 @@ export class GoogleAIService implements LLMService {
         console.log('totalTokens', totalTokens);
 
         const result = await chat.sendMessageStream(input);
+        let concated = ""
         for await (const chunk of result.stream) {
             const chunkText = chunk.text();
-            console.log(chunkText);
+            concated += chunkText;
             onChunk(chunkText);
         }
-        onDone('');
+        onDone(concated);
     }
 
     async chatStream(opts: ChatStreamOptions) {
@@ -58,12 +56,13 @@ export class GoogleAIService implements LLMService {
         console.log('totalTokens', totalTokens);
 
         const result = await chat.sendMessageStream(input);
+        let concated = ""
         for await (const chunk of result.stream) {
             const chunkText = chunk.text();
-            console.log(chunkText);
+            concated += chunkText;
             onChunk(chunkText);
         }
-        onDone('');
+        onDone(concated);
     }
 }
 

@@ -77,7 +77,7 @@ export interface GptServiceSource {
 export const OpenAIOfficialServiceSource: GptServiceSource = {
     type: BotModelProviderType.OpenAI,
     label: 'OpenAI (official)',
-    endpoint: 'https://api.openai.com/v1/engines',
+    endpoint: 'http://localhost:8080/https://api.openai.com/v1',
     apiKey: import.meta.env.VITE_OPENAI_API_KEY || '',
 }
 

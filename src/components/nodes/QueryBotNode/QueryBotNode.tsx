@@ -13,6 +13,7 @@ import { TextArea } from '../../TextArea';
 import { Button } from '@mui/joy';
 import { replacePrompt } from '../../../util/misc.util';
 import { useLLM } from '../../../services/google-ai.service';
+import { useCurrentCommunicationNode } from '../../../hooks/NodeManager/useNodeManager';
 
 export type QueryBotNodeProps = {
     data: QueryBotNodeData
@@ -21,8 +22,8 @@ export type QueryBotNodeProps = {
 
 export function QueryBotNode({ data, selected }: QueryBotNodeProps) {
     const { id } = data
-    const { removeNode, getCommunicationNode } = useNodeManager()
-    const { signal, handle } = getCommunicationNode(id)
+    const { removeNode } = useNodeManager()
+    const { signal, handle } = useCurrentCommunicationNode(id)
     const session = useRecoilValue(querySessionsState).find(session => session.id === id);
     const queryAI = useLLM(session?.bot.settings)
     const [input, setInput] = useState<string>('')
@@ -36,13 +37,16 @@ export function QueryBotNode({ data, selected }: QueryBotNodeProps) {
                 setOutput(prev => prev + chunk)
             },
             onDone: (output: string) => {
-                signal('output', output)
+                console.log('[QueryBotNode] query done', output);
+
+                signal?.('output', output)
             }
         })
     }
 
     useEffect(() => {
-        return handle('input', (input: string) => {
+        return handle?.('input', (input: string) => {
+            setOutput('')
             setInput(input)
         })
     }, [id, handle])

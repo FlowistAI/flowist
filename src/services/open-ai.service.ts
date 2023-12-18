@@ -23,12 +23,13 @@ export class OpenAIService implements LLMService {
             stream: true,
         });
 
+        let concated = ""
         for await (const chunk of stream) {
             const chunkText = chunk.choices[0]?.delta?.content || '';
-            console.log(chunkText);
+            concated += chunkText;
             onChunk(chunkText);
         }
-        onDone('');
+        onDone(concated);
     }
 
     async chatStream(opts: ChatStreamOptions) {
@@ -51,12 +52,13 @@ export class OpenAIService implements LLMService {
             stream: true,
         });
 
+        let concated = ""
         for await (const chunk of stream) {
             const chunkText = chunk.choices[0]?.delta?.content || '';
-            console.log(chunkText);
+            concated += chunkText;
             onChunk(chunkText);
         }
-        onDone('');
+        onDone(concated);
     }
 }
 

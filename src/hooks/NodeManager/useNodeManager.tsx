@@ -10,3 +10,9 @@ export const useNodeManager = () => {
 
     return mgr;
 };
+
+export const useCurrentCommunicationNode = (id: string) => {
+    const mgr = useNodeManager();
+    const { handle, signal } = mgr.getCommunicationNode(id) ?? {}
+    return { handle, signal }
+}

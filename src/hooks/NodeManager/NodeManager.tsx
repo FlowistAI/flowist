@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Dispatch, SetStateAction } from "react";
-import { Connection, Edge, EdgeChange, MarkerType, Node, NodeChange } from "reactflow";
+import { Connection, Edge, EdgeChange, MarkerType, Node, NodeChange, applyEdgeChanges } from "reactflow";
 import { AppNodeType, AppNodeTypes } from "../../constants/nodeTypes";
 import { SubManager } from "./SubManager";
 import { CommunicationNode, GraphTelecom, ParsedSourceTargetId, SignalHandler, createSourceTargetId, parseSourceTargetId } from "../../libs/GraphTelecom/GraphTelecom";
 import { NodeIdGenerator } from "../../util/id-generator";
+import { produce } from "immer";
 
 export type NodeAddHandler = (node: Node) => void;
 export type EdgeAddHandler = (edge: Edge) => void;
@@ -68,7 +69,7 @@ export class NodeManager {
         return this._nodes;
     }
 
-    private _addEdge: EdgeAddHandler;
+    private _addEdgeToFlow: EdgeAddHandler;
     private _removeEdge: (edgeId: string) => void;
     private _edges: Edge[];
     get edges() {
@@ -100,9 +101,11 @@ export class NodeManager {
         this._nodes = options.nodes;
         this.onNodesChange = options.onNodesChange;
         this.removeNode = this.removeNode.bind(this);
+        this.addNewNode = this.addNewNode.bind(this);
         this.addNode = this.addNode.bind(this);
+        this.deleteSelectedEdges = this.deleteSelectedEdges.bind(this);
 
-        this._addEdge = (edge: Edge) => {
+        this._addEdgeToFlow = (edge: Edge) => {
             options.setEdges((edges) => edges.concat(edge));
         }
 
@@ -111,7 +114,26 @@ export class NodeManager {
         }
 
         this._edges = options.edges;
-        this.onEdgesChange = options.onEdgesChange;
+        // this.onEdgesChange = options.onEdgesChange;
+        this.onEdgesChange = (changes) => {
+            // TODO: should not handle edge style here
+            return options.setEdges((eds) => {
+                const newEdges = produce(eds, draft => {
+                    for (const edge of draft) {
+                        const change = changes.find(change => change.type === 'select' && change.id === edge.id);
+                        if (!(change && change.type === 'select' && edge.style)) {
+                            continue;
+                        }
+                        if (change.selected) {
+                            edge.style.strokeWidth = parseFloat(edge.style.strokeWidth as unknown as string) * 1.2;
+                        } else {
+                            edge.style.strokeWidth = parseFloat(edge.style.strokeWidth as unknown as string) / 1.2;
+                        }
+                    }
+                })
+                return applyEdgeChanges(changes, newEdges)
+            })
+        }
         this.removeEdge = this.removeEdge.bind(this);
         this.addEdge = this.addEdge.bind(this);
         this.onConnect = this.onConnect.bind(this);
@@ -181,18 +203,15 @@ export class NodeManager {
                 throw new Error(`node.type ${node.type} is not a valid AppNodeTypes`);
             }
 
-            const type = node.type as AppNodeTypes;
-            this._addNodeToTypeMap(node.id, type);
-            this._addNodeToTeleGraph(node.id, type);
-            this._addNodeToFlow(node);
+            this.addNode(node);
         });
 
         Object.values(edgeMap).forEach((edge) => {
-            this._addEdge(edge);
+            this.addEdge(edge);
         });
     }
 
-    public addNode(options: AddNodeOptions<AppNodeTypes>) {
+    public addNewNode(options: AddNodeOptions<AppNodeTypes>) {
         if (options.type === undefined) {
             throw new Error('options.type is undefined');
         }
@@ -206,11 +225,29 @@ export class NodeManager {
         this._addNodeToFlow(node);
     }
 
+    public addNode(node: Node) {
+        if (node.type === undefined) {
+            throw new Error('node.type is undefined');
+        }
+        const type = node.type as AppNodeTypes;
+        this._addNodeToTypeMap(node.id, type);
+        this._addNodeToTeleGraph(node.id, type);
+        this._addNodeToFlow(node);
+    }
+
     private _addNodeToTeleGraph(id: string, type: AppNodeType) {
         this.telecom.registerNode(CommunicationNode.fromDefinition({
             id: id,
             ports: { ...this.portDefs[type] }
         }))
+    }
+
+    private _addEdgeToTeleGraph(edge: Edge) {
+        this.telecom.connect(edge.source, edge.sourceHandle!, edge.target, edge.targetHandle!); // it throws
+    }
+
+    private _removeEdgeFromTeleGraph(edgeId: string) {
+        this.telecom.disconnect(...parseSourceTargetId(edgeId)); // it throws
     }
 
     private _addNodeToTypeMap(id: string, type: AppNodeType) {
@@ -231,9 +268,17 @@ export class NodeManager {
             throw new Error(`factory for node type ${type} not found`);
         }
         subManager.destroyNode(nodeId);
-        this._removeNodeFromTypeMap(nodeId);
-        this._removeNodeFromTeleGraph(nodeId);
+        this._removeAttachedEdges(nodeId);
         this._removeNodeFromFlow(nodeId);
+        this._removeNodeFromTeleGraph(nodeId);
+        this._removeNodeFromTypeMap(nodeId);
+    }
+
+    private _removeAttachedEdges(nodeId: string) {
+        const edges = this.edges.filter(edge => edge.source === nodeId || edge.target === nodeId);
+        edges.forEach(edge => {
+            this.removeEdge(edge.id);
+        });
     }
 
     private _removeNodeFromTeleGraph(id: string) {
@@ -244,17 +289,19 @@ export class NodeManager {
         if (edge.type === undefined) {
             throw new Error('edge.type is undefined');
         }
+        this._addEdgeToTeleGraph(edge);
         this.edgeTypes[edge.id] = edge.type;
-        this._addEdge(edge);
+        this._addEdgeToFlow(edge);
     }
 
     private removeEdge(edgeId: string) {
-        const edge = this.edgeTypes[edgeId];
-        if (!edge) {
+        const edgeType = this.edgeTypes[edgeId];
+        if (!edgeType) {
             throw new Error(`edge ${edgeId} not found`);
         }
         delete this.edgeTypes[edgeId];
         this._removeEdge(edgeId);
+        this._removeEdgeFromTeleGraph(edgeId);
     }
 
     onConnect(connection: Connection) {
@@ -280,6 +327,10 @@ export class NodeManager {
 
     getCommunicationNode(id: string) {
         return this.telecom.getNode(id);
+    }
+
+    public deleteSelectedEdges() {
+        this.onEdgesChange(this.edges.filter(edge => edge.selected).map(edge => ({ type: 'remove', id: edge.id })));
     }
 
     private createEdge(connection: Connection): Edge | undefined {

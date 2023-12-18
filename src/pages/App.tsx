@@ -69,6 +69,14 @@ function App() {
           edges={nodeManager.edges}
           onEdgesChange={nodeManager.onEdgesChange}
           onConnect={nodeManager.onConnect}
+          onKeyUp={(event) => {
+            //FIXME: event.target should be the child of the react-flow div
+            if (event.target instanceof Element && event.target.classList.contains('react-flow__edge')) {
+              if (event.key === 'Delete') {
+                nodeManager.deleteSelectedEdges();
+              }
+            }
+          }}
           onInit={(instance) => {
             console.log('flow instance:', instance);
             setReactFlowInstance(instance);

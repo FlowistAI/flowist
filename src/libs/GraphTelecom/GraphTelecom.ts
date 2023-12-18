@@ -1,4 +1,4 @@
-import { Nullable } from "../../types/types";
+import { Nullable, Optional } from "../../types/types";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 type Handler<T> = (value?: T) => void;
@@ -206,11 +206,8 @@ export class GraphTelecom {
         this.eventEmitter = new EventEmitter();
     }
 
-    getNode(nodeId: string): CommunicationNode {
+    getNode(nodeId: string): Optional<CommunicationNode> {
         const node = this.nodes.get(nodeId);
-        if (!node) {
-            throw new Error(`Node ${nodeId} not found in the graph`);
-        }
         return node;
     }
 
@@ -259,6 +256,8 @@ export class GraphTelecom {
     }
 
     connect(outputNodeId: string, outputPortId: string, inputNodeId: string, inputPortId: string): void {
+        console.log('GraphTelecom connect', { outputNodeId, outputPortId, inputNodeId, inputPortId });
+
         const outputNode = this.nodes.get(outputNodeId);
         const inputNode = this.nodes.get(inputNodeId);
 
@@ -301,6 +300,8 @@ export class GraphTelecom {
         }
         this.eventEmitter.off('signal', listener);
         this.portListeners.delete(`${outputNodePortId}-${inputNodePortId}`);
+        console.log('GraphTelecom disconnect', { outputNodeId, outputPortId, inputNodeId, inputPortId });
+
     }
 
     getConnectionInfo(nodeId: string) {
