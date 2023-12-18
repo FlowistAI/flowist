@@ -1,14 +1,17 @@
 import { Handle, NodeResizer, Position } from 'reactflow';
 import { XIcon } from '@primer/octicons-react';
 import './ChatBotNode.css';
-import Chat from '../../Chat';
+import { BotInfo, MessageInput, MessageList } from '../../Chat';
 import { ChatBotNodeData } from "../../../types/chat-node-types";
-import { chatSessionsState } from '../../../states/chat-states';
-import { useRecoilValue } from 'recoil';
+import { addMessageFnCreater, chatSessionsState, updateMessageFnCreater, useChatSession, useChatSessions } from '../../../states/chat-states';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useNodeManager } from '../../../hooks/NodeManager';
 import { ChatBotDropDownMenu } from './ChatBotDropdownMenu';
 import { sourceStyle, targetStyle } from '../../../constants/handle-styles';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { generateUUID } from '../../../util/id-generator';
+import { BotModelProviderType } from '../../../types/bot-types';
+import { useLLM } from '../../../services/google-ai.service';
 
 export type ChatBotNodeProps = {
     data: ChatBotNodeData
@@ -18,7 +21,6 @@ export type ChatBotNodeProps = {
 export function ChatBotNode({ data, selected }: ChatBotNodeProps) {
     const { id } = data
     const { removeNode, getCommunicationNode } = useNodeManager()
-    const session = useRecoilValue(chatSessionsState).find(session => session.id === id);
     const { signal, handle } = getCommunicationNode(id)
     const [input, setInput] = useState<string>('')
 
@@ -33,6 +35,46 @@ export function ChatBotNode({ data, selected }: ChatBotNodeProps) {
         console.log('node', id, 'reply done', output);
         signal('output', output)
     }
+
+    const { session, addMessage, updateMessage, messages } = useChatSession(id)
+    const botMessageIdRef = useRef<string | undefined>();
+
+    const llm = useLLM(session?.bot.settings);
+
+    const handleSend = useCallback(async (message: string) => {
+        if (!session) {
+            console.error('session is undefined');
+            return;
+        }
+        console.log('on send message', message);
+        // add user message to the list
+        addMessage({ id: generateUUID(), content: message, isUser: true, avatar: user.avatar });
+        // add bot message to the list and store the id in the ref
+        const id = generateUUID();
+        botMessageIdRef.current = id;
+        addMessage({ id, content: '', isUser: false, avatar: bot.avatar });
+        // send message to the bot
+        await llm?.chatStream({
+            input: message,
+            historyMessages: messages,
+            onChunk: (chunk: string) => {
+                const botMessageId = botMessageIdRef.current;
+                if (!botMessageId) {
+                    console.error('botMessageId is undefined but onResponseChunk is called');
+                    return;
+                }
+                updateMessage(botMessageId, (prev) => prev + chunk);
+            },
+            onDone: () => {
+                const msgId = botMessageIdRef.current;
+                const msgContent = messages.find(msg => msg.id === msgId)?.content;
+                botMessageIdRef.current = undefined;
+                if (msgContent) {
+                    onReplyDone?.(msgContent);
+                }
+            }
+        })
+    }, [session, addMessage, llm, messages, updateMessage, onReplyDone]);
 
     if (!session) {
         return null;
@@ -64,7 +106,11 @@ export function ChatBotNode({ data, selected }: ChatBotNodeProps) {
                 </button>
             </div>
             <div className="chat-bot__content nowheel cursor-default" >
-                <Chat session={session} input={input} setInput={setInput} onReplyDone={onReplyDone} />
+                <div className="chat">
+                    <BotInfo bot={session.bot} />
+                    <MessageList messages={messages} />
+                    <MessageInput onSendMessage={handleSend} input={input} setInput={setInput} />
+                </div>
             </div>
             <Handle type="source" position={Position.Left} style={sourceStyle} id="output">
                 <div className='-ml-14 pointer-events-none'>

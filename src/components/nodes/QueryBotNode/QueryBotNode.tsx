@@ -6,9 +6,13 @@ import { querySessionsState } from '../../../states/query-states';
 import { useRecoilValue } from 'recoil';
 import { useNodeManager } from '../../../hooks/NodeManager';
 import { QueryBotDropDownMenu } from './QueryBotDropdownMenu';
-import QueryBot from '../../QueryBot';
 import { useEffect, useState } from 'react';
 import { sourceStyle, targetStyle } from '../../../constants/handle-styles';
+import { BotInfo } from '../../Chat';
+import { TextArea } from '../../TextArea';
+import { Button } from '@mui/joy';
+import { replacePrompt } from '../../../util/misc.util';
+import { useLLM } from '../../../services/google-ai.service';
 
 export type QueryBotNodeProps = {
     data: QueryBotNodeData
@@ -20,17 +24,25 @@ export function QueryBotNode({ data, selected }: QueryBotNodeProps) {
     const { removeNode, getCommunicationNode } = useNodeManager()
     const { signal, handle } = getCommunicationNode(id)
     const session = useRecoilValue(querySessionsState).find(session => session.id === id);
+    const queryAI = useLLM(session?.bot.settings)
     const [input, setInput] = useState<string>('')
+    const [output, setOutput] = useState<string>('')
 
-    const onQueryDone = (output: string) => {
-        console.log('node', id, 'query done with output', output);
-
-        signal('output', output)
+    const handleQuery = (input: string) => {
+        if (!queryAI) return
+        queryAI.queryStream({
+            input,
+            onChunk: (chunk) => {
+                setOutput(prev => prev + chunk)
+            },
+            onDone: (output: string) => {
+                signal('output', output)
+            }
+        })
     }
 
     useEffect(() => {
         return handle('input', (input: string) => {
-            console.log('node', id, 'recevied input', input);
             setInput(input)
         })
     }, [id, handle])
@@ -67,7 +79,52 @@ export function QueryBotNode({ data, selected }: QueryBotNodeProps) {
                 </button>
             </div>
             <div className="chat-bot__content nowheel cursor-default" >
-                <QueryBot input={input} setInput={setInput} session={session} onQueryDone={onQueryDone} />
+                <div className="chat h-full">
+                    <BotInfo bot={session.bot} />
+                    <div className="p-4 h-full flex flex-col nodrag">
+                        {/* input */}
+                        <TextArea
+                            placeholder="Ask a question..."
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                    handleQuery(input);
+                                    setInput('');
+                                }
+                            }}
+                            value={input}
+                            onChange={(e) => setInput(e.target.value)}
+                        />
+                        <div className="flex justify-end my-2 gap-2">
+                            {/* clear */}
+                            <Button
+                                onClick={() => {
+                                    setInput('');
+                                    setOutput('');
+                                }}
+                                variant='outlined'
+                            >
+                                Clear
+                            </Button>
+                            {/* query */}
+                            <Button
+                                onClick={() => {
+                                    handleQuery(replacePrompt(session.bot.settings.prompt, input));
+                                }}
+                            >
+                                Query
+                            </Button>
+                        </div>
+                        {/* output */}
+                        <div className="textarea-fix flex-1 flex flex-col max-h-full">
+                            <TextArea
+                                className='flex-1'
+                                value={output}
+                                placeholder="Answer..."
+                                readOnly
+                            />
+                        </div>
+                    </div>
+                </div>
             </div>
             <Handle type="source" position={Position.Bottom} id='output' style={sourceStyle}>
                 <div className='-ml-6 pointer-events-none'>
