@@ -14,17 +14,21 @@ import { useToast } from '../../../hooks/Toast/useToast'
 export type ChatBotDropDownMenuProps = {
     sessionId: string
 }
+
 export const ChatBotDropDownMenu: FC<ChatBotDropDownMenuProps> = ({ sessionId }) => {
     const [open, setOpen] = useState<boolean>(false)
     const session = useRecoilValue(chatSessionsState).find(session => session.id === sessionId)
     const setSessions = useSetRecoilState(chatSessionsState)
     const toast = useToast()
+
     if (!session) {
         return null
     }
+
     const saveBotSettings = (values: BotNodePreset) => {
         setSessions((prev) => produce(prev, (draft) => {
             const session = draft.find(s => s.id === sessionId)
+
             if (session) {
                 session.bot = values.bot
             }

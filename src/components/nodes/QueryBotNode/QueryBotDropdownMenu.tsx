@@ -14,18 +14,23 @@ import { useToast } from '../../../hooks/Toast/useToast'
 export type QueryBotDropDownMenuProps = {
     sessionId: string
 }
+
 export const QueryBotDropDownMenu: FC<QueryBotDropDownMenuProps> = ({ sessionId }) => {
     const [open, setOpen] = useState<boolean>(false)
     const session = useRecoilValue(querySessionsState).find(session => session.id === sessionId)
     const setSessions = useSetRecoilState(querySessionsState)
     const toast = useToast()
+
     if (!session) {
         console.log(`QueryBotDropDownMenu: session not found for id ${sessionId}, ignore if just deleted`)
+
         return null
     }
+
     const saveBotSettings = (values: BotNodePreset) => {
         setSessions((prev) => produce(prev, (draft) => {
             const session = draft.find(s => s.id === sessionId)
+
             if (session) {
                 session.bot = values.bot
             }
@@ -35,6 +40,7 @@ export const QueryBotDropDownMenu: FC<QueryBotDropDownMenuProps> = ({ sessionId 
     }
 
     const { bot } = session
+
     return <>
         <Dropdown>
             <MenuButton

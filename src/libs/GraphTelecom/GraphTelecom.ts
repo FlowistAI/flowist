@@ -12,28 +12,34 @@ export class EventEmitter<T> {
 
     emit<K extends keyof T>(eventName: K, value?: T[K]): void {
         const handlers = this.handlersMap.get(eventName)
+
         if (!handlers) {
             return
         }
+
         handlers.forEach(h => h(value))
     }
 
     on<K extends keyof T>(eventName: K, callback: Handler<T[keyof T]>): void {
         let handlers = this.handlersMap.get(eventName)
+
         if (!handlers) {
             handlers = new Set()
             this.handlersMap.set(eventName, handlers)
         }
+
         handlers.add(callback)
     }
 
     off<K extends keyof T>(eventName: K, callback: Handler<T[keyof T]>): void {
         const handlers = this.handlersMap.get(eventName)
+
         if (!handlers) {
             throw new Error(`No handlers for event ${String(eventName)}`)
         }
 
         handlers.delete(callback)
+
         if (handlers.size === 0) {
             this.handlersMap.delete(eventName)
         }
@@ -91,7 +97,9 @@ export class CommunicationNode {
         this.onSignal = (port, data) => {
             this.eventEmitter.emit(port, data)
         }
+
         this._sendSignal = () => { throw new Error('sendSignal not ready') }
+
         // this.setHandler.bind(this);
         // this.resethandler.bind(this);
         // bind all methods
@@ -106,6 +114,7 @@ export class CommunicationNode {
 
     handle(port: string, handler: (data: any) => void) {
         this.eventEmitter.on(port, handler)
+
         return () => {
             this.eventEmitter.off(port, handler)
         }
@@ -123,6 +132,7 @@ export class CommunicationNode {
         Object.entries(definition.ports.output).forEach(([portId]) => {
             node.addOutputPort(portId)
         })
+
         return node
     }
 
@@ -155,6 +165,7 @@ export class CommunicationNode {
     signal(outputPortId: string, signal: Signal): void {
         // Find the output port with the given ID
         const outputPort = this.outputPorts.find(port => port.id === outputPortId)
+
         if (outputPort) {
             // Emit a signal event with the output port ID and signal
             console.log(`Node ${this.id} sending signal from port ${outputPort.id}`, signal)
@@ -171,6 +182,7 @@ type NodePortId = string; // nodeId:portId
 type CommunicateMsg = { from: NodePortId; to: NodePortId; signal: Signal };
 type PortListener = (signal: CommunicateMsg) => void;
 type SourceTargetId = string; // sourceNodeId:sourcePortId-targetNodeId:targetPortId
+
 export type ParsedSourceTargetId = [NodeId, PortId, NodeId, PortId];
 
 export function createSourceTargetId(
@@ -182,6 +194,7 @@ export function createSourceTargetId(
 
 export function parseSourceTargetId(sourceTargetId: SourceTargetId) {
     const r = sourceTargetId.split('-').map(s => s.split(':')).flat()
+
     if (r.length !== 4) {
         throw new Error(`Invalid length of sourceTargetId: ${sourceTargetId}`)
     }
@@ -208,6 +221,7 @@ export class GraphTelecom {
 
     getNode(nodeId: string): Optional<CommunicationNode> {
         const node = this.nodes.get(nodeId)
+
         return node
     }
 
@@ -229,6 +243,7 @@ export class GraphTelecom {
 
     unregisterNode(nodeId: string): void {
         const node = this.nodes.get(nodeId)
+
         if (!node) {
             throw new Error(`Node ${nodeId} not found in the graph`)
         }
@@ -236,6 +251,7 @@ export class GraphTelecom {
         node.inputPorts.forEach(port => {
             const listenerKey = `${nodeId}:${port.id}`
             const listener = this.portListeners.get(listenerKey)
+
             if (listener) {
                 this.eventEmitter.off('signal', listener)
                 this.portListeners.delete(listenerKey)
@@ -274,6 +290,7 @@ export class GraphTelecom {
             if (!from || !to) {
                 throw new Error(`Invalid signal: ${JSON.stringify({ from, to, signal })}`)
             }
+
             if (from === outputNodePortId && to === inputNodePortId) {
                 inputNode.onSignal(inputPortId, signal)
             }
@@ -295,9 +312,11 @@ export class GraphTelecom {
         const inputNodePortId = `${inputNodeId}:${inputPortId}`
 
         const listener = this.portListeners.get(`${outputNodePortId}-${inputNodePortId}`)
+
         if (!listener) {
             throw new Error(`No listener for output port ${outputNodePortId} and input port ${inputNodePortId}`)
         }
+
         this.eventEmitter.off('signal', listener)
         this.portListeners.delete(`${outputNodePortId}-${inputNodePortId}`)
         console.log('GraphTelecom disconnect', { outputNodeId, outputPortId, inputNodeId, inputPortId })
@@ -315,35 +334,42 @@ export class GraphTelecom {
         this.portListeners.forEach((_, key) => {
             // outgoing connections
             const [fromNode, fromPort, toNode, toPort] = key.split('-').map(s => s.split(':')).flat()
+
             if (fromNode === nodeId) {
                 connectionInfo.outgoing[toNode] = toPort
             }
+
             // incoming connections
             if (toNode === nodeId) {
                 connectionInfo.incoming[fromNode] = fromPort
             }
 
         })
+
         return connectionInfo
     }
 
     isSendingToNode(nodeId: string, targetNodeId: string) {
         const connectionInfo = this.getConnectionInfo(nodeId)
+
         return targetNodeId in connectionInfo.outgoing
     }
 
     isReceivingFromNode(nodeId: string, sourceNodeId: string) {
         const connectionInfo = this.getConnectionInfo(nodeId)
+
         return sourceNodeId in connectionInfo.incoming
     }
 
     isSendingToPort(nodeId: string, targetNodeId: string, targetPortId: string) {
         const connectionInfo = this.getConnectionInfo(nodeId)
+
         return connectionInfo.outgoing[targetNodeId] === targetPortId
     }
 
     isReceivingFromPort(nodeId: string, sourceNodeId: string, sourcePortId: string) {
         const connectionInfo = this.getConnectionInfo(nodeId)
+
         return connectionInfo.incoming[sourceNodeId] === sourcePortId
     }
 

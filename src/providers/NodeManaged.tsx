@@ -61,6 +61,7 @@ export function NodeManaged({ children }: { children: React.ReactElement }) {
     }), [chatService, queryService])
 
     const graphTelecom = useGraphTelecom({ workspaceId: 'singleton' })
+
     return (<NodeManagerProvider
         options={{
             subManagers,

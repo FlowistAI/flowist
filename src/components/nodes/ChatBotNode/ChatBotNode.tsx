@@ -42,8 +42,10 @@ export function ChatBotNode({ data, selected }: ChatBotNodeProps) {
     const handleSend = useCallback(async (message: string) => {
         if (!session) {
             console.error('session is undefined')
+
             return
         }
+
         console.log('on send message', message)
         // add user message to the list
         addMessage({ id: generateUUID(), content: message, isUser: true, avatar: session.user.avatar })
@@ -57,10 +59,13 @@ export function ChatBotNode({ data, selected }: ChatBotNodeProps) {
             historyMessages: messages,
             onChunk: (chunk: string) => {
                 const botMessageId = botMessageIdRef.current
+
                 if (!botMessageId) {
                     console.error('botMessageId is undefined but onResponseChunk is called')
+
                     return
                 }
+
                 updateMessage(botMessageId, (prev) => prev + chunk)
             },
             onDone: (all: string) => {
@@ -77,8 +82,10 @@ export function ChatBotNode({ data, selected }: ChatBotNodeProps) {
         <div className="chat-bot" onContextMenu={e => {
             if (e.target !== e.currentTarget) {
                 e.stopPropagation()
+
                 return false
             }
+
             e.preventDefault()
             e.stopPropagation()
         }}>

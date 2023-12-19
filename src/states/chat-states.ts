@@ -14,10 +14,12 @@ export const addMessageFnCreater = (setSessions: Setter<ChatSession[]>) => (sess
     setSessions((prevSessions) => {
         const r = produce<ChatSession[]>(prevSessions, (draft) => {
             const sess = draft.find((s) => s.id === sessionId)
+
             if (sess) {
                 sess.messages.push(message)
             }
         })
+
         return r
     })
 }
@@ -26,8 +28,10 @@ export const updateMessageFnCreater = (setSessions: Setter<ChatSession[]>) => (s
     setSessions((prevSessions) => {
         const r = produce<ChatSession[]>(prevSessions, (draft) => {
             const sess = draft.find((s) => s.id === sessionId)
+
             if (sess) {
                 const msg = sess.messages.find((m) => m.id === messageId)
+
                 if (msg) {
                     msg.content = messageGetter(msg.content)
                 } else {
@@ -35,6 +39,7 @@ export const updateMessageFnCreater = (setSessions: Setter<ChatSession[]>) => (s
                 }
             }
         })
+
         return r
     })
 }
@@ -45,12 +50,14 @@ export const useChatSessions = () => {
     const updateMessage = useMemo(() => updateMessageFnCreater(setSessions), [setSessions])
     const getMessages = useCallback((sessionId: string) => {
         const sess = sessions.find((s) => s.id === sessionId)
+
         if (sess) {
             return sess.messages
         } else {
             return []
         }
     }, [sessions])
+
     return { sessions, setSessions, addMessage, updateMessage, getMessages }
 }
 
@@ -67,6 +74,7 @@ export const useChatSession = (id: string) => {
 
     const messages = useMemo(() => {
         const sess = sessions.find((s) => s.id === id)
+
         if (sess) {
             return sess.messages
         } else {
@@ -75,5 +83,6 @@ export const useChatSession = (id: string) => {
     }, [sessions, id])
 
     const session = useMemo(() => sessions.find((s) => s.id === id), [sessions, id])
+
     return { session, addMessage, updateMessage, messages }
 }

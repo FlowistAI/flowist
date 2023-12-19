@@ -25,6 +25,7 @@ export function TextToSpeechNode({ data, selected }: TextToSpeechNodeProps) {
         <div className="text-to-speech-node" onContextMenu={e => {
             e.preventDefault()
             e.stopPropagation()
+
             return true
         }}>
             <Handle type="target" position={Position.Top} />

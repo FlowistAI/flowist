@@ -100,6 +100,7 @@ export const useOpenAIChat: (options: OpenAIChatHookOptions) => OpenAIChatHook =
                 console.log(chunkText)
                 onResponseChunk(chunkText)
             }
+
             onDone()
         } catch (error) {
             console.error('Error querying the model:', error)

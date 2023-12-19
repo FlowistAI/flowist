@@ -37,12 +37,14 @@ export function FloatingMenu({
 
     const handleLoad = async () => {
         const data = await retrieveData<NodeManagerSnapshot>('nm-data')
+
         if (data) {
             console.log('restore from data', data)
 
             nm.restore(data)
         }
     }
+
     return (
         <div
             className="floating-menu px-2"

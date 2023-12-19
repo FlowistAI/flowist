@@ -60,6 +60,7 @@ export class QueryBotNodeService implements SubManager<AppNodeTypes.QueryBot> {
             style: { width: 400, height: 400 },
             ...data,
         }
+
         return node
     }
 

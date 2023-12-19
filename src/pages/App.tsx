@@ -21,10 +21,13 @@ function App() {
 
   const onContextMenu = useCallback((event: React.MouseEvent<HTMLDivElement>) => {
     event.preventDefault()
+
     if (!reactFlowInstance) {
       console.error('reactFlowInstance is undefined')
+
       return
     }
+
     const ctxMenuPos = {
       x: event.clientX,
       y: event.clientY,

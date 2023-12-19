@@ -71,6 +71,7 @@ export class ChatBotNodeService implements SubManager<AppNodeTypes.ChatBot> {
             style: { width: 400, height: 400 },
             ...data,
         }
+
         return node
     }
 

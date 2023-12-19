@@ -28,11 +28,13 @@ export class GoogleAIService implements LLMService {
 
         const result = await chat.sendMessageStream(input)
         let concated = ''
+
         for await (const chunk of result.stream) {
             const chunkText = chunk.text()
             concated += chunkText
             onChunk(chunkText)
         }
+
         onDone(concated)
     }
 
@@ -57,11 +59,13 @@ export class GoogleAIService implements LLMService {
 
         const result = await chat.sendMessageStream(input)
         let concated = ''
+
         for await (const chunk of result.stream) {
             const chunkText = chunk.text()
             concated += chunkText
             onChunk(chunkText)
         }
+
         onDone(concated)
     }
 }
@@ -72,6 +76,7 @@ export const useLLM: (botSettings?: BotSettings) => Optional<LLMService> = (botS
         if (!botSettings) {
             return undefined
         }
+
         return botSettings.serviceSource.type === BotModelProviderType.GoogleGemini ? new GoogleAIService(botSettings) : new OpenAIService(botSettings)
     }, [botSettings])
 }

@@ -36,6 +36,7 @@ const modifiers = [
                 if (placement.includes('end')) {
                     return [8, 20]
                 }
+
                 return [-8, 20]
             },
         },
@@ -56,6 +57,7 @@ function NavMenuButton({
 
     const handleButtonKeyDown = (event: React.KeyboardEvent<HTMLButtonElement>) => {
         internalOpen.current = open
+
         if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
             event.preventDefault()
             onOpen(event)
@@ -141,11 +143,13 @@ export default function MenuIconSideNavExample() {
         (index: number) => (getIsOnButton: () => boolean) => {
             setTimeout(() => {
                 const isOnButton = getIsOnButton()
+
                 if (!isOnButton) {
                     setMenuIndex((latestIndex: null | number) => {
                         if (index === latestIndex) {
                             return null
                         }
+
                         return latestIndex
                     })
                 }
@@ -155,6 +159,7 @@ export default function MenuIconSideNavExample() {
     const handleIsDesktop = () => {
         console.log('isDesktop', isDesktop())
     }
+
     return (
         <Sheet sx={{ borderRadius: 'sm', py: 1, mr: 0 }}>
             <List>

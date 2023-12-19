@@ -8,6 +8,7 @@ import { NodeIdGenerator } from '../../util/id-generator'
 import { produce } from 'immer'
 
 export type NodeAddHandler = (node: Node) => void;
+
 export type EdgeAddHandler = (edge: Edge) => void;
 type OnChange<ChangesType> = (changes: ChangesType[]) => void;
 
@@ -121,9 +122,11 @@ export class NodeManager {
                 const newEdges = produce(eds, draft => {
                     for (const edge of draft) {
                         const change = changes.find(change => change.type === 'select' && change.id === edge.id)
+
                         if (!(change && change.type === 'select' && edge.style)) {
                             continue
                         }
+
                         if (change.selected) {
                             edge.style.strokeWidth = parseFloat(edge.style.strokeWidth as unknown as string) * 1.2
                         } else {
@@ -131,9 +134,11 @@ export class NodeManager {
                         }
                     }
                 })
+
                 return applyEdgeChanges(changes, newEdges)
             })
         }
+
         this.removeEdge = this.removeEdge.bind(this)
         this.addEdge = this.addEdge.bind(this)
         this.onConnect = this.onConnect.bind(this)
@@ -147,6 +152,7 @@ export class NodeManager {
 
     static from(prev: NodeManager | undefined, options: NodeManagerOptions<AppNodeTypes>) {
         const manager = new NodeManager(options)
+
         if (!prev) {
             return manager
         }
@@ -157,11 +163,13 @@ export class NodeManager {
 
         manager.nodeTypes = prev.nodeTypes
         manager.edgeTypes = prev.edgeTypes
+
         return manager
     }
 
     snapshot() {
         console.log('idgen snapshot', this.idGeneratorGetter().index)
+
         return {
             idGenerator: { index: this.idGeneratorGetter().index },
             nodeMap: Object.fromEntries(this.nodes.map(node => [node.id, node])),
@@ -179,12 +187,14 @@ export class NodeManager {
 
         this.idGeneratorSetter(() => new NodeIdGenerator(snapshot.idGenerator.index))
         console.log('NodeManagerrestore', snapshot)
+
         if (this.nodes.length > 0) {
             throw new Error('already initialized')
         }
 
         Object.entries(snapshot.partitions).forEach(([type, partition]) => {
             const subManager = this.subManagers[type as AppNodeTypes]
+
             if (!subManager) {
                 throw new Error(`factory for node type ${type} not found`)
             }
@@ -215,10 +225,13 @@ export class NodeManager {
         if (options.type === undefined) {
             throw new Error('options.type is undefined')
         }
+
         const subManager = this.subManagers[options.type]
+
         if (!subManager) {
             throw new Error(`factory for node type ${options.type} not found`)
         }
+
         const node = subManager.createNode(options)
         this._addNodeToTypeMap(node.id, options.type)
         this._addNodeToTeleGraph(node.id, options.type)
@@ -229,6 +242,7 @@ export class NodeManager {
         if (node.type === undefined) {
             throw new Error('node.type is undefined')
         }
+
         const type = node.type as AppNodeTypes
         this._addNodeToTypeMap(node.id, type)
         this._addNodeToTeleGraph(node.id, type)
@@ -260,13 +274,17 @@ export class NodeManager {
 
     public removeNode(nodeId: string) {
         const type = this.nodeTypes[nodeId]
+
         if (type === undefined) {
             throw new Error(`node ${nodeId} has no type`)
         }
+
         const subManager = this.subManagers[type as AppNodeTypes]
+
         if (!subManager) {
             throw new Error(`factory for node type ${type} not found`)
         }
+
         subManager.destroyNode(nodeId)
         this._removeAttachedEdges(nodeId)
         this._removeNodeFromFlow(nodeId)
@@ -289,6 +307,7 @@ export class NodeManager {
         if (edge.type === undefined) {
             throw new Error('edge.type is undefined')
         }
+
         this._addEdgeToTeleGraph(edge)
         this.edgeTypes[edge.id] = edge.type
         this._addEdgeToFlow(edge)
@@ -296,9 +315,11 @@ export class NodeManager {
 
     private removeEdge(edgeId: string) {
         const edgeType = this.edgeTypes[edgeId]
+
         if (!edgeType) {
             throw new Error(`edge ${edgeId} not found`)
         }
+
         delete this.edgeTypes[edgeId]
         this._removeEdge(edgeId)
         this._removeEdgeFromTeleGraph(edgeId)
@@ -312,15 +333,18 @@ export class NodeManager {
         if (!edge) {
             return
         }
+
         this.telecom.connect(edge.source, edge.sourceHandle!, edge.target, edge.targetHandle!) // it throws
         this.addEdge(edge)
     }
 
     onDisconnect(id: string) {
         const edge = this.edges.find(edge => edge.id === id)
+
         if (!edge) {
             throw new Error(`edge ${id} not found`)
         }
+
         this.telecom.disconnect(edge.source, edge.sourceHandle!, edge.target, edge.targetHandle!) // it throws
         this.removeEdge(id)
     }
@@ -336,12 +360,15 @@ export class NodeManager {
     private createEdge(connection: Connection): Edge | undefined {
         const id = createSourceTargetId(connection.source, connection.sourceHandle, connection.target, connection.targetHandle)
         let parsed: ParsedSourceTargetId
+
         try {
             parsed = parseSourceTargetId(id)
         } catch (error) {
             console.warn(error)
+
             return undefined
         }
+
         const [source, sourceHandle, target, targetHandle] = parsed
 
         return {

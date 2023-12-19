@@ -27,6 +27,7 @@ const validate = (values: BotNodePreset) => {
             },
         }
     }
+
     console.log('errors', errors)
 
     return errors

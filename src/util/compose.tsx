@@ -22,6 +22,7 @@ type Compose = (ComponentProps | ProviderProps) & Required<PropsWithChildren<unk
 
 export const Compose: FC<Compose> = ({ children, components, providers }) => {
     components = components || providers
+
     return (
         <>
             {components.reverse().reduce((acc, curr) => {

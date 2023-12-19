@@ -10,6 +10,7 @@ export type SettingPanelProps = {
 
 const SettingPanel: FC<SettingPanelProps> = ({ activeTab }) => {
     let content
+
     switch (activeTab) {
         case 'system':
             content = <SystemSettings />

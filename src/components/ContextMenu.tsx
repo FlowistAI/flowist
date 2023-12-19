@@ -51,6 +51,7 @@ export const ContextMenu = ({ position, items, isOpen, onClose }: ContextMenuPro
                 onClose?.()
             }
         }
+
         return (
             <RcMenu style={{ width: menuWidth }}>
                 {items.map((item) => {
@@ -66,6 +67,7 @@ export const ContextMenu = ({ position, items, isOpen, onClose }: ContextMenuPro
                             </RcMenu.SubMenu>
                         )
                     }
+
                     return (
                         <MenuItem key={item.key} onClick={() => handleMenuItemClick(item)}>
                             <IconText icon={item.icon} text={item.text} />

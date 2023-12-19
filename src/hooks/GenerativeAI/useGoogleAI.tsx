@@ -21,6 +21,7 @@ export const useGoogleAI: (options: GoogleAIHookOptions) => GoogleAIHook = ({ bo
     const generativeModel = useMemo(() => {
         const genAIInstance = new GoogleGenerativeAI(apiKey)
         const generativeModel = genAIInstance.getGenerativeModel({ model })
+
         return generativeModel
     }, [apiKey, model])
 
@@ -39,6 +40,7 @@ export const useGoogleAI: (options: GoogleAIHookOptions) => GoogleAIHook = ({ bo
             console.log('totalTokens', totalTokens)
 
             const result = await generativeModel.generateContentStream([query])
+
             for await (const chunk of result.stream) {
                 const chunkText = chunk.text()
                 console.log(chunkText)
@@ -80,6 +82,7 @@ export const useGoogleAIChat: (options: GoogleAIChatHookOptions) => GoogleAIChat
     const generativeModel = useMemo(() => {
         const genAIInstance = new GoogleGenerativeAI(apiKey)
         const generativeModel = genAIInstance.getGenerativeModel({ model })
+
         return generativeModel
     }, [apiKey, model])
 
@@ -100,11 +103,13 @@ export const useGoogleAIChat: (options: GoogleAIChatHookOptions) => GoogleAIChat
             console.log('totalTokens', totalTokens)
 
             const result = await chat.sendMessageStream(msg)
+
             for await (const chunk of result.stream) {
                 const chunkText = chunk.text()
                 console.log(chunkText)
                 onResponseChunk(chunkText)
             }
+
             onDone()
         } catch (error) {
             console.error('Error querying the model:', error)

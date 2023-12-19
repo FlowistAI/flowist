@@ -24,11 +24,13 @@ export class OpenAIService implements LLMService {
         })
 
         let concated = ''
+
         for await (const chunk of stream) {
             const chunkText = chunk.choices[0]?.delta?.content || ''
             concated += chunkText
             onChunk(chunkText)
         }
+
         onDone(concated)
     }
 
@@ -53,11 +55,13 @@ export class OpenAIService implements LLMService {
         })
 
         let concated = ''
+
         for await (const chunk of stream) {
             const chunkText = chunk.choices[0]?.delta?.content || ''
             concated += chunkText
             onChunk(chunkText)
         }
+
         onDone(concated)
     }
 }

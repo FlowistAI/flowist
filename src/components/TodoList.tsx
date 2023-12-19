@@ -9,6 +9,7 @@ export type Todo = {
 
 const TodoItem: React.FC<{ todo: Todo }> = ({ todo }) => {
     const { content, completed } = todo
+
     return (
         <div className='todo-item'>
             <input type='checkbox' checked={completed} />
@@ -25,6 +26,7 @@ export const TodoList: React.FC = () => {
         if (!newTodo) {
             return
         }
+
         const todo: Todo = {
             id: generateUUID(),
             content: newTodo,
