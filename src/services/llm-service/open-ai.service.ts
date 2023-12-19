@@ -1,6 +1,6 @@
-import { BotSettings } from "../types/bot-types";
+import { BotSettings } from "../../types/bot-types";
 import OpenAI from 'openai';
-import { LLMService, QueryStreamOptions, ChatStreamOptions } from "./ai.types";
+import { LLMService, QueryStreamOptions, ChatStreamOptions } from "./llm-service.types";
 
 export class OpenAIService implements LLMService {
 

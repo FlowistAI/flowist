@@ -1,10 +1,10 @@
-import { BotModelProviderType, BotSettings } from "../types/bot-types";
+import { BotModelProviderType, BotSettings } from "../../types/bot-types";
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { ChatStreamOptions, QueryStreamOptions } from "./ai.types";
+import { ChatStreamOptions, QueryStreamOptions } from "./llm-service.types";
 import { OpenAIService } from "./open-ai.service";
-import { LLMService } from "./ai.types";
+import { LLMService } from "./llm-service.types";
 import { useMemo } from "react";
-import { Optional } from "../types/types";
+import { Optional } from "../../types/types";
 
 export class GoogleAIService implements LLMService {
 

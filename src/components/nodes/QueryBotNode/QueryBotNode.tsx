@@ -12,7 +12,7 @@ import { BotInfo } from '../../Chat';
 import { TextArea } from '../../TextArea';
 import { Button } from '@mui/joy';
 import { replacePrompt } from '../../../util/misc.util';
-import { useLLM } from '../../../services/google-ai.service';
+import { useLLM } from '../../../services/llm-service/google-ai.service';
 import { useCurrentCommunicationNode } from '../../../hooks/NodeManager/useNodeManager';
 
 export type QueryBotNodeProps = {

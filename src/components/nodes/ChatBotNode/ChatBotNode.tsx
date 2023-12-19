@@ -8,7 +8,7 @@ import { ChatBotDropDownMenu } from './ChatBotDropdownMenu';
 import { sourceStyle, targetStyle } from '../../../constants/handle-styles';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { generateUUID } from '../../../util/id-generator';
-import { useLLM } from '../../../services/google-ai.service';
+import { useLLM } from '../../../services/llm-service/google-ai.service';
 import './ChatBotNode.css';
 import { useCurrentCommunicationNode } from '../../../hooks/NodeManager/useNodeManager';
 
