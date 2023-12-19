@@ -1,6 +1,6 @@
 import { ReactFlowProvider } from 'reactflow'
 import { RecoilRoot } from 'recoil'
-import { NodeManaged } from './NodeManaged'
+import { NodeManaged } from './node-manager-wire'
 
 export function Composed({ children }: { children: React.ReactElement }) {
 

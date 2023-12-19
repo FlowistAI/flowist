@@ -1,5 +1,5 @@
 import { ChatBotNode } from '../components/nodes/ChatBotNode/ChatBotNode'
-import { TextToSpeechNode } from '../components/TextToSpeechNode'
+import { TextToSpeechNode } from '../nodes/text-to-speech/component/TextToSpeechNode'
 import { QueryBotNode } from '../components/nodes/QueryBotNode/QueryBotNode'
 import { PortDefinition } from '../hooks/NodeManager/NodeManager'
 

@@ -11,6 +11,8 @@ import { QueryBotNodeService } from '../services/query-bot-node.service'
 import { useGraphTelecom } from '../hooks/GraphTelecom/useGraphTelecom'
 import { NodeIdGenerator } from '../util/id-generator'
 import { useMemo, useState } from 'react'
+import { TextToSpeechNodeService } from '../nodes/text-to-speech/text-to-speech-node.service'
+import { textToSpeechSessionsState } from '../nodes/text-to-speech/text-to-speech-sessions.states'
 
 export function NodeManaged({ children }: { children: React.ReactElement }) {
     const [nodes, setNodes, onNodesChange] = useNodesState(initNodes)
@@ -52,13 +54,34 @@ export function NodeManaged({ children }: { children: React.ReactElement }) {
     }), [idGenerator, querySessions, setQuerySessions])
 
     /**
+     * Text to speech session state
+     */
+    const [textToSpeechSessions, setTextToSpeechSessions] = useRecoilState(textToSpeechSessionsState)
+    const textToSpeechService = useMemo(() => new TextToSpeechNodeService({
+        sessionCreateHandler: (session) => {
+            setTextToSpeechSessions((sessions) => sessions.concat(session))
+        },
+        sessionDestroyHandler: (sessId) => {
+            setTextToSpeechSessions((sessions) => sessions.filter(s => s.id !== sessId))
+        },
+        sessionsGetter: () => {
+            return textToSpeechSessions
+        },
+        idGeneratorGetter: () => idGenerator
+    }), [idGenerator, setTextToSpeechSessions, textToSpeechSessions])
+
+    /**
      * Sub managers
      */
+    type AppNodeSubManagers = {
+        [K in AppNodeTypes]: SubManager<K>;
+    };
 
-    const subManagers: Record<AppNodeTypes, SubManager<AppNodeTypes, unknown>> = useMemo(() => ({
+    const subManagers: AppNodeSubManagers = useMemo(() => ({
         [AppNodeTypes.ChatBot]: chatService,
         [AppNodeTypes.QueryBot]: queryService,
-    }), [chatService, queryService])
+        [AppNodeTypes.TextToSpeech]: textToSpeechService,
+    }), [chatService, queryService, textToSpeechService])
 
     const graphTelecom = useGraphTelecom({ workspaceId: 'singleton' })
 

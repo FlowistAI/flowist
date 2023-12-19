@@ -2,6 +2,8 @@ import { Handle, NodeResizer, Position } from 'reactflow'
 import { XIcon } from '@primer/octicons-react'
 import './TextToSpeechNode.css'
 import { useState } from 'react'
+import { Button } from '@mui/joy'
+import AudioPlayer from './AudioPlayer'
 
 export type TextToSpeechNodeProps = {
     data: {
@@ -15,7 +17,7 @@ export type TextToSpeechNodeProps = {
 export function TextToSpeechNode({ data, selected }: TextToSpeechNodeProps) {
     const [text, setText] = useState('')
 
-    const handlePlay = () => {
+    const handleGenerate = () => {
         // 在这里编写将文本转换为语音并播放的逻辑
         // 可以使用浏览器的 Web Speech API 或其他文本转语音的库
         // 在播放完成后可以添加一些回调逻辑
@@ -46,9 +48,9 @@ export function TextToSpeechNode({ data, selected }: TextToSpeechNodeProps) {
                     placeholder="Enter text..."
                     className="text-to-speech-node__input"
                 />
-                <button className="text-to-speech-node__play" onClick={handlePlay}>
-                    Play
-                </button>
+                <Button onClick={handleGenerate} color="primary">Generate</Button>
+                {/* player */}
+                <AudioPlayer/>
             </div>
             <Handle type="source" position={Position.Bottom} id="a" />
             <Handle

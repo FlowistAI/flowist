@@ -71,6 +71,9 @@ dependencies:
   react-dom:
     specifier: ^18.2.0
     version: 18.2.0(react@18.2.0)
+  react-use-audio-player:
+    specifier: ^2.2.0
+    version: 2.2.0(react@18.2.0)
   reactflow:
     specifier: ^11.9.4
     version: 11.10.1(@types/react@18.2.43)(immer@10.0.3)(react-dom@18.2.0)(react@18.2.0)
@@ -3221,6 +3224,10 @@ packages:
       react-is: 16.13.1
     dev: false
 
+  /howler@2.2.4:
+    resolution: {integrity: sha512-iARIBPgcQrwtEr+tALF+rapJ8qSc+Set2GJQl7xT1MQzWaVkFebdJhR3alVlSiUf5U7nAANKuj3aWpwerocD5w==}
+    dev: false
+
   /html-escaper@2.0.2:
     resolution: {integrity: sha512-H2iMtd0I4Mt5eYiapRdIDjp+XzelXQ0tFE4JS7YFwFevXXMmOp9myNrUvCg0D6ws8iqkRPBfKHgbwig1SmlLfg==}
     dev: true
@@ -4509,6 +4516,15 @@ packages:
       prop-types: 15.8.1
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
+    dev: false
+
+  /react-use-audio-player@2.2.0(react@18.2.0):
+    resolution: {integrity: sha512-IMM+WiZAq1KUvTwq0sAdRdjEzyG4jzz1tK/JtC/+LLt3z/uJk3AFRLL3pgbOgS/2SnfVzFKCxR7pnBsu6nUFvg==}
+    peerDependencies:
+      react: '>=16.8'
+    dependencies:
+      howler: 2.2.4
+      react: 18.2.0
     dev: false
 
   /react@18.2.0:
