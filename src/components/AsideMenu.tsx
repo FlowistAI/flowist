@@ -10,7 +10,8 @@ import Settings from '@mui/icons-material/Settings';
 import Person from '@mui/icons-material/Person';
 import Dropdown from '@mui/joy/Dropdown';
 import MenuButton from '@mui/joy/MenuButton';
-import { Output } from '@mui/icons-material';
+import { Output, PestControl } from '@mui/icons-material';
+import { isDesktop } from "../util/bridge";
 // The Menu is built on top of Popper v2, so it accepts `modifiers` prop that will be passed to the Popper.
 // https://popper.js.org/docs/v2/modifiers/offset/
 interface MenuButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
@@ -150,6 +151,10 @@ export default function MenuIconSideNavExample() {
                 }
             }, 200);
         };
+
+    const handleIsDesktop = () => {
+        console.log('isDesktop', isDesktop());
+    }
     return (
         <Sheet sx={{ borderRadius: 'sm', py: 1, mr: 0 }}>
             <List>
@@ -210,12 +215,29 @@ export default function MenuIconSideNavExample() {
                         <Person />
                     </NavMenuButton>
                 </ListItem>
+                <ListItem>
+                    <NavMenuButton
+                        label="Debug"
+                        open={menuIndex === 3}
+                        onOpen={() => setMenuIndex(3)}
+                        onLeaveMenu={createHandleLeaveMenu(3)}
+                        menu={
+                            <Menu onClose={() => setMenuIndex(null)}>
+                                <MenuItem onClick={handleIsDesktop}>Is Desktop</MenuItem>
+                                <MenuItem {...itemProps}>Personal 2</MenuItem>
+                                <MenuItem {...itemProps}>Personal 3</MenuItem>
+                            </Menu>
+                        }
+                    >
+                        <PestControl />
+                    </NavMenuButton>
+                </ListItem>
             </List>
         </Sheet>
     );
 }
 
-export const AsideMenu = () => {
+export const AsideMenu = React.memo(() => {
 
     return (
         <aside className="aside-menu flex flex-col items-center gap-4" style={{ backgroundColor: '#fbfcfe' }}>
@@ -229,4 +251,4 @@ export const AsideMenu = () => {
             </div>
         </aside>
     );
-}
+})
