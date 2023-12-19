@@ -1,10 +1,10 @@
-import { Node } from "reactflow";
-import { AppNodeTypes } from "../constants/nodeTypes";
-import { Bot, BotModelProviderType, GoogleGeminiModelIds, GoogleGeminiOfficialServiceSource, SessionId, User } from "../types/bot-types";
-import { ChatBotNodeData, ChatSession } from "../types/chat-node-types";
-import { BotNodePreset } from "../types/bot-types";
-import { SubManager } from "../hooks/NodeManager/SubManager";
-import { NodeIdGenerator } from "../util/id-generator";
+import { Node } from 'reactflow'
+import { AppNodeTypes } from '../constants/nodeTypes'
+import { Bot, BotModelProviderType, GoogleGeminiModelIds, GoogleGeminiOfficialServiceSource, SessionId, User } from '../types/bot-types'
+import { ChatBotNodeData, ChatSession } from '../types/chat-node-types'
+import { BotNodePreset } from '../types/bot-types'
+import { SubManager } from '../hooks/NodeManager/SubManager'
+import { NodeIdGenerator } from '../util/id-generator'
 
 export type CreateNodeOptions = {
     preset?: BotNodePreset
@@ -81,14 +81,14 @@ export class ChatBotNodeService implements SubManager<AppNodeTypes.ChatBot> {
             user: user ?? ChatBotNodeService.DefaultUser,
             messages: [],
         }
-        console.log('add chat bot session', sess);
+        console.log('add chat bot session', sess)
         this.sessionCreateHandler(sess)
 
         return sess
     }
 
     destroyNode(nodeId: string) {
-        console.log('removeSession', nodeId);
+        console.log('removeSession', nodeId)
         this.sessionDestroyHandler(nodeId)
     }
 
@@ -97,7 +97,7 @@ export class ChatBotNodeService implements SubManager<AppNodeTypes.ChatBot> {
     }
 
     restore(snapshot: ChatSession[]) {
-        console.log('ChatBot Partition restore', snapshot);
+        console.log('ChatBot Partition restore', snapshot)
 
         snapshot.forEach(sess => {
             this.sessionCreateHandler(sess)

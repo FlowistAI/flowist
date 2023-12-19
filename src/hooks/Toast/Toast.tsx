@@ -1,9 +1,9 @@
-import React from 'react';
-import { useRecoilValue, useResetRecoilState } from 'recoil';
-import { Snackbar } from '@mui/joy';
-import { toastState } from './atoms';
-import { InfoIcon } from '@primer/octicons-react';
-import { CheckOutlined, ErrorOutline, InfoOutlined, WarningOutlined } from '@mui/icons-material';
+import React from 'react'
+import { useRecoilValue, useResetRecoilState } from 'recoil'
+import { Snackbar } from '@mui/joy'
+import { toastState } from './atoms'
+import { InfoIcon } from '@primer/octicons-react'
+import { CheckOutlined, ErrorOutline, InfoOutlined, WarningOutlined } from '@mui/icons-material'
 
 type Color = 'primary' | 'neutral' | 'danger' | 'success' | 'warning'
 const severityMap: Record<string, Color> = {
@@ -21,12 +21,12 @@ const iconMap: Record<Color, React.ReactNode> = {
 }
 
 const Toast: React.FC = () => {
-    const message = useRecoilValue(toastState);
-    const resetToast = useResetRecoilState(toastState);
+    const message = useRecoilValue(toastState)
+    const resetToast = useResetRecoilState(toastState)
 
     const handleClose = () => {
-        resetToast();
-    };
+        resetToast()
+    }
 
     if (!message) {
         return null
@@ -54,7 +54,7 @@ const Toast: React.FC = () => {
             {icon}
             {message.content}
         </Snackbar >
-    );
-};
+    )
+}
 
-export default Toast;
+export default Toast

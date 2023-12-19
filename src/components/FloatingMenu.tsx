@@ -1,15 +1,15 @@
-import './FloatingMenu.css';
-import { useState } from 'react';
-import { Button, Modal } from '@mui/joy';
-import SettingPage from '../pages/setting/SettingPage';
-import { SaveOutlined, SettingsOutlined } from '@mui/icons-material';
-import { useNodeManager } from '../hooks/NodeManager';
-import { persistData, retrieveData } from '../constants/persistence';
-import { NodeManagerSnapshot } from '../hooks/NodeManager/NodeManager';
-import { useToast } from '../hooks/Toast/useToast';
-import BrowserUpdatedOutlinedIcon from '@mui/icons-material/BrowserUpdatedOutlined';
+import './FloatingMenu.css'
+import { useState } from 'react'
+import { Button, Modal } from '@mui/joy'
+import SettingPage from '../pages/setting/SettingPage'
+import { SaveOutlined, SettingsOutlined } from '@mui/icons-material'
+import { useNodeManager } from '../hooks/NodeManager'
+import { persistData, retrieveData } from '../constants/persistence'
+import { NodeManagerSnapshot } from '../hooks/NodeManager/NodeManager'
+import { useToast } from '../hooks/Toast/useToast'
+import BrowserUpdatedOutlinedIcon from '@mui/icons-material/BrowserUpdatedOutlined'
 interface FloatingMenuProps {
-    logo?: boolean;
+    logo?: boolean
 }
 
 const iconStyle = { width: 24, height: 24, color: 'var(--color-gray-80)' }
@@ -19,15 +19,15 @@ export function FloatingMenu({
 }: FloatingMenuProps) {
 
     const handleMouseEnter = () => {
-    };
+    }
 
     const handleMouseLeave = () => {
-    };
+    }
 
-    const [open, setOpen] = useState(false);
+    const [open, setOpen] = useState(false)
 
-    const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
+    const handleOpen = () => setOpen(true)
+    const handleClose = () => setOpen(false)
     const nm = useNodeManager()
     const toast = useToast()
     const handleSave = async () => {
@@ -38,7 +38,7 @@ export function FloatingMenu({
     const handleLoad = async () => {
         const data = await retrieveData<NodeManagerSnapshot>('nm-data')
         if (data) {
-            console.log('restore from data', data);
+            console.log('restore from data', data)
 
             nm.restore(data)
         }
@@ -50,8 +50,8 @@ export function FloatingMenu({
             onMouseLeave={handleMouseLeave}
             onContextMenu={
                 (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
+                    e.preventDefault()
+                    e.stopPropagation()
                 }
             }
         >

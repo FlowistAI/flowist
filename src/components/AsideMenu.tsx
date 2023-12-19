@@ -1,30 +1,30 @@
-import * as React from 'react';
-import Menu, { menuClasses } from '@mui/joy/Menu';
-import MenuItem from '@mui/joy/MenuItem';
-import IconButton from '@mui/joy/IconButton';
-import List from '@mui/joy/List';
-import ListItem from '@mui/joy/ListItem';
-import Sheet from '@mui/joy/Sheet';
-import Apps from '@mui/icons-material/Apps';
-import Settings from '@mui/icons-material/Settings';
-import Person from '@mui/icons-material/Person';
-import Dropdown from '@mui/joy/Dropdown';
-import MenuButton from '@mui/joy/MenuButton';
-import { Output, PestControl } from '@mui/icons-material';
-import { isDesktop } from "../util/bridge";
+import * as React from 'react'
+import Menu, { menuClasses } from '@mui/joy/Menu'
+import MenuItem from '@mui/joy/MenuItem'
+import IconButton from '@mui/joy/IconButton'
+import List from '@mui/joy/List'
+import ListItem from '@mui/joy/ListItem'
+import Sheet from '@mui/joy/Sheet'
+import Apps from '@mui/icons-material/Apps'
+import Settings from '@mui/icons-material/Settings'
+import Person from '@mui/icons-material/Person'
+import Dropdown from '@mui/joy/Dropdown'
+import MenuButton from '@mui/joy/MenuButton'
+import { Output, PestControl } from '@mui/icons-material'
+import { isDesktop } from '../util/bridge'
 // The Menu is built on top of Popper v2, so it accepts `modifiers` prop that will be passed to the Popper.
 // https://popper.js.org/docs/v2/modifiers/offset/
 interface MenuButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
-    children: React.ReactNode;
-    menu: React.ReactElement;
-    open: boolean;
+    children: React.ReactNode
+    menu: React.ReactElement
+    open: boolean
     onOpen: (
         event?:
             | React.MouseEvent<HTMLButtonElement>
             | React.KeyboardEvent<HTMLButtonElement>,
-    ) => void;
-    onLeaveMenu: (callback: () => boolean) => void;
-    label: string;
+    ) => void
+    onLeaveMenu: (callback: () => boolean) => void
+    label: string
 }
 
 const modifiers = [
@@ -34,13 +34,13 @@ const modifiers = [
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             offset: ({ placement }: any) => {
                 if (placement.includes('end')) {
-                    return [8, 20];
+                    return [8, 20]
                 }
-                return [-8, 20];
+                return [-8, 20]
             },
         },
     },
-];
+]
 
 function NavMenuButton({
     children,
@@ -51,23 +51,23 @@ function NavMenuButton({
     label,
     ...props
 }: Omit<MenuButtonProps, 'color'>) {
-    const isOnButton = React.useRef(false);
-    const internalOpen = React.useRef(open);
+    const isOnButton = React.useRef(false)
+    const internalOpen = React.useRef(open)
 
     const handleButtonKeyDown = (event: React.KeyboardEvent<HTMLButtonElement>) => {
-        internalOpen.current = open;
+        internalOpen.current = open
         if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
-            event.preventDefault();
-            onOpen(event);
+            event.preventDefault()
+            onOpen(event)
         }
-    };
+    }
 
     return (
         <Dropdown
             open={open}
             onOpenChange={(_, isOpen) => {
                 if (isOpen) {
-                    onOpen?.();
+                    onOpen?.()
                 }
             }}
         >
@@ -76,19 +76,19 @@ function NavMenuButton({
                 slots={{ root: IconButton }}
                 slotProps={{ root: { variant: 'plain', color: 'neutral' } }}
                 onMouseDown={() => {
-                    internalOpen.current = open;
+                    internalOpen.current = open
                 }}
                 onClick={() => {
                     if (!internalOpen.current) {
-                        onOpen();
+                        onOpen()
                     }
                 }}
                 onMouseEnter={() => {
-                    onOpen();
-                    isOnButton.current = true;
+                    onOpen()
+                    isOnButton.current = true
                 }}
                 onMouseLeave={() => {
-                    isOnButton.current = false;
+                    isOnButton.current = false
                 }}
                 onKeyDown={handleButtonKeyDown}
                 sx={{
@@ -102,7 +102,7 @@ function NavMenuButton({
             </MenuButton>
             {React.cloneElement(menu, {
                 onMouseLeave: () => {
-                    onLeaveMenu(() => isOnButton.current);
+                    onLeaveMenu(() => isOnButton.current)
                 },
                 modifiers,
                 slotProps: {
@@ -120,7 +120,7 @@ function NavMenuButton({
                 },
             })}
         </Dropdown>
-    );
+    )
 }
 
 const IconText = ({ icon, text }: { icon?: React.ReactNode; text: string }) => (
@@ -130,30 +130,30 @@ const IconText = ({ icon, text }: { icon?: React.ReactNode; text: string }) => (
         </span>}
         {text}
     </>
-);
+)
 
 export default function MenuIconSideNavExample() {
-    const [menuIndex, setMenuIndex] = React.useState<null | number>(null);
+    const [menuIndex, setMenuIndex] = React.useState<null | number>(null)
     const itemProps = {
         onClick: () => setMenuIndex(null),
-    };
+    }
     const createHandleLeaveMenu =
         (index: number) => (getIsOnButton: () => boolean) => {
             setTimeout(() => {
-                const isOnButton = getIsOnButton();
+                const isOnButton = getIsOnButton()
                 if (!isOnButton) {
                     setMenuIndex((latestIndex: null | number) => {
                         if (index === latestIndex) {
-                            return null;
+                            return null
                         }
-                        return latestIndex;
-                    });
+                        return latestIndex
+                    })
                 }
-            }, 200);
-        };
+            }, 200)
+        }
 
     const handleIsDesktop = () => {
-        console.log('isDesktop', isDesktop());
+        console.log('isDesktop', isDesktop())
     }
     return (
         <Sheet sx={{ borderRadius: 'sm', py: 1, mr: 0 }}>
@@ -234,7 +234,7 @@ export default function MenuIconSideNavExample() {
                 </ListItem>
             </List>
         </Sheet>
-    );
+    )
 }
 
 export const AsideMenu = React.memo(() => {
@@ -250,5 +250,5 @@ export const AsideMenu = React.memo(() => {
                 </div>
             </div>
         </aside>
-    );
+    )
 })

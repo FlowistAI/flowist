@@ -1,6 +1,6 @@
 export type Language = {
-    id: string;
-    name: string;
+    id: string
+    name: string
 };
 
 export type LangId = Language['id'];

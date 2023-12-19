@@ -1,21 +1,21 @@
-import './Chat.css';
-import React, { useRef, useEffect } from 'react';
-import { Bot } from '../types/bot-types';
-import { ChatMessage } from "../types/chat-node-types";
-import { Button, Textarea, Tooltip } from '@mui/joy';
+import './Chat.css'
+import React, { useRef, useEffect } from 'react'
+import { Bot } from '../types/bot-types'
+import { ChatMessage } from '../types/chat-node-types'
+import { Button, Textarea, Tooltip } from '@mui/joy'
 
 export interface AvatarProps {
-    src: string;
-    show?: boolean;
+    src: string
+    show?: boolean
 }
 
 export const Avatar: React.FC<AvatarProps> = ({ src, show = true }) => (
     show ? <img src={src} alt="Profile" className="avatar" />
         : <div className="avatar" />
-);
+)
 
 export interface BotInfoProps {
-    bot: Bot;
+    bot: Bot
 }
 
 export const BotInfo: React.FC<BotInfoProps> = ({ bot }) => (
@@ -36,11 +36,11 @@ export const BotInfo: React.FC<BotInfoProps> = ({ bot }) => (
             <span className='px-2'>...</span>
         </Tooltip>
     </div>
-);
+)
 
 export interface MessageProps {
-    message: ChatMessage;
-    isUser: boolean;
+    message: ChatMessage
+    isUser: boolean
 }
 
 export const Message: React.FC<MessageProps> = ({ message, isUser }) => (
@@ -49,22 +49,22 @@ export const Message: React.FC<MessageProps> = ({ message, isUser }) => (
         <div className="message-content min-w-0">{message.content}</div>
         <Avatar show={isUser} src={message.avatar} />
     </div>
-);
+)
 
 export interface MessageListProps {
-    messages: ChatMessage[];
+    messages: ChatMessage[]
 }
 
 export const MessageList: React.FC<MessageListProps> = ({ messages }) => {
-    const messagesEndRef = useRef<HTMLDivElement>(null);
+    const messagesEndRef = useRef<HTMLDivElement>(null)
 
     const scrollToBottom = () => {
-        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-    };
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+    }
 
     useEffect(() => {
-        scrollToBottom();
-    }, [messages]);
+        scrollToBottom()
+    }, [messages])
 
     return (
         <div className="messages nodrag">
@@ -73,30 +73,30 @@ export const MessageList: React.FC<MessageListProps> = ({ messages }) => {
             ))}
             <div ref={messagesEndRef} />
         </div>
-    );
-};
+    )
+}
 
 export interface MessageInputProps {
-    onSendMessage?: (message: string) => void;
-    input?: string;
-    setInput?: (input: string) => void;
+    onSendMessage?: (message: string) => void
+    input?: string
+    setInput?: (input: string) => void
 }
 
 export const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage, input: inputOut, setInput: setInputOut }) => {
-    const [inputInner, setInputInner] = React.useState('');
-    console.log('inputOut', inputOut, 'inputInner', inputInner);
+    const [inputInner, setInputInner] = React.useState('')
+    console.log('inputOut', inputOut, 'inputInner', inputInner)
 
     const realInput = inputOut ?? inputInner
     const realSetInput = setInputOut ?? setInputInner
 
     const handleSend = () => {
-        console.log('send ', realInput);
+        console.log('send ', realInput)
 
         if (realInput.trim()) {
-            onSendMessage?.(realInput);
-            realSetInput('');
+            onSendMessage?.(realInput)
+            realSetInput('')
         }
-    };
+    }
 
     return (
         <div className="message-input nodrag gap-2">
@@ -109,7 +109,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage, input
                 onKeyUp={(e) => {
                     // ctrl + enter
                     if (e.ctrlKey && e.key === 'Enter') {
-                        handleSend();
+                        handleSend()
                     }
                 }}
             />
@@ -117,6 +117,6 @@ export const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage, input
                 Send
             </Button>
         </div>
-    );
-};
+    )
+}
 

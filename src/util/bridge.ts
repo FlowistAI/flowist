@@ -2,11 +2,11 @@
 declare global {
     interface Window {
         api?: {
-            client: string;
-        };
+            client: string
+        }
     }
 }
 
 export function isDesktop() {
-    return window.api?.client === "electron";
+    return window.api?.client === 'electron'
 }

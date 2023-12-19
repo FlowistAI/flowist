@@ -1,6 +1,6 @@
-import { BotSettings } from "../../types/bot-types";
-import OpenAI from 'openai';
-import { LLMService, QueryStreamOptions, ChatStreamOptions } from "./llm-service.types";
+import { BotSettings } from '../../types/bot-types'
+import OpenAI from 'openai'
+import { LLMService, QueryStreamOptions, ChatStreamOptions } from './llm-service.types'
 
 export class OpenAIService implements LLMService {
 
@@ -8,10 +8,10 @@ export class OpenAIService implements LLMService {
     }
 
     async queryStream(opts: QueryStreamOptions) {
-        const { input, onChunk, onDone } = opts;
+        const { input, onChunk, onDone } = opts
         const model = this.botSettings.model
-        const apiKey = this.botSettings.serviceSource.apiKey;
-        const baseURL = this.botSettings.serviceSource.endpoint;
+        const apiKey = this.botSettings.serviceSource.apiKey
+        const baseURL = this.botSettings.serviceSource.endpoint
         const client = new OpenAI({ apiKey, baseURL, dangerouslyAllowBrowser: true })
 
         const stream = await client.chat.completions.create({
@@ -21,23 +21,23 @@ export class OpenAIService implements LLMService {
                 'content': input,
             }],
             stream: true,
-        });
+        })
 
-        let concated = ""
+        let concated = ''
         for await (const chunk of stream) {
-            const chunkText = chunk.choices[0]?.delta?.content || '';
-            concated += chunkText;
-            onChunk(chunkText);
+            const chunkText = chunk.choices[0]?.delta?.content || ''
+            concated += chunkText
+            onChunk(chunkText)
         }
-        onDone(concated);
+        onDone(concated)
     }
 
     async chatStream(opts: ChatStreamOptions) {
-        const { input, historyMessages, onChunk, onDone } = opts;
+        const { input, historyMessages, onChunk, onDone } = opts
 
         const model = this.botSettings.model
-        const apiKey = this.botSettings.serviceSource.apiKey;
-        const baseURL = this.botSettings.serviceSource.endpoint;
+        const apiKey = this.botSettings.serviceSource.apiKey
+        const baseURL = this.botSettings.serviceSource.endpoint
         const client = new OpenAI({ apiKey, baseURL, dangerouslyAllowBrowser: true })
 
         const stream = await client.chat.completions.create({
@@ -50,15 +50,15 @@ export class OpenAIService implements LLMService {
                 'content': input,
             }],
             stream: true,
-        });
+        })
 
-        let concated = ""
+        let concated = ''
         for await (const chunk of stream) {
-            const chunkText = chunk.choices[0]?.delta?.content || '';
-            concated += chunkText;
-            onChunk(chunkText);
+            const chunkText = chunk.choices[0]?.delta?.content || ''
+            concated += chunkText
+            onChunk(chunkText)
         }
-        onDone(concated);
+        onDone(concated)
     }
 }
 

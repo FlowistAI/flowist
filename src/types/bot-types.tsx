@@ -1,28 +1,28 @@
 export type Participant = {
     type: 'bot' | 'user'
-    name: string;
-    avatar: string;
+    name: string
+    avatar: string
 }
 
 export type Bot = Participant & {
-    type: 'bot';
-    settings: BotSettings;
+    type: 'bot'
+    settings: BotSettings
 }
 
 export type User = Participant & {
-    type: 'user';
+    type: 'user'
 }
 
 
 export type SessionId = string;
 
 export type BotSettings = {
-    model: string;
-    temperature: number;
-    prompt: string;
-    maxTokens: number;
-    provider: BotModelProviderType;
-    serviceSource: GptServiceSource;
+    model: string
+    temperature: number
+    prompt: string
+    maxTokens: number
+    provider: BotModelProviderType
+    serviceSource: GptServiceSource
 }
 
 export enum OpenAIModelIds {
@@ -68,10 +68,10 @@ export const botModelProviderOptions = [
 ]
 
 export interface GptServiceSource {
-    type: BotModelProviderType;
-    label: string;
-    endpoint: string;
-    apiKey: string;
+    type: BotModelProviderType
+    label: string
+    endpoint: string
+    apiKey: string
 }
 
 export const OpenAIOfficialServiceSource: GptServiceSource = {
@@ -91,22 +91,22 @@ export const GoogleGeminiOfficialServiceSource: GptServiceSource = {
 export const getInitialServiceSource = (type: BotModelProviderType): GptServiceSource => {
     switch (type) {
         case BotModelProviderType.OpenAI:
-            return OpenAIOfficialServiceSource;
+            return OpenAIOfficialServiceSource
         case BotModelProviderType.GoogleGemini:
-            return GoogleGeminiOfficialServiceSource;
+            return GoogleGeminiOfficialServiceSource
         default:
-            throw new Error('Unknown provider type');
+            throw new Error('Unknown provider type')
     }
 }
 
 export const getDefaultModel = (type: BotModelProviderType): string => {
     switch (type) {
         case BotModelProviderType.OpenAI:
-            return OpenAIModelIds.GPT35Turbo;
+            return OpenAIModelIds.GPT35Turbo
         case BotModelProviderType.GoogleGemini:
-            return GoogleGeminiModelIds.GeminiPro;
+            return GoogleGeminiModelIds.GeminiPro
         default:
-            throw new Error('Unknown provider type');
+            throw new Error('Unknown provider type')
     }
 }
 
@@ -141,6 +141,6 @@ export const botModelOptions = {
 }
 
 export type BotNodePreset = {
-    bot: Bot;
+    bot: Bot
 };
 

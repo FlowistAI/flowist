@@ -1,19 +1,19 @@
-import { Handle, NodeResizer, Position } from 'reactflow';
-import { XIcon } from '@primer/octicons-react';
-import './QueryBotNode.css';
-import { QueryBotNodeData } from "../../../types/query-node-types";
-import { querySessionsState } from '../../../states/query-states';
-import { useRecoilValue } from 'recoil';
-import { useNodeManager } from '../../../hooks/NodeManager';
-import { QueryBotDropDownMenu } from './QueryBotDropdownMenu';
-import { useEffect, useState } from 'react';
-import { sourceStyle, targetStyle } from '../../../constants/handle-styles';
-import { BotInfo } from '../../Chat';
-import { TextArea } from '../../TextArea';
-import { Button } from '@mui/joy';
-import { replacePrompt } from '../../../util/misc.util';
-import { useLLM } from '../../../services/llm-service/google-ai.service';
-import { useCurrentCommunicationNode } from '../../../hooks/NodeManager/useNodeManager';
+import { Handle, NodeResizer, Position } from 'reactflow'
+import { XIcon } from '@primer/octicons-react'
+import './QueryBotNode.css'
+import { QueryBotNodeData } from '../../../types/query-node-types'
+import { querySessionsState } from '../../../states/query-states'
+import { useRecoilValue } from 'recoil'
+import { useNodeManager } from '../../../hooks/NodeManager'
+import { QueryBotDropDownMenu } from './QueryBotDropdownMenu'
+import { useEffect, useState } from 'react'
+import { sourceStyle, targetStyle } from '../../../constants/handle-styles'
+import { BotInfo } from '../../Chat'
+import { TextArea } from '../../TextArea'
+import { Button } from '@mui/joy'
+import { replacePrompt } from '../../../util/misc.util'
+import { useLLM } from '../../../services/llm-service/google-ai.service'
+import { useCurrentCommunicationNode } from '../../../hooks/NodeManager/useNodeManager'
 
 export type QueryBotNodeProps = {
     data: QueryBotNodeData
@@ -24,7 +24,7 @@ export function QueryBotNode({ data, selected }: QueryBotNodeProps) {
     const { id } = data
     const { removeNode } = useNodeManager()
     const { signal, handle } = useCurrentCommunicationNode(id)
-    const session = useRecoilValue(querySessionsState).find(session => session.id === id);
+    const session = useRecoilValue(querySessionsState).find(session => session.id === id)
     const queryAI = useLLM(session?.bot.settings)
     const [input, setInput] = useState<string>('')
     const [output, setOutput] = useState<string>('')
@@ -37,7 +37,7 @@ export function QueryBotNode({ data, selected }: QueryBotNodeProps) {
                 setOutput(prev => prev + chunk)
             },
             onDone: (output: string) => {
-                console.log('[QueryBotNode] query done', output);
+                console.log('[QueryBotNode] query done', output)
 
                 signal?.('output', output)
             }
@@ -52,7 +52,7 @@ export function QueryBotNode({ data, selected }: QueryBotNodeProps) {
     }, [id, handle])
 
     if (!session) {
-        return null;
+        return null
     }
 
     return (
@@ -75,7 +75,7 @@ export function QueryBotNode({ data, selected }: QueryBotNodeProps) {
             <div className="chat-bot__header">
                 <QueryBotDropDownMenu sessionId={session.id} />
 
-                <span className="chat-bot__title">{session.bot.name ?? "Chat"}</span>
+                <span className="chat-bot__title">{session.bot.name ?? 'Chat'}</span>
                 <button className="chat-bot__close" onClick={() => removeNode(data.id)}>
                     <span>
                         <XIcon size={16} />
@@ -91,8 +91,8 @@ export function QueryBotNode({ data, selected }: QueryBotNodeProps) {
                             placeholder="Ask a question..."
                             onKeyDown={(e) => {
                                 if (e.key === 'Enter') {
-                                    handleQuery(input);
-                                    setInput('');
+                                    handleQuery(input)
+                                    setInput('')
                                 }
                             }}
                             value={input}
@@ -102,8 +102,8 @@ export function QueryBotNode({ data, selected }: QueryBotNodeProps) {
                             {/* clear */}
                             <Button
                                 onClick={() => {
-                                    setInput('');
-                                    setOutput('');
+                                    setInput('')
+                                    setOutput('')
                                 }}
                                 variant='outlined'
                             >
@@ -112,7 +112,7 @@ export function QueryBotNode({ data, selected }: QueryBotNodeProps) {
                             {/* query */}
                             <Button
                                 onClick={() => {
-                                    handleQuery(replacePrompt(session.bot.settings.prompt, input));
+                                    handleQuery(replacePrompt(session.bot.settings.prompt, input))
                                 }}
                             >
                                 Query
@@ -136,5 +136,5 @@ export function QueryBotNode({ data, selected }: QueryBotNodeProps) {
                 </div>
             </Handle>
         </div >
-    );
+    )
 }

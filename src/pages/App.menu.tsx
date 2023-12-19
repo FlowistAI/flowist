@@ -1,11 +1,11 @@
-import { PlusIcon } from "@primer/octicons-react";
-import { MenuItem } from "../components/ContextMenu";
-import { NodeManager } from "../hooks/NodeManager";
-import { AppNodeTypes } from "../constants/nodeTypes";
+import { PlusIcon } from '@primer/octicons-react'
+import { MenuItem } from '../components/ContextMenu'
+import { NodeManager } from '../hooks/NodeManager'
+import { AppNodeTypes } from '../constants/nodeTypes'
 
 export type MenuItemsCreator = (options: {
-    nodeManager: NodeManager,
-    cursor?: { x: number, y: number }
+    nodeManager: NodeManager
+    cursor?: { x: number; y: number }
 }) => MenuItem[]
 
 export const createMenuItems: MenuItemsCreator = (
@@ -36,5 +36,5 @@ export const createMenuItems: MenuItemsCreator = (
                 }
             ]
         },
-    ];
+    ]
 

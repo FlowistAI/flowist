@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
-import './ModelSettings.css';
+import React, { useState } from 'react'
+import './ModelSettings.css'
 
 const ModelSettings = () => {
-  const [globalPrompt, setGlobalPrompt] = useState('');
-  const [apiSource, setApiSource] = useState('official');
-  const [apiKey, setApiKey] = useState('');
-  const [defaultModel, setDefaultModel] = useState('GPT3.5');
-  const [customApiUrl, setCustomApiUrl] = useState('');
+  const [globalPrompt, setGlobalPrompt] = useState('')
+  const [apiSource, setApiSource] = useState('official')
+  const [apiKey, setApiKey] = useState('')
+  const [defaultModel, setDefaultModel] = useState('GPT3.5')
+  const [customApiUrl, setCustomApiUrl] = useState('')
 
   return (
     <div className="model-settings">
@@ -89,7 +89,7 @@ const ModelSettings = () => {
         </div>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default ModelSettings;
+export default ModelSettings

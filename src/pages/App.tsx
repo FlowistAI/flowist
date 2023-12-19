@@ -1,48 +1,48 @@
-import React, { useCallback, useRef, useState } from 'react';
-import ReactFlow, { Background, Controls, MiniMap, NodeMouseHandler, XYPosition } from 'reactflow';
-import 'reactflow/dist/style.css';
-import './App.css';
-import { FloatingMenu } from '../components/FloatingMenu';
-import { Optional } from '../types/types';
-import { COMPONENT_BY_NODE_TYPE } from '../constants/nodeTypes';
-import { useNodeManager } from '../hooks/NodeManager';
-import { useRecoilState } from 'recoil';
-import { ReactFlowInstanceState } from '../states/react-flow';
-import Toast from '../hooks/Toast/Toast';
-import { ContextMenu } from '../components/ContextMenu';
-import { createMenuItems as createMenuItems } from './App.menu';
-import { AsideMenu } from '../components/AsideMenu';
+import React, { useCallback, useRef, useState } from 'react'
+import ReactFlow, { Background, Controls, MiniMap, NodeMouseHandler, XYPosition } from 'reactflow'
+import 'reactflow/dist/style.css'
+import './App.css'
+import { FloatingMenu } from '../components/FloatingMenu'
+import { Optional } from '../types/types'
+import { COMPONENT_BY_NODE_TYPE } from '../constants/nodeTypes'
+import { useNodeManager } from '../hooks/NodeManager'
+import { useRecoilState } from 'recoil'
+import { ReactFlowInstanceState } from '../states/react-flow'
+import Toast from '../hooks/Toast/Toast'
+import { ContextMenu } from '../components/ContextMenu'
+import { createMenuItems as createMenuItems } from './App.menu'
+import { AsideMenu } from '../components/AsideMenu'
 
 function App() {
-  const [ctxMenuPos, setCtxMenuPos] = useState<Optional<XYPosition>>(undefined);
-  const [cvsCurPos, setCvsCurPos] = useState<Optional<XYPosition>>(undefined);
+  const [ctxMenuPos, setCtxMenuPos] = useState<Optional<XYPosition>>(undefined)
+  const [cvsCurPos, setCvsCurPos] = useState<Optional<XYPosition>>(undefined)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [reactFlowInstance, setReactFlowInstance] = useRecoilState(ReactFlowInstanceState);
+  const [reactFlowInstance, setReactFlowInstance] = useRecoilState(ReactFlowInstanceState)
 
   const onContextMenu = useCallback((event: React.MouseEvent<HTMLDivElement>) => {
-    event.preventDefault();
+    event.preventDefault()
     if (!reactFlowInstance) {
-      console.error('reactFlowInstance is undefined');
+      console.error('reactFlowInstance is undefined')
       return
     }
     const ctxMenuPos = {
       x: event.clientX,
       y: event.clientY,
     }
-    setCtxMenuPos(ctxMenuPos);
-    const cvsPos = reactFlowInstance.screenToFlowPosition(ctxMenuPos);
-    setCvsCurPos(cvsPos);
+    setCtxMenuPos(ctxMenuPos)
+    const cvsPos = reactFlowInstance.screenToFlowPosition(ctxMenuPos)
+    setCvsCurPos(cvsPos)
     // 显示上下文菜单
-  }, [reactFlowInstance]);
-  const reactFlowWrapper = useRef(null);
+  }, [reactFlowInstance])
+  const reactFlowWrapper = useRef(null)
 
   const onNodeContextMenu = useCallback<NodeMouseHandler>((event, node) => {
-    event.preventDefault();
-    console.log('node:', node);
+    event.preventDefault()
+    console.log('node:', node)
     // 显示上下文菜单
-  }, []);
+  }, [])
 
-  const nodeManager = useNodeManager();
+  const nodeManager = useNodeManager()
   const menuItems = createMenuItems({ nodeManager: nodeManager, cursor: cvsCurPos })
 
   return (
@@ -73,27 +73,27 @@ function App() {
             //FIXME: event.target should be the child of the react-flow div
             if (event.target instanceof Element && event.target.classList.contains('react-flow__edge')) {
               if (event.key === 'Delete') {
-                nodeManager.deleteSelectedEdges();
+                nodeManager.deleteSelectedEdges()
               }
             }
           }}
           onInit={(instance) => {
-            console.log('flow instance:', instance);
-            setReactFlowInstance(instance);
+            console.log('flow instance:', instance)
+            setReactFlowInstance(instance)
           }}
           onClick={
             () => {
-              setCtxMenuPos(undefined);
+              setCtxMenuPos(undefined)
             }
           }
           onDrag={
             () => {
-              setCtxMenuPos(undefined);
+              setCtxMenuPos(undefined)
             }
           }
           onMove={
             () => {
-              setCtxMenuPos(undefined);
+              setCtxMenuPos(undefined)
             }
           }
         >
@@ -107,7 +107,7 @@ function App() {
       </main>
 
     </div>
-  );
+  )
 }
 
-export default App;
+export default App

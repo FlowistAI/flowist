@@ -1,11 +1,11 @@
-import { Node } from "reactflow";
-import { AppNodeTypes } from "../constants/nodeTypes";
-import { Bot, SessionId, User } from "../types/bot-types";
-import { QueryBotNodeData, QuerySession } from "../types/query-node-types";
-import { BotNodePreset } from "../types/bot-types";
-import { ChatBotNodeService } from "./chat-node-service";
-import { SubManager } from "../hooks/NodeManager/SubManager";
-import { NodeIdGenerator } from "../util/id-generator";
+import { Node } from 'reactflow'
+import { AppNodeTypes } from '../constants/nodeTypes'
+import { Bot, SessionId, User } from '../types/bot-types'
+import { QueryBotNodeData, QuerySession } from '../types/query-node-types'
+import { BotNodePreset } from '../types/bot-types'
+import { ChatBotNodeService } from './chat-node-service'
+import { SubManager } from '../hooks/NodeManager/SubManager'
+import { NodeIdGenerator } from '../util/id-generator'
 
 export type CreateNodeOptions = {
     preset?: BotNodePreset
@@ -71,14 +71,14 @@ export class QueryBotNodeService implements SubManager<AppNodeTypes.QueryBot> {
             input: '',
             output: '',
         }
-        console.log('add query session', sess);
+        console.log('add query session', sess)
         this.sessionCreateHandler(sess)
 
         return sess
     }
 
     destroyNode(nodeId: string) {
-        console.log('remove query session', nodeId);
+        console.log('remove query session', nodeId)
         this.sessionDestroyHandler(nodeId)
     }
 
@@ -89,7 +89,7 @@ export class QueryBotNodeService implements SubManager<AppNodeTypes.QueryBot> {
     }
 
     restore(snapshot: QueryParitionSnapshot) {
-        console.log('QueryBot Partition restore', snapshot);
+        console.log('QueryBot Partition restore', snapshot)
         snapshot.sessions.forEach(sess => {
             this.sessionCreateHandler(sess)
         })

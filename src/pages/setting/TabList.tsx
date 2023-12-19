@@ -1,9 +1,9 @@
-import React, { FC } from 'react';
-import './TabList.css';
+import React, { FC } from 'react'
+import './TabList.css'
 
 export type TabListProps = {
-    activeTab: string;
-    setActiveTab: (tab: string) => void;
+    activeTab: string
+    setActiveTab: (tab: string) => void
 };
 
 export const TabList: FC<TabListProps> = ({ activeTab, setActiveTab }) => {
@@ -28,7 +28,7 @@ export const TabList: FC<TabListProps> = ({ activeTab, setActiveTab }) => {
                 关于
             </div>
         </div>
-    );
-};
+    )
+}
 
-export default TabList;
+export default TabList

@@ -1,31 +1,31 @@
-import React from 'react';
-import RcMenu, { Item as MenuItem } from 'rc-menu';
+import React from 'react'
+import RcMenu, { Item as MenuItem } from 'rc-menu'
 import RcDropdown from 'rc-dropdown'
 import 'rc-dropdown/assets/index.css'
 import 'rc-menu/assets/index.css'
 import './ContextMenu.rc.css'
-const menuWidth = 200;
+const menuWidth = 200
 
 // import './ContextMenu.css';
 export interface MenuItem {
-    key: string;
-    text: string;
-    icon?: React.ReactNode;
-    callback?: () => void;
-    children?: MenuItem[];
+    key: string
+    text: string
+    icon?: React.ReactNode
+    callback?: () => void
+    children?: MenuItem[]
 }
 
 export type SubMenuProps = {
-    items: MenuItem;
-    parentPos?: { x: number; y: number };
-    parentSize?: { width: number; height: number };
+    items: MenuItem
+    parentPos?: { x: number; y: number }
+    parentSize?: { width: number; height: number }
 };
 
 type ContextMenuProps = {
-    position?: { x: number; y: number };
-    isOpen?: boolean;
-    items: MenuItem[];
-    onClose?: () => void;
+    position?: { x: number; y: number }
+    isOpen?: boolean
+    items: MenuItem[]
+    onClose?: () => void
 };
 
 const IconText = ({ icon, text }: { icon?: React.ReactNode; text: string }) => (
@@ -35,11 +35,11 @@ const IconText = ({ icon, text }: { icon?: React.ReactNode; text: string }) => (
         </span>}
         {text}
     </>
-);
+)
 
 export const ContextMenu = ({ position, items, isOpen, onClose }: ContextMenuProps) => {
     if (!isOpen || !position) {
-        return null;
+        return null
     }
 
     type OverlayProvider = (onClose?: () => void) => React.ReactElement;
@@ -47,8 +47,8 @@ export const ContextMenu = ({ position, items, isOpen, onClose }: ContextMenuPro
     const overlayProvider: OverlayProvider = (onClose) => {
         const handleMenuItemClick = (item: MenuItem) => {
             if (item) {
-                item.callback?.();
-                onClose?.();
+                item.callback?.()
+                onClose?.()
             }
         }
         return (
@@ -64,21 +64,21 @@ export const ContextMenu = ({ position, items, isOpen, onClose }: ContextMenuPro
                                     </MenuItem>
                                 ))}
                             </RcMenu.SubMenu>
-                        );
+                        )
                     }
                     return (
                         <MenuItem key={item.key} onClick={() => handleMenuItemClick(item)}>
                             <IconText icon={item.icon} text={item.text} />
                         </MenuItem>
-                    );
+                    )
                 })}
             </RcMenu>
-        );
+        )
     }
 
     // fix screen bottom overflow
     if (position.y + 80 > window.innerHeight) {
-        position.y = window.innerHeight - 80;
+        position.y = window.innerHeight - 80
     }
 
 
@@ -96,5 +96,5 @@ export const ContextMenu = ({ position, items, isOpen, onClose }: ContextMenuPro
         >
             <div />
         </RcDropdown>
-    );
-};
+    )
+}

@@ -1,37 +1,37 @@
-import { Dropdown, MenuButton, ListItemDecorator, Modal, ModalDialog, ModalClose, Typography } from "@mui/joy"
-import { IconButton, Menu, MenuItem } from "@mui/joy"
-import { KebabHorizontalIcon } from "@primer/octicons-react"
-import { FC, useState } from "react"
-import SettingsIcon from '@mui/icons-material/Settings';
-import SaveAsIcon from '@mui/icons-material/SaveAs';
-import { useRecoilValue, useSetRecoilState } from "recoil";
-import { produce } from "immer";
-import { querySessionsState } from "../../../states/query-states";
-import BotSettingsForm from "../_common/BotSettingsForm";
-import { BotNodePreset } from "../../../types/bot-types";
-import { useToast } from "../../../hooks/Toast/useToast";
+import { Dropdown, MenuButton, ListItemDecorator, Modal, ModalDialog, ModalClose, Typography } from '@mui/joy'
+import { IconButton, Menu, MenuItem } from '@mui/joy'
+import { KebabHorizontalIcon } from '@primer/octicons-react'
+import { FC, useState } from 'react'
+import SettingsIcon from '@mui/icons-material/Settings'
+import SaveAsIcon from '@mui/icons-material/SaveAs'
+import { useRecoilValue, useSetRecoilState } from 'recoil'
+import { produce } from 'immer'
+import { querySessionsState } from '../../../states/query-states'
+import BotSettingsForm from '../_common/BotSettingsForm'
+import { BotNodePreset } from '../../../types/bot-types'
+import { useToast } from '../../../hooks/Toast/useToast'
 
 export type QueryBotDropDownMenuProps = {
     sessionId: string
 }
 export const QueryBotDropDownMenu: FC<QueryBotDropDownMenuProps> = ({ sessionId }) => {
-    const [open, setOpen] = useState<boolean>(false);
-    const session = useRecoilValue(querySessionsState).find(session => session.id === sessionId);
-    const setSessions = useSetRecoilState(querySessionsState);
+    const [open, setOpen] = useState<boolean>(false)
+    const session = useRecoilValue(querySessionsState).find(session => session.id === sessionId)
+    const setSessions = useSetRecoilState(querySessionsState)
     const toast = useToast()
     if (!session) {
-        console.log(`QueryBotDropDownMenu: session not found for id ${sessionId}, ignore if just deleted`);
+        console.log(`QueryBotDropDownMenu: session not found for id ${sessionId}, ignore if just deleted`)
         return null
     }
     const saveBotSettings = (values: BotNodePreset) => {
         setSessions((prev) => produce(prev, (draft) => {
-            const session = draft.find(s => s.id === sessionId);
+            const session = draft.find(s => s.id === sessionId)
             if (session) {
-                session.bot = values.bot;
+                session.bot = values.bot
             }
-        }));
+        }))
         toast({ type: 'success', content: 'Bot settings saved' })
-        setOpen(false);
+        setOpen(false)
     }
 
     const { bot } = session

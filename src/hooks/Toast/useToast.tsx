@@ -1,12 +1,12 @@
-import { useSetRecoilState } from 'recoil';
-import { toastState, ToastMessage } from './atoms';
+import { useSetRecoilState } from 'recoil'
+import { toastState, ToastMessage } from './atoms'
 
 export const useToast = (): ((message: ToastMessage) => void) => {
-    const setToast = useSetRecoilState(toastState);
+    const setToast = useSetRecoilState(toastState)
 
     const showToast = (message: ToastMessage) => {
-        setToast(message);
-    };
+        setToast(message)
+    }
 
-    return showToast;
-};
+    return showToast
+}

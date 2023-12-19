@@ -1,10 +1,10 @@
-import React from 'react';
-import './Chat.css';
-import { BotInfo } from './Chat';
-import { Button } from '@mui/joy';
-import { QuerySession } from '../types/query-node-types';
-import { TextArea } from './TextArea';
-import { replacePrompt } from '../util/misc.util';
+import React from 'react'
+import './Chat.css'
+import { BotInfo } from './Chat'
+import { Button } from '@mui/joy'
+import { QuerySession } from '../types/query-node-types'
+import { TextArea } from './TextArea'
+import { replacePrompt } from '../util/misc.util'
 
 
 interface ChatProps {
@@ -16,10 +16,10 @@ interface ChatProps {
 
 const QueryBot: React.FC<ChatProps> = ({ session, onQueryDone, input, setInput }) => {
 
-    const bot = session.bot;
-    const [output, setOutput] = React.useState<string>('');
+    const bot = session.bot
+    const [output, setOutput] = React.useState<string>('')
 
-    console.log('output', output);
+    console.log('output', output)
 
 
     const { output: modelOutput, query: onQuery } = useGoogleAI({
@@ -29,8 +29,8 @@ const QueryBot: React.FC<ChatProps> = ({ session, onQueryDone, input, setInput }
     })
 
     React.useEffect(() => {
-        setOutput(modelOutput);
-    }, [modelOutput]);
+        setOutput(modelOutput)
+    }, [modelOutput])
 
 
     return (
@@ -42,8 +42,8 @@ const QueryBot: React.FC<ChatProps> = ({ session, onQueryDone, input, setInput }
                     placeholder="Ask a question..."
                     onKeyDown={(e) => {
                         if (e.key === 'Enter') {
-                            onQuery(input);
-                            setInput('');
+                            onQuery(input)
+                            setInput('')
                         }
                     }}
                     value={input}
@@ -53,8 +53,8 @@ const QueryBot: React.FC<ChatProps> = ({ session, onQueryDone, input, setInput }
                     {/* clear */}
                     <Button
                         onClick={() => {
-                            setInput('');
-                            setOutput('');
+                            setInput('')
+                            setOutput('')
                         }}
                         variant='outlined'
                     >
@@ -63,7 +63,7 @@ const QueryBot: React.FC<ChatProps> = ({ session, onQueryDone, input, setInput }
                     {/* query */}
                     <Button
                         onClick={() => {
-                            onQuery(replacePrompt(bot.settings.prompt, input));
+                            onQuery(replacePrompt(bot.settings.prompt, input))
                         }}
                     >
                         Query
@@ -82,6 +82,6 @@ const QueryBot: React.FC<ChatProps> = ({ session, onQueryDone, input, setInput }
 
         </div>
     )
-};
+}
 
-export default QueryBot;
+export default QueryBot

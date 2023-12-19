@@ -1,12 +1,12 @@
-import { atom, useRecoilState } from 'recoil';
-import { ChatMessage, ChatSession } from "../types/chat-node-types";
-import { produce } from 'immer';
-import { useCallback, useMemo } from 'react';
+import { atom, useRecoilState } from 'recoil'
+import { ChatMessage, ChatSession } from '../types/chat-node-types'
+import { produce } from 'immer'
+import { useCallback, useMemo } from 'react'
 
 export const chatSessionsState = atom<ChatSession[]>({
     key: 'chatSessionsState',
     default: [],
-});
+})
 
 export type Setter<T> = (fn: (prev: T) => T) => void
 

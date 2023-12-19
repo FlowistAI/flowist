@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import './SystemSettings.css';
+import React, { useState } from 'react'
+import './SystemSettings.css'
 
 const SystemSettings = () => {
-  const [language, setLanguage] = useState('Chinese');
-  const [autoSave, setAutoSave] = useState(false);
+  const [language, setLanguage] = useState('Chinese')
+  const [autoSave, setAutoSave] = useState(false)
 
   return (
     <div className="system-settings">
@@ -28,7 +28,7 @@ const SystemSettings = () => {
         />
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default SystemSettings;
+export default SystemSettings

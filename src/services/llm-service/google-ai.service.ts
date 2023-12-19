@@ -1,10 +1,10 @@
-import { BotModelProviderType, BotSettings } from "../../types/bot-types";
-import { GoogleGenerativeAI } from '@google/generative-ai';
-import { ChatStreamOptions, QueryStreamOptions } from "./llm-service.types";
-import { OpenAIService } from "./open-ai.service";
-import { LLMService } from "./llm-service.types";
-import { useMemo } from "react";
-import { Optional } from "../../types/types";
+import { BotModelProviderType, BotSettings } from '../../types/bot-types'
+import { GoogleGenerativeAI } from '@google/generative-ai'
+import { ChatStreamOptions, QueryStreamOptions } from './llm-service.types'
+import { OpenAIService } from './open-ai.service'
+import { LLMService } from './llm-service.types'
+import { useMemo } from 'react'
+import { Optional } from '../../types/types'
 
 export class GoogleAIService implements LLMService {
 
@@ -12,37 +12,37 @@ export class GoogleAIService implements LLMService {
     }
 
     async queryStream(opts: QueryStreamOptions) {
-        const { input, onChunk, onDone } = opts;
-        const model = this.botSettings.model;
-        const apiKey = this.botSettings.serviceSource.apiKey;
-        const genAIInstance = new GoogleGenerativeAI(apiKey);
-        const generativeModel = genAIInstance.getGenerativeModel({ model });
+        const { input, onChunk, onDone } = opts
+        const model = this.botSettings.model
+        const apiKey = this.botSettings.serviceSource.apiKey
+        const genAIInstance = new GoogleGenerativeAI(apiKey)
+        const generativeModel = genAIInstance.getGenerativeModel({ model })
 
         const chat = generativeModel.startChat({
             history: [],
             generationConfig: {}
-        });
+        })
 
-        const { totalTokens } = await generativeModel.countTokens(input);
-        console.log('totalTokens', totalTokens);
+        const { totalTokens } = await generativeModel.countTokens(input)
+        console.log('totalTokens', totalTokens)
 
-        const result = await chat.sendMessageStream(input);
-        let concated = ""
+        const result = await chat.sendMessageStream(input)
+        let concated = ''
         for await (const chunk of result.stream) {
-            const chunkText = chunk.text();
-            concated += chunkText;
-            onChunk(chunkText);
+            const chunkText = chunk.text()
+            concated += chunkText
+            onChunk(chunkText)
         }
-        onDone(concated);
+        onDone(concated)
     }
 
     async chatStream(opts: ChatStreamOptions) {
-        const { input, onChunk, onDone, historyMessages } = opts;
+        const { input, onChunk, onDone, historyMessages } = opts
 
-        const model = this.botSettings.model;
-        const apiKey = this.botSettings.serviceSource.apiKey;
-        const genAIInstance = new GoogleGenerativeAI(apiKey);
-        const generativeModel = genAIInstance.getGenerativeModel({ model });
+        const model = this.botSettings.model
+        const apiKey = this.botSettings.serviceSource.apiKey
+        const genAIInstance = new GoogleGenerativeAI(apiKey)
+        const generativeModel = genAIInstance.getGenerativeModel({ model })
 
         const chat = generativeModel.startChat({
             history: historyMessages.map(({ content: message, isUser }) => ({
@@ -50,19 +50,19 @@ export class GoogleAIService implements LLMService {
                 parts: message
             })),
             generationConfig: {}
-        });
+        })
 
-        const { totalTokens } = await generativeModel.countTokens(input);
-        console.log('totalTokens', totalTokens);
+        const { totalTokens } = await generativeModel.countTokens(input)
+        console.log('totalTokens', totalTokens)
 
-        const result = await chat.sendMessageStream(input);
-        let concated = ""
+        const result = await chat.sendMessageStream(input)
+        let concated = ''
         for await (const chunk of result.stream) {
-            const chunkText = chunk.text();
-            concated += chunkText;
-            onChunk(chunkText);
+            const chunkText = chunk.text()
+            concated += chunkText
+            onChunk(chunkText)
         }
-        onDone(concated);
+        onDone(concated)
     }
 }
 
@@ -70,8 +70,8 @@ export class GoogleAIService implements LLMService {
 export const useLLM: (botSettings?: BotSettings) => Optional<LLMService> = (botSettings) => {
     return useMemo(() => {
         if (!botSettings) {
-            return undefined;
+            return undefined
         }
         return botSettings.serviceSource.type === BotModelProviderType.GoogleGemini ? new GoogleAIService(botSettings) : new OpenAIService(botSettings)
-    }, [botSettings]);
+    }, [botSettings])
 }

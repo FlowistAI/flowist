@@ -1,4 +1,4 @@
-import { Node } from "reactflow";
+import { Node } from 'reactflow'
 
 export const initNodes: Node[] = [
     // {
@@ -6,7 +6,7 @@ export const initNodes: Node[] = [
     //     data: { label: 'Node B' },
     //     position: { x: 100, y: 100 },
     // },
-];
+]
 
 export const initEdges = [
     // {
@@ -14,4 +14,4 @@ export const initEdges = [
     //     source: 'a',
     //     target: 'b',
     // },
-];
+]

@@ -1,18 +1,18 @@
-import { useContext } from "react";
-import { NodeManagerContext } from "./NodeManagerProvider";
+import { useContext } from 'react'
+import { NodeManagerContext } from './NodeManagerProvider'
 
 export const useNodeManager = () => {
-    const mgr = useContext(NodeManagerContext);
+    const mgr = useContext(NodeManagerContext)
 
     if (mgr === undefined) {
-        throw new Error('useNodeManager must be used within a NodeManagerProvider');
+        throw new Error('useNodeManager must be used within a NodeManagerProvider')
     }
 
-    return mgr;
-};
+    return mgr
+}
 
 export const useCurrentCommunicationNode = (id: string) => {
-    const mgr = useNodeManager();
+    const mgr = useNodeManager()
     const { handle, signal } = mgr.getCommunicationNode(id) ?? {}
     return { handle, signal }
 }

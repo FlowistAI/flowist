@@ -1,38 +1,38 @@
-import { useState } from "react";
-import { generateUUID } from "../util/id-generator";
+import { useState } from 'react'
+import { generateUUID } from '../util/id-generator'
 
 export type Todo = {
-    id: string;
-    content: string;
-    completed: boolean;
+    id: string
+    content: string
+    completed: boolean
 };
 
 const TodoItem: React.FC<{ todo: Todo }> = ({ todo }) => {
-    const { content, completed } = todo;
+    const { content, completed } = todo
     return (
         <div className='todo-item'>
             <input type='checkbox' checked={completed} />
             <span>{content}</span>
         </div>
-    );
+    )
 }
 
 export const TodoList: React.FC = () => {
-    const [todos, setTodos] = useState<Todo[]>([]);
-    const [newTodo, setNewTodo] = useState<string>('');
+    const [todos, setTodos] = useState<Todo[]>([])
+    const [newTodo, setNewTodo] = useState<string>('')
 
     const handleAddTodo = () => {
         if (!newTodo) {
-            return;
+            return
         }
         const todo: Todo = {
             id: generateUUID(),
             content: newTodo,
             completed: false,
-        };
-        setTodos([...todos, todo]);
-        setNewTodo('');
-    };
+        }
+        setTodos([...todos, todo])
+        setNewTodo('')
+    }
 
     return (
         <div className='todo-list'>
@@ -51,5 +51,5 @@ export const TodoList: React.FC = () => {
                 ))}
             </div>
         </div>
-    );
+    )
 }

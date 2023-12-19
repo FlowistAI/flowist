@@ -1,13 +1,13 @@
-import { ChatBotNode } from "../components/nodes/ChatBotNode/ChatBotNode";
-import { TextToSpeechNode } from "../components/TextToSpeechNode";
-import { QueryBotNode } from "../components/nodes/QueryBotNode/QueryBotNode";
-import { PortDefinition } from "../hooks/NodeManager/NodeManager";
+import { ChatBotNode } from '../components/nodes/ChatBotNode/ChatBotNode'
+import { TextToSpeechNode } from '../components/TextToSpeechNode'
+import { QueryBotNode } from '../components/nodes/QueryBotNode/QueryBotNode'
+import { PortDefinition } from '../hooks/NodeManager/NodeManager'
 
 export const COMPONENT_BY_NODE_TYPE = {
     'chat-bot': ChatBotNode,
     'query-bot': QueryBotNode,
     'text-to-speech': TextToSpeechNode,
-} as const;
+} as const
 
 
 export type AppNodeType = keyof typeof COMPONENT_BY_NODE_TYPE;
@@ -29,10 +29,10 @@ export const STANDARD_IO_PORTS = {
             id: 'output',
         }
     },
-} as const;
+} as const
 
 export const PORT_DEFINITIONS: Record<string, PortDefinition> = {
     'chat-bot': STANDARD_IO_PORTS,
     'text-to-speech': STANDARD_IO_PORTS,
     'query-bot': STANDARD_IO_PORTS,
-} as const;
+} as const

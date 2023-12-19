@@ -1,13 +1,13 @@
-import { atom } from 'recoil';
+import { atom } from 'recoil'
 
 export type ToastType = 'info' | 'warning' | 'success' | 'error';
 
 export interface ToastMessage {
-    type: ToastType;
-    content: string;
+    type: ToastType
+    content: string
 }
 
 export const toastState = atom<ToastMessage | null>({
     key: 'toastState',
     default: null,
-});
+})

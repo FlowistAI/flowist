@@ -1,21 +1,21 @@
-import { useFormik } from 'formik';
-import { Input, Select, Button, FormControl, Option, Textarea } from '@mui/joy';
+import { useFormik } from 'formik'
+import { Input, Select, Button, FormControl, Option, Textarea } from '@mui/joy'
 
-import { InputLabel } from '@mui/material';
-import { BotModelProviderType, botAvatarOptions, botModelOptions, botModelProviderOptions, getDefaultModel, getInitialServiceSource } from '../../../types/bot-types';
-import { BotNodePreset } from "../../../types/bot-types";
-import { FC } from 'react';
-import { produce } from 'immer';
+import { InputLabel } from '@mui/material'
+import { BotModelProviderType, botAvatarOptions, botModelOptions, botModelProviderOptions, getDefaultModel, getInitialServiceSource } from '../../../types/bot-types'
+import { BotNodePreset } from '../../../types/bot-types'
+import { FC } from 'react'
+import { produce } from 'immer'
 
 type Errors<T> = {
     [P in keyof T]?: T[P] extends object ? Errors<T[P]> : string;
 };
 
 const validate = (values: BotNodePreset) => {
-    const errors: Errors<BotNodePreset> = {};
+    const errors: Errors<BotNodePreset> = {}
 
     if (!values.bot.name) {
-        errors.bot = { ...errors.bot, name: 'Bot Name is required' };
+        errors.bot = { ...errors.bot, name: 'Bot Name is required' }
     }
 
     if (!Number.isInteger(values.bot.settings.maxTokens)) {
@@ -25,16 +25,16 @@ const validate = (values: BotNodePreset) => {
                 ...errors.bot?.settings ?? {},
                 maxTokens: 'Max Tokens must be an integer',
             },
-        };
+        }
     }
-    console.log("errors", errors);
+    console.log('errors', errors)
 
-    return errors;
-};
+    return errors
+}
 
 export type BotSettingsFormProps = {
-    initialValues: BotNodePreset;
-    onSubmit: (values: BotNodePreset) => void;
+    initialValues: BotNodePreset
+    onSubmit: (values: BotNodePreset) => void
 };
 
 const BotSettingsForm: FC<BotSettingsFormProps> = ({ initialValues, onSubmit }) => {
@@ -43,7 +43,7 @@ const BotSettingsForm: FC<BotSettingsFormProps> = ({ initialValues, onSubmit }) 
         initialValues,
         validate,
         onSubmit
-    });
+    })
 
     return (
         <form onSubmit={formik.handleSubmit} className='flex flex-col'>
@@ -81,15 +81,15 @@ const BotSettingsForm: FC<BotSettingsFormProps> = ({ initialValues, onSubmit }) 
                     name="bot.settings.provider"
                     value={formik.values.bot.settings.provider}
                     onChange={(_, newValue) => {
-                        if (!newValue) return;
+                        if (!newValue) return
                         const newValues = produce(formik.values, (draft) => {
-                            console.log("newValue", newValue);
+                            console.log('newValue', newValue)
 
-                            draft.bot.settings.provider = newValue as BotModelProviderType;
-                            draft.bot.settings.serviceSource = getInitialServiceSource(newValue as BotModelProviderType);
-                            draft.bot.settings.model = getDefaultModel(newValue as BotModelProviderType);
+                            draft.bot.settings.provider = newValue as BotModelProviderType
+                            draft.bot.settings.serviceSource = getInitialServiceSource(newValue as BotModelProviderType)
+                            draft.bot.settings.model = getDefaultModel(newValue as BotModelProviderType)
                         })
-                        formik.setValues(newValues);
+                        formik.setValues(newValues)
                     }}
                 >
                     {botModelProviderOptions.map((option) => (
@@ -187,7 +187,7 @@ const BotSettingsForm: FC<BotSettingsFormProps> = ({ initialValues, onSubmit }) 
                 Save
             </Button>
         </form>
-    );
-};
+    )
+}
 
-export default BotSettingsForm;
+export default BotSettingsForm
