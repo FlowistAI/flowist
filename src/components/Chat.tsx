@@ -11,7 +11,7 @@ import React, { useCallback, useEffect, useRef } from 'react'
 import { Bot } from '../types/bot-types'
 import { ChatMessage } from '../types/chat-node.types'
 import './Chat.css'
-import { MoreHoriz } from '@mui/icons-material'
+import { MoreHoriz, Send } from '@mui/icons-material'
 import { useChatSession } from '../states/chat-states'
 import { useClipboard } from '@nextui-org/use-clipboard'
 import { useToast } from '../hooks/Toast/useToast'
@@ -345,7 +345,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
                 onClick={handleSend}
                 disabled={realInput.trim() === '' || !allowSend}
             >
-                Send
+                <Send fontSize="small" /> <div className="pl-2 mt-1">Send</div>
             </Button>
         </div>
     )
