@@ -2,10 +2,9 @@ import React from 'react'
 import './Chat.css'
 import { BotInfo } from './Chat'
 import { Button } from '@mui/joy'
-import { QuerySession } from '../types/query-node-types'
+import { QuerySession } from '../types/query-node.types'
 import { TextArea } from './TextArea'
 import { replacePrompt } from '../util/misc.util'
-
 
 interface ChatProps {
     session: QuerySession
@@ -14,24 +13,26 @@ interface ChatProps {
     setInput: (input: string) => void
 }
 
-const QueryBot: React.FC<ChatProps> = ({ session, onQueryDone, input, setInput }) => {
-
+const QueryBot: React.FC<ChatProps> = ({
+    session,
+    onQueryDone,
+    input,
+    setInput,
+}) => {
     const bot = session.bot
     const [output, setOutput] = React.useState<string>('')
 
     console.log('output', output)
 
-
     const { output: modelOutput, query: onQuery } = useGoogleAI({
         apiKey: session.bot.settings.serviceSource.apiKey,
         model: session.bot.settings.model,
-        onDone: onQueryDone ?? (() => { }),
+        onDone: onQueryDone ?? (() => {}),
     })
 
     React.useEffect(() => {
         setOutput(modelOutput)
     }, [modelOutput])
-
 
     return (
         <div className="chat h-full">
@@ -56,7 +57,7 @@ const QueryBot: React.FC<ChatProps> = ({ session, onQueryDone, input, setInput }
                             setInput('')
                             setOutput('')
                         }}
-                        variant='outlined'
+                        variant="outlined"
                     >
                         Clear
                     </Button>
@@ -72,14 +73,13 @@ const QueryBot: React.FC<ChatProps> = ({ session, onQueryDone, input, setInput }
                 {/* output */}
                 <div className="textarea-fix flex-1 flex flex-col max-h-full">
                     <TextArea
-                        className='flex-1'
+                        className="flex-1"
                         value={output}
                         placeholder="Answer..."
                         readOnly
                     />
                 </div>
             </div>
-
         </div>
     )
 }

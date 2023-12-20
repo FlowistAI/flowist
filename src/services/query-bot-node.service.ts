@@ -1,7 +1,7 @@
 import { Node } from 'reactflow'
 import { AppNodeTypes } from '../constants/nodeTypes'
 import { Bot, SessionId, User } from '../types/bot-types'
-import { QueryBotNodeData, QuerySession } from '../types/query-node-types'
+import { QueryBotNodeData, QuerySession } from '../types/query-node.types'
 import { BotNodePreset } from '../types/bot-types'
 import { ChatBotNodeService } from './chat-bot-node.service'
 import { SubManager } from '../hooks/NodeManager/SubManager'

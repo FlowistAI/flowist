@@ -1,7 +1,7 @@
 import { Handle, NodeResizer, Position } from 'reactflow'
 import { XIcon } from '@primer/octicons-react'
 import './QueryBotNode.css'
-import { QueryBotNodeData } from '../../../types/query-node-types'
+import { QueryBotNodeData } from '../../../types/query-node.types'
 import { querySessionsState } from '../../../states/query-states'
 import { useRecoilValue } from 'recoil'
 import { useNodeManager } from '../../../hooks/NodeManager'
