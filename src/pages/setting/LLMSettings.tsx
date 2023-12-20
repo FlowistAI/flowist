@@ -1,29 +1,52 @@
 import { FC, forwardRef, useImperativeHandle, useState } from 'react'
 import './LLMSettings.css'
 import { SettingRefAttrs } from './SettingRefAttrs'
+import { useAtom } from 'jotai'
+import {
+    systemNameAtom,
+    systemLanguageAtom,
+    systemThemeAtom,
+    systemAutoSaveAtom,
+} from '../../hooks/Settings'
 
 const ModelSettings: FC<React.RefAttributes<SettingRefAttrs>> = forwardRef(
     (_, ref) => {
-        const [globalPrompt, setGlobalPrompt] = useState('')
-        const [apiSource, setApiSource] = useState('official')
-        const [apiKey, setApiKey] = useState('')
-        const [defaultModel, setDefaultModel] = useState('GPT3.5')
-        const [customApiUrl, setCustomApiUrl] = useState('')
+        // const [defaultPrompt, setDefaultPrompt] = useState('')
+        // const [apiSource, setApiSource] = useState('official')
+        // const [apiKey, setApiKey] = useState('')
+        // const [defaultModel, setDefaultModel] = useState('GPT3.5')
+        // const [customApiUrl, setCustomApiUrl] = useState('')
+
+        const [systemName, setSystemName] = useAtom(systemNameAtom)
+        const [systemLanguage, setSystemLanguage] = useAtom(systemLanguageAtom)
+        const [systemTheme, setSystemTheme] = useAtom(systemThemeAtom)
+        const [systemAutoSave, setSystemAutoSave] = useAtom(systemAutoSaveAtom)
+
+        const [systemNameLocal, setSystemNameLocal] = useState(systemName)
+        const [systemLanguageLocal, setSystemLanguageLocal] =
+            useState(systemLanguage)
+        const [systemThemeLocal, setSystemThemeLocal] = useState(systemTheme)
+        const [systemAutoSaveLocal, setSystemAutoSaveLocal] =
+            useState(systemAutoSave)
 
         useImperativeHandle(ref, () => ({
             save() {
-                console.log('llm, save')
+                setSystemName(systemNameLocal)
+                setSystemLanguage(systemLanguageLocal)
+                setSystemTheme(systemThemeLocal)
+                setSystemAutoSave(systemAutoSaveLocal)
+                console.log('system, save')
             },
         }))
 
         return (
             <div className="model-settings">
                 <div className="setting-item">
-                    <label htmlFor="global-prompt">全局默认提示词：</label>
+                    <label htmlFor="default-prompt">全局默认提示词：</label>
                     <textarea
-                        id="global-prompt"
-                        value={globalPrompt}
-                        onChange={(e) => setGlobalPrompt(e.target.value)}
+                        id="default-prompt"
+                        value={defaultPrompt}
+                        onChange={(e) => setDefaultPrompt(e.target.value)}
                     />
                 </div>
                 <div className="setting-item">

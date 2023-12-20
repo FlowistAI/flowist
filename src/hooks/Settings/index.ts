@@ -78,6 +78,10 @@ export type SettingsData = {
 
 export type SettingsSection = keyof SettingsData
 
+/**
+ * System section
+ */
+
 export const systemNameAtom = atom<string>('GIDE')
 
 export const systemLanguageAtom = atom<SupportedLang>('en')
@@ -85,6 +89,12 @@ export const systemLanguageAtom = atom<SupportedLang>('en')
 export const systemThemeAtom = atom<Theme>('light')
 
 export const systemAutoSaveAtom = atom<boolean>(true)
+
+/**
+ * LLM section
+ */
+
+export const llmDefaultPromptAtom = atom<string>('')
 
 export const llmDefaultProviderAtom = atom<LLMProvider>('OpenAI')
 
@@ -108,6 +118,10 @@ export const llmProvidersAtom = atom<LLMProviderSettings>({
     },
 })
 
+/**
+ * TTS section
+ */
+
 export const ttsDefaultProviderAtom = atom<TTSProvider>('TencentTTS')
 
 export const ttsProvidersAtom = atom<TTSProviderSettings>({
@@ -130,6 +144,7 @@ export const systemSettingAtom = atom<SettingsData>((get) => ({
         autoSave: get(systemAutoSaveAtom),
     },
     llm: {
+        defaultPrompt: get(llmDefaultPromptAtom),
         defaultProvider: get(llmDefaultProviderAtom),
         providers: get(llmProvidersAtom),
     },

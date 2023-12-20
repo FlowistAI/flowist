@@ -9,7 +9,7 @@ const AboutTab: FC<React.RefAttributes<SettingRefAttrs>> = forwardRef(
 
         useImperativeHandle(ref, () => ({
             save() {
-                console.log('about, save')
+                console.log('about, nothing to save')
             },
         }))
 

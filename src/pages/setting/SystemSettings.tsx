@@ -16,13 +16,26 @@ const SystemSettings: FC<React.RefAttributes<SettingRefAttrs>> = forwardRef(
         const [autoSave, setAutoSave] = useAtom(systemAutoSaveAtom)
         const [autoSaveLocal, setAutoSaveLocal] = useState(autoSave)
 
+        const [systemName, setSystemName] = useAtom(systemNameAtom)
+        const [systemLanguage, setSystemLanguage] = useAtom(systemLanguageAtom)
+        const [systemTheme, setSystemTheme] = useAtom(systemThemeAtom)
+        const [systemAutoSave, setSystemAutoSave] = useAtom(systemAutoSaveAtom)
+
+        const [systemNameLocal, setSystemNameLocal] = useState(systemName)
+        const [systemLanguageLocal, setSystemLanguageLocal] =
+            useState(systemLanguage)
+        const [systemThemeLocal, setSystemThemeLocal] = useState(systemTheme)
+        const [systemAutoSaveLocal, setSystemAutoSaveLocal] =
+            useState(systemAutoSave)
+
         useImperativeHandle(ref, () => ({
             save() {
-                setLanguage(languageLocal)
-                setAutoSave(autoSaveLocal)
+                setSystemName(systemNameLocal)
+                setSystemLanguage(systemLanguageLocal)
+                setSystemTheme(systemThemeLocal)
+                setSystemAutoSave(systemAutoSaveLocal)
                 console.log('system, save')
             },
-        }))
 
         const handleLangSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
             setLanguageLocal(e.target.value as SupportedLang)
