@@ -1,6 +1,13 @@
 import { Node } from 'reactflow'
 import { AppNodeTypes } from '../constants/nodeTypes'
-import { Bot, BotModelProviderType, GoogleGeminiModelIds, GoogleGeminiOfficialServiceSource, SessionId, User } from '../types/bot-types'
+import {
+    Bot,
+    BotModelProviderType,
+    GoogleAIModelIds,
+    GoogleGeminiOfficialServiceSource,
+    SessionId,
+    User,
+} from '../types/bot-types'
 import { ChatBotNodeData, ChatSession } from '../types/chat-node.types'
 import { BotNodePreset } from '../types/bot-types'
 import { SubManager } from '../hooks/NodeManager/SubManager'
@@ -24,12 +31,12 @@ export class ChatBotNodeService implements SubManager<AppNodeTypes.ChatBot> {
         name: 'Gemini Pro',
         avatar: 'google-ai.png',
         settings: {
-            model: GoogleGeminiModelIds.GeminiPro,
+            model: GoogleAIModelIds.GeminiPro,
             temperature: 0.7,
             maxTokens: 0,
             prompt: '',
-            provider: BotModelProviderType.GoogleGemini,
-            serviceSource: GoogleGeminiOfficialServiceSource
+            provider: BotModelProviderType.GoogleAI,
+            serviceSource: GoogleGeminiOfficialServiceSource,
         },
     }
 
@@ -100,9 +107,8 @@ export class ChatBotNodeService implements SubManager<AppNodeTypes.ChatBot> {
     restore(snapshot: ChatSession[]) {
         console.log('ChatBot Partition restore', snapshot)
 
-        snapshot.forEach(sess => {
+        snapshot.forEach((sess) => {
             this.sessionCreateHandler(sess)
         })
     }
 }
-

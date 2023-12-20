@@ -7,9 +7,7 @@ import { useMemo } from 'react'
 import { Optional } from '../../types/types'
 
 export class GoogleAIService implements LLMService {
-
-    constructor(private botSettings: BotSettings) {
-    }
+    constructor(private botSettings: BotSettings) {}
 
     async queryStream(opts: QueryStreamOptions) {
         const { input, onChunk, onDone } = opts
@@ -20,7 +18,7 @@ export class GoogleAIService implements LLMService {
 
         const chat = generativeModel.startChat({
             history: [],
-            generationConfig: {}
+            generationConfig: {},
         })
 
         const { totalTokens } = await generativeModel.countTokens(input)
@@ -49,9 +47,9 @@ export class GoogleAIService implements LLMService {
         const chat = generativeModel.startChat({
             history: historyMessages.map(({ content: message, isUser }) => ({
                 role: isUser ? 'user' : 'model',
-                parts: message
+                parts: message,
             })),
-            generationConfig: {}
+            generationConfig: {},
         })
 
         const { totalTokens } = await generativeModel.countTokens(input)
@@ -70,13 +68,16 @@ export class GoogleAIService implements LLMService {
     }
 }
 
-
-export const useLLM: (botSettings?: BotSettings) => Optional<LLMService> = (botSettings) => {
+export const useLLM: (botSettings?: BotSettings) => Optional<LLMService> = (
+    botSettings,
+) => {
     return useMemo(() => {
         if (!botSettings) {
             return undefined
         }
 
-        return botSettings.serviceSource.type === BotModelProviderType.GoogleGemini ? new GoogleAIService(botSettings) : new OpenAIService(botSettings)
+        return botSettings.serviceSource.type === BotModelProviderType.GoogleAI
+            ? new GoogleAIService(botSettings)
+            : new OpenAIService(botSettings)
     }, [botSettings])
 }

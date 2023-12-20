@@ -2,11 +2,9 @@ import { CommunicationNode, GraphTelecom } from './GraphTelecom'
 
 describe('CommunicationNode', () => {
     let node: CommunicationNode
-    let onSignalMock: jest.Mock
 
     beforeEach(() => {
-        onSignalMock = jest.fn()
-        node = new CommunicationNode('node1', onSignalMock)
+        node = new CommunicationNode('node1')
     })
 
     test('addInputPort should add a new input port', () => {
@@ -33,14 +31,14 @@ describe('Telecommunicator', () => {
 
     beforeEach(() => {
         telecommunicator = new GraphTelecom()
-        node1 = new CommunicationNode('node1', jest.fn())
-        node2 = new CommunicationNode('node2', jest.fn())
+        node1 = new CommunicationNode('node1')
+        node2 = new CommunicationNode('node2')
         telecommunicator.registerNode(node1)
         telecommunicator.registerNode(node2)
     })
 
     test('addNode should add a new node', () => {
-        const node3 = new CommunicationNode('node3', jest.fn())
+        const node3 = new CommunicationNode('node3')
         telecommunicator.registerNode(node3)
         expect(telecommunicator['nodes'].size).toBe(3)
     })

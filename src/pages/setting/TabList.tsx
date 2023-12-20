@@ -4,7 +4,7 @@ import './TabList.css'
 export type TabListProps = {
     activeTab: string
     setActiveTab: (tab: string) => void
-};
+}
 
 export const TabList: FC<TabListProps> = ({ activeTab, setActiveTab }) => {
     return (
@@ -13,19 +13,19 @@ export const TabList: FC<TabListProps> = ({ activeTab, setActiveTab }) => {
                 className={`tab ${activeTab === 'system' ? 'active' : ''}`}
                 onClick={() => setActiveTab('system')}
             >
-                系统设置
+                System
             </div>
             <div
                 className={`tab ${activeTab === 'model' ? 'active' : ''}`}
                 onClick={() => setActiveTab('model')}
             >
-                模型设置
+                LLM
             </div>
             <div
                 className={`tab ${activeTab === 'about' ? 'active' : ''}`}
                 onClick={() => setActiveTab('about')}
             >
-                关于
+                About
             </div>
         </div>
     )
