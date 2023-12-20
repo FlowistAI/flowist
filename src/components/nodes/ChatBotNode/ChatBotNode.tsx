@@ -3,7 +3,7 @@ import { XIcon } from '@primer/octicons-react'
 
 import { Handle, NodeResizer, Position } from 'reactflow'
 import { BotInfo, MessageInput, MessageList } from '../../Chat'
-import { ChatBotNodeData } from '../../../types/chat-node-types'
+import { ChatBotNodeData } from '../../../types/chat-node.types'
 import { useChatSession } from '../../../states/chat-states'
 import { useNodeManager } from '../../../hooks/NodeManager'
 import { ChatBotDropDownMenu } from './ChatBotDropdownMenu'
@@ -41,13 +41,13 @@ export function ChatBotNode({ data, selected }: ChatBotNodeProps) {
         [id, signal],
     )
 
-    const { session, addMessage, updateMessage, messages } = useChatSession(id)
+    const chat = useChatSession(id)
 
     const botMessageIdRef = useRef<string | undefined>()
-    const llmService = useLLMService(session?.bot.settings)
+    const llmService = useLLMService(chat.session?.bot.settings)
     const handleSend = useCallback(
         async (message: string) => {
-            if (!session) {
+            if (!chat.session) {
                 console.error('session is undefined')
 
                 return
@@ -55,27 +55,27 @@ export function ChatBotNode({ data, selected }: ChatBotNodeProps) {
 
             console.log('on send message', message)
             // add user message to the list
-            addMessage({
+            chat.addMessage({
                 id: generateUUID(),
                 content: message,
                 isUser: true,
-                avatar: session.user.avatar,
+                avatar: chat.session.user.avatar,
             })
 
             // add bot message to the list and store the id in the ref
             const id = generateUUID()
             botMessageIdRef.current = id
-            addMessage({
+            chat.addMessage({
                 id,
                 content: '',
                 isUser: false,
-                avatar: session.bot.avatar,
+                avatar: chat.session.bot.avatar,
             })
 
             // send message to the bot
             await llmService?.chatStream({
                 input: message,
-                historyMessages: messages,
+                historyMessages: chat.contextMessages,
                 onChunk: (chunk: string) => {
                     const botMessageId = botMessageIdRef.current
 
@@ -87,17 +87,17 @@ export function ChatBotNode({ data, selected }: ChatBotNodeProps) {
                         return
                     }
 
-                    updateMessage(botMessageId, (prev) => prev + chunk)
+                    chat.updateMessage(botMessageId, (prev) => prev + chunk)
                 },
                 onDone: (all: string) => {
                     onReplyDone(all)
                 },
             })
         },
-        [session, addMessage, llmService, messages, updateMessage, onReplyDone],
+        [chat, llmService, onReplyDone],
     )
 
-    if (!session) {
+    if (!chat.session) {
         return <Invalid />
     }
 
@@ -124,10 +124,10 @@ export function ChatBotNode({ data, selected }: ChatBotNodeProps) {
                 <div className="ml-2 pointer-events-none">Input</div>
             </Handle>
             <div className="chat-bot__header">
-                <ChatBotDropDownMenu sessionId={session.id} />
+                <ChatBotDropDownMenu sessionId={chat.session.id} />
 
                 <span className="chat-bot__title">
-                    {session.bot.name ?? 'Chat'}
+                    {chat.session.bot.name ?? 'Chat'}
                 </span>
                 <button
                     className="chat-bot__close"
@@ -140,8 +140,11 @@ export function ChatBotNode({ data, selected }: ChatBotNodeProps) {
             </div>
             <div className="chat-bot__content nowheel cursor-default">
                 <div className="chat">
-                    <BotInfo bot={session.bot} />
-                    <MessageList messages={messages} />
+                    <BotInfo bot={chat.session.bot} />
+                    <MessageList
+                        sessionId={chat.session.id}
+                        messages={chat.rawMessages}
+                    />
                     <MessageInput
                         onSendMessage={handleSend}
                         input={input}

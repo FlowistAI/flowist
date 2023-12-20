@@ -9,9 +9,13 @@ import {
 } from '@mui/joy'
 import React, { useCallback, useEffect, useRef } from 'react'
 import { Bot } from '../types/bot-types'
-import { ChatMessage } from '../types/chat-node-types'
+import { ChatMessage } from '../types/chat-node.types'
 import './Chat.css'
 import { MoreHoriz } from '@mui/icons-material'
+import { useChatSession } from '../states/chat-states'
+import { useClipboard } from '@nextui-org/use-clipboard'
+import { useToast } from '../hooks/Toast/useToast'
+import { useModal } from '../hooks/Modal/usePromptModal'
 
 export interface AvatarProps {
     src: string
@@ -49,48 +53,212 @@ export const BotInfo: React.FC<BotInfoProps> = ({ bot }) => (
     </div>
 )
 
+type MessageMenuActionHandler = (
+    messageId: string,
+    action: MessageMenuAction,
+) => void
+
 export interface MessageProps {
     message: ChatMessage
     isUser: boolean
+    onAction?: MessageMenuActionHandler
 }
 
 const textAreaStyle = { flex: 1 } as React.CSSProperties
 
-export const MessageMenu: React.FC = () => {
+export enum MessageMenuAction {
+    Copy = 'Copy',
+    Edit = 'Edit',
+    Clear = 'Clear',
+    InsertContextDelimiterAbove = 'Insert context delimiter above',
+    InsertContextDelimiterBelow = 'Insert context delimiter below',
+    ClearMessagesAbove = 'Clear messages above',
+    ClearMessagesBelow = 'Clear messages below',
+}
+
+export const MessageMenuActions = Object.values(MessageMenuAction)
+
+export type MessageMenuProps = {
+    message: ChatMessage
+    onAction?: MessageMenuActionHandler
+}
+
+export const MessageMenu: React.FC<MessageMenuProps> = (props) => {
     return (
         <Dropdown>
             <MenuButton variant="plain">
                 <MoreHoriz />
             </MenuButton>
             <Menu>
-                <MenuItem>Copy</MenuItem>
-                <MenuItem>Edit</MenuItem>
-                <MenuItem>Set context delimiter above</MenuItem>
-                <MenuItem>Set context delimiter below</MenuItem>
-                <MenuItem>Clear</MenuItem>
-                <MenuItem>Clear messages above</MenuItem>
-                <MenuItem>Clear messages below</MenuItem>
+                {MessageMenuActions.map((action) => (
+                    <MenuItem
+                        onClick={() =>
+                            props.onAction?.(props.message.id, action)
+                        }
+                        key={action}
+                    >
+                        {action}
+                    </MenuItem>
+                ))}
             </Menu>
         </Dropdown>
     )
 }
 
-export const Message: React.FC<MessageProps> = ({ message, isUser }) => (
-    <div className={`message max-w-full ${isUser ? 'own' : ''}`}>
-        {!isUser && <Avatar src={message.avatar} />}
-        {isUser && <MessageMenu />}
-        <div className="message-content break-words	 min-w-0">
-            {message.content}
-        </div>
-        {isUser && <Avatar src={message.avatar} />}
-    </div>
+export const Message: React.FC<MessageProps> = ({
+    message,
+    isUser,
+    onAction,
+}) => (
+    <>
+        {message.content === '---' ? (
+            // delimiter
+            <div className="message flex items-center">
+                <hr className="flex-1 border-gray-300 border-1 border-dashed" />
+                <span className="px-4 text-gray-500">Context Cleared</span>
+                <hr className="flex-1 border-gray-300 border-1 border-dashed" />
+            </div>
+        ) : (
+            <div className={`message max-w-full ${isUser ? 'own' : ''}`}>
+                {!isUser && <Avatar src={message.avatar} />}
+                {isUser && (
+                    <MessageMenu message={message} onAction={onAction} />
+                )}
+                <div className="message-content break-words	 min-w-0">
+                    {message.content}
+                </div>
+                {isUser && <Avatar src={message.avatar} />}
+            </div>
+        )}
+    </>
 )
 
+const useMessageMenuActionHandler = (sessionId: string) => {
+    const sess = useChatSession(sessionId)
+
+    const { copy, error } = useClipboard()
+    const toast = useToast()
+    const modal = useModal()
+
+    const handleAction = useCallback(
+        (messageId: string, action: MessageMenuAction) => {
+            const message = sess.getMessage(messageId)
+            if (!message) {
+                console.error('Message not found', messageId)
+
+                return
+            }
+
+            switch (action) {
+                case MessageMenuAction.Copy: {
+                    const showErr = (error: Error) =>
+                        toast({
+                            type: 'error',
+                            content:
+                                'Failed to copy message' +
+                                error.message.toString(),
+                        })
+
+                    if (error) {
+                        showErr(error)
+
+                        return
+                    }
+
+                    copy(message.content)
+
+                    if (error) {
+                        showErr(error)
+
+                        return
+                    }
+
+                    toast({
+                        type: 'success',
+                        content: 'Message copied',
+                    })
+
+                    break
+                }
+
+                case MessageMenuAction.Edit: {
+                    modal.promptModal({
+                        title: 'Edit message',
+                        type: 'textarea',
+                        prompt: 'Input new message content',
+                        defaultValue: message.content,
+                        onOk(value) {
+                            sess.updateMessage(messageId, () => value)
+                            toast({
+                                type: 'success',
+                                content: 'Message updated',
+                            })
+                        },
+                    })
+                    break
+                }
+
+                case MessageMenuAction.Clear: {
+                    sess.deleteMessage(messageId)
+                    toast({
+                        type: 'success',
+                        content: 'Message deleted',
+                    })
+                    break
+                }
+
+                case MessageMenuAction.InsertContextDelimiterAbove: {
+                    sess.insertMessage({
+                        message: {
+                            id: 'context-delimiter',
+                            content: '---',
+                            isUser: true,
+                            avatar: '',
+                        },
+                        beforeMessageId: messageId,
+                    })
+                    break
+                }
+
+                case MessageMenuAction.InsertContextDelimiterBelow: {
+                    sess.insertMessage({
+                        message: {
+                            id: 'context-delimiter',
+                            content: '---',
+                            isUser: true,
+                            avatar: '',
+                        },
+                        afterMessageId: messageId,
+                    })
+                    break
+                }
+
+                case MessageMenuAction.ClearMessagesAbove: {
+                    sess.clearMessageBefore(messageId)
+                    break
+                }
+
+                case MessageMenuAction.ClearMessagesBelow: {
+                    sess.clearMessageAfter(messageId)
+                    break
+                }
+            }
+        },
+        [copy, error, sess, toast],
+    )
+
+    return handleAction
+}
+
 export interface MessageListProps {
+    sessionId: string
     messages: ChatMessage[]
 }
 
-export const MessageList: React.FC<MessageListProps> = ({ messages }) => {
+export const MessageList: React.FC<MessageListProps> = ({
+    sessionId,
+    messages,
+}) => {
     const messagesEndRef = useRef<HTMLDivElement>(null)
 
     const scrollToBottom = () => {
@@ -101,13 +269,16 @@ export const MessageList: React.FC<MessageListProps> = ({ messages }) => {
         scrollToBottom()
     }, [messages])
 
+    const handleMessageMenuAction = useMessageMenuActionHandler(sessionId)
+
     return (
         <div className="messages nodrag">
-            {messages.map((message, index) => (
+            {messages.map((message) => (
                 <Message
-                    key={index}
+                    key={message.id}
                     message={message}
                     isUser={message.isUser}
+                    onAction={handleMessageMenuAction}
                 />
             ))}
             <div ref={messagesEndRef} />

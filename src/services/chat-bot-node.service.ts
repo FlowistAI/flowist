@@ -1,7 +1,7 @@
 import { Node } from 'reactflow'
 import { AppNodeTypes } from '../constants/nodeTypes'
 import { Bot, BotModelProviderType, GoogleGeminiModelIds, GoogleGeminiOfficialServiceSource, SessionId, User } from '../types/bot-types'
-import { ChatBotNodeData, ChatSession } from '../types/chat-node-types'
+import { ChatBotNodeData, ChatSession } from '../types/chat-node.types'
 import { BotNodePreset } from '../types/bot-types'
 import { SubManager } from '../hooks/NodeManager/SubManager'
 import { NodeIdGenerator } from '../util/id-generator'
