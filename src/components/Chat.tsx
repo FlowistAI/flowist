@@ -55,7 +55,7 @@ export const BotInfo: React.FC<BotInfoProps> = ({ bot }) => (
 
 type MessageMenuActionHandler = (
     messageId: string,
-    action: MessageMenuAction,
+    action: MessageMenuActionType,
 ) => void
 
 export interface MessageProps {
@@ -66,17 +66,18 @@ export interface MessageProps {
 
 const textAreaStyle = { flex: 1 } as React.CSSProperties
 
-export enum MessageMenuAction {
-    Copy = 'Copy',
-    Edit = 'Edit',
-    Clear = 'Clear',
-    InsertContextDelimiterAbove = 'Insert context delimiter above',
-    InsertContextDelimiterBelow = 'Insert context delimiter below',
-    ClearMessagesAbove = 'Clear messages above',
-    ClearMessagesBelow = 'Clear messages below',
-}
+export const MessageMenuActions = {
+    Copy: 'Copy',
+    Edit: 'Edit',
+    Delete: 'Delete',
+    InsertContextDelimiterAbove: 'Insert context delimiter above',
+    InsertContextDelimiterBelow: 'Insert context delimiter below',
+    ClearMessagesAbove: 'Clear messages above',
+    ClearMessagesBelow: 'Clear messages below',
+} as const
 
-export const MessageMenuActions = Object.values(MessageMenuAction)
+export type MessageMenuActionType =
+    (typeof MessageMenuActions)[keyof typeof MessageMenuActions]
 
 export type MessageMenuProps = {
     message: ChatMessage
@@ -90,7 +91,7 @@ export const MessageMenu: React.FC<MessageMenuProps> = (props) => {
                 <MoreHoriz />
             </MenuButton>
             <Menu>
-                {MessageMenuActions.map((action) => (
+                {Object.values(MessageMenuActions).map((action) => (
                     <MenuItem
                         onClick={() =>
                             props.onAction?.(props.message.id, action)
@@ -127,6 +128,9 @@ export const Message: React.FC<MessageProps> = ({
                 <div className="message-content break-words	 min-w-0">
                     {message.content}
                 </div>
+                {!isUser && (
+                    <MessageMenu message={message} onAction={onAction} />
+                )}
                 {isUser && <Avatar src={message.avatar} />}
             </div>
         )}
@@ -141,7 +145,7 @@ const useMessageMenuActionHandler = (sessionId: string) => {
     const modal = useModal()
 
     const handleAction = useCallback(
-        (messageId: string, action: MessageMenuAction) => {
+        (messageId: string, action: MessageMenuActionType) => {
             const message = sess.getMessage(messageId)
             if (!message) {
                 console.error('Message not found', messageId)
@@ -150,7 +154,7 @@ const useMessageMenuActionHandler = (sessionId: string) => {
             }
 
             switch (action) {
-                case MessageMenuAction.Copy: {
+                case MessageMenuActions.Copy: {
                     const showErr = (error: Error) =>
                         toast({
                             type: 'error',
@@ -181,7 +185,7 @@ const useMessageMenuActionHandler = (sessionId: string) => {
                     break
                 }
 
-                case MessageMenuAction.Edit: {
+                case MessageMenuActions.Edit: {
                     modal.promptModal({
                         title: 'Edit message',
                         type: 'textarea',
@@ -198,7 +202,7 @@ const useMessageMenuActionHandler = (sessionId: string) => {
                     break
                 }
 
-                case MessageMenuAction.Clear: {
+                case MessageMenuActions.Delete: {
                     sess.deleteMessage(messageId)
                     toast({
                         type: 'success',
@@ -207,7 +211,7 @@ const useMessageMenuActionHandler = (sessionId: string) => {
                     break
                 }
 
-                case MessageMenuAction.InsertContextDelimiterAbove: {
+                case MessageMenuActions.InsertContextDelimiterAbove: {
                     sess.insertMessage({
                         message: {
                             id: 'context-delimiter',
@@ -220,7 +224,7 @@ const useMessageMenuActionHandler = (sessionId: string) => {
                     break
                 }
 
-                case MessageMenuAction.InsertContextDelimiterBelow: {
+                case MessageMenuActions.InsertContextDelimiterBelow: {
                     sess.insertMessage({
                         message: {
                             id: 'context-delimiter',
@@ -233,18 +237,18 @@ const useMessageMenuActionHandler = (sessionId: string) => {
                     break
                 }
 
-                case MessageMenuAction.ClearMessagesAbove: {
+                case MessageMenuActions.ClearMessagesAbove: {
                     sess.clearMessageBefore(messageId)
                     break
                 }
 
-                case MessageMenuAction.ClearMessagesBelow: {
+                case MessageMenuActions.ClearMessagesBelow: {
                     sess.clearMessageAfter(messageId)
                     break
                 }
             }
         },
-        [copy, error, sess, toast],
+        [copy, error, modal, sess, toast],
     )
 
     return handleAction
