@@ -47,6 +47,10 @@ export function ChatBotNode({ data, selected }: ChatBotNodeProps) {
     const llmService = useLLMService(chat.session?.bot.settings)
     const handleSend = useCallback(
         async (message: string) => {
+            if (!message) {
+                return
+            }
+
             if (!chat.session) {
                 console.error('session is undefined')
 
@@ -61,6 +65,11 @@ export function ChatBotNode({ data, selected }: ChatBotNodeProps) {
                 isUser: true,
                 avatar: chat.session.user.avatar,
             })
+
+            // do not send a delimiter
+            if (message === '---') {
+                return
+            }
 
             // add bot message to the list and store the id in the ref
             const id = generateUUID()

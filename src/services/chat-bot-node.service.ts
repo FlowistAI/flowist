@@ -2,12 +2,12 @@ import { Node } from 'reactflow'
 import { AppNodeTypes } from '../constants/nodeTypes'
 import {
     Bot,
-    BotModelProviderType,
-    GoogleAIModelIds,
     GoogleGeminiOfficialServiceSource,
     SessionId,
     User,
 } from '../types/bot-types'
+import { LLMProviders } from "../hooks/Settings/types"
+import { GoogleAIModelIds } from "../hooks/Settings/types"
 import { ChatBotNodeData, ChatSession } from '../types/chat-node.types'
 import { BotNodePreset } from '../types/bot-types'
 import { SubManager } from '../hooks/NodeManager/SubManager'
@@ -35,7 +35,7 @@ export class ChatBotNodeService implements SubManager<AppNodeTypes.ChatBot> {
             temperature: 0.7,
             maxTokens: 0,
             prompt: '',
-            provider: BotModelProviderType.GoogleAI,
+            provider: LLMProviders.GoogleAI,
             serviceSource: GoogleGeminiOfficialServiceSource,
         },
     }

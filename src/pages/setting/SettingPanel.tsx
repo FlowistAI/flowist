@@ -3,7 +3,7 @@ import SystemSettings from './SystemSettings'
 import ModelSettings from './LLMSettings'
 import AboutTab from './AboutTab'
 import './SettingPanel.css'
-import { SettingsSection } from '../../hooks/Settings'
+import { SettingsSection } from '../../hooks/Settings/types'
 import { SettingRefAttrs } from './SettingRefAttrs'
 import { useToast } from '../../hooks/Toast/useToast'
 
@@ -41,7 +41,7 @@ const SettingPanel: FC<SettingPanelProps> = forwardRef(({ activeTab }, ref) => {
     }))
 
     return (
-        <div className="setting-panel">
+        <div className="setting-panel overflow-auto">
             <Hide cond={activeTab == 'system'}>
                 <SystemSettings ref={refSystem} />
             </Hide>

@@ -1,68 +1,44 @@
-import { FC, forwardRef, useImperativeHandle, useState } from 'react'
+import { FC, forwardRef } from 'react'
 import './SystemSettings.css'
 import { useAtom } from 'jotai'
 import {
-    SupportedLang,
     systemAutoSaveAtom,
     systemLanguageAtom,
-} from '../../hooks/Settings'
+    systemNameAtom,
+    systemThemeAtom,
+} from '../../hooks/Settings/states'
+import { SystemSection, systemSectionSchema } from '../../hooks/Settings/types'
 import { SettingRefAttrs } from './SettingRefAttrs'
+import { SystemSettingsForm } from './SystemSettings.form'
 
 const SystemSettings: FC<React.RefAttributes<SettingRefAttrs>> = forwardRef(
     (_, ref) => {
-        const [language, setLanguage] = useAtom(systemLanguageAtom)
-        const [languageLocal, setLanguageLocal] =
-            useState<SupportedLang>(language)
-        const [autoSave, setAutoSave] = useAtom(systemAutoSaveAtom)
-        const [autoSaveLocal, setAutoSaveLocal] = useState(autoSave)
-
         const [systemName, setSystemName] = useAtom(systemNameAtom)
         const [systemLanguage, setSystemLanguage] = useAtom(systemLanguageAtom)
         const [systemTheme, setSystemTheme] = useAtom(systemThemeAtom)
         const [systemAutoSave, setSystemAutoSave] = useAtom(systemAutoSaveAtom)
 
-        const [systemNameLocal, setSystemNameLocal] = useState(systemName)
-        const [systemLanguageLocal, setSystemLanguageLocal] =
-            useState(systemLanguage)
-        const [systemThemeLocal, setSystemThemeLocal] = useState(systemTheme)
-        const [systemAutoSaveLocal, setSystemAutoSaveLocal] =
-            useState(systemAutoSave)
-
-        useImperativeHandle(ref, () => ({
-            save() {
-                setSystemName(systemNameLocal)
-                setSystemLanguage(systemLanguageLocal)
-                setSystemTheme(systemThemeLocal)
-                setSystemAutoSave(systemAutoSaveLocal)
-                console.log('system, save')
-            },
-
-        const handleLangSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
-            setLanguageLocal(e.target.value as SupportedLang)
+        const handleSave = (values: SystemSection) => {
+            console.log('system, save')
+            setSystemName(values.name)
+            setSystemLanguage(values.language)
+            setSystemTheme(values.theme)
+            setSystemAutoSave(values.autoSave)
         }
 
         return (
             <div className="system-settings">
-                <div className="setting-item">
-                    <label htmlFor="language-select">Language</label>
-                    <select
-                        id="language-select"
-                        value={languageLocal}
-                        onChange={handleLangSelect}
-                    >
-                        <option value="zh-CN">简体中文</option>
-                        <option value="en">English</option>
-                    </select>
-                </div>
-                <div className="setting-item">
-                    <label htmlFor="auto-save-checkbox">Auto Save</label>
-                    <input
-                        id="auto-save-checkbox"
-                        type="checkbox"
-                        checked={autoSaveLocal}
-                        onChange={(e) => setAutoSaveLocal(e.target.checked)}
-                    />
-                </div>
+                <SystemSettingsForm
+                    ref={ref}
+                    initialValues={{
+                        name: systemName,
+                        language: systemLanguage,
+                        theme: systemTheme,
+                        autoSave: systemAutoSave,
+                    }}
+                    validationSchema={systemSectionSchema}
+                    onSubmit={handleSave}
+                />
             </div>
         )
     },

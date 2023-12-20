@@ -125,7 +125,7 @@ export const Message: React.FC<MessageProps> = ({
                 {isUser && (
                     <MessageMenu message={message} onAction={onAction} />
                 )}
-                <div className="message-content break-words	 min-w-0">
+                <div className="message-content break-words whitespace-break-spaces min-w-0">
                     {message.content}
                 </div>
                 {!isUser && (

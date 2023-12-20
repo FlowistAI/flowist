@@ -1,82 +1,14 @@
 import { atom } from 'jotai'
+import { LLMProvider } from './types'
 import {
-    GoogleAIModelId,
-    BotModelProvider as LLMProvider,
-    OpenAIModelId,
-} from '../../types/bot-types'
-
-export type BaseLLMSettings = {
-    label: string // Provider display name
-}
-
-export type OpenAILLMSettings = BaseLLMSettings & {
-    endpoint: string
-    apiKey: string
-    model: OpenAIModelId
-    temperature: number
-    prompt: string
-    maxTokens: number
-}
-
-export type GoggleAILLMSettings = BaseLLMSettings & {
-    apiKey: string
-    model: GoogleAIModelId
-    temperature: number
-    prompt: string
-    maxTokens: number
-}
-
-export type LLMSettings<TProvider extends LLMProvider> =
-    TProvider extends 'OpenAI'
-        ? OpenAILLMSettings
-        : TProvider extends 'GoogleAI'
-        ? GoggleAILLMSettings
-        : never
-
-export type TencentTTSSettings = {
-    appId: string
-    secretId: string
-    secretKey: string
-}
-
-export type TTSProvider = 'TencentTTS'
-
-export type TTSSettings<TProvider extends TTSProvider> =
-    TProvider extends 'TencentTTS' ? TencentTTSSettings : never
-
-export type Theme = 'light' | 'dark'
-
-export type SupportedLang = 'zh-CN' | 'en' | 'fr' | 'jp'
-
-export type LLMProviderSettings = {
-    [K in LLMProvider]: LLMSettings<K>
-}
-
-export type TTSProviderSettings = {
-    [K in TTSProvider]: TTSSettings<K>
-}
-
-export type SettingsData = {
-    system: {
-        name: string
-        language: SupportedLang // zh-CN, en, fr, jp
-        theme: Theme // light, dark
-        autoSave: boolean
-    }
-    llm: {
-        defaultProvider: LLMProvider | undefined
-        providers: LLMProviderSettings
-    }
-    tts: {
-        defaultProvider: string | undefined
-        providers: TTSProviderSettings
-    }
-    about: {
-        version: string
-    }
-}
-
-export type SettingsSection = keyof SettingsData
+    SupportedLang,
+    Theme,
+    LLMProviderSettings,
+    TTSProvider,
+    TTSProviderSettings,
+    TTSSettings,
+    SettingsData,
+} from './types'
 
 /**
  * System section
@@ -106,7 +38,7 @@ export const llmProvidersAtom = atom<LLMProviderSettings>({
         model: 'gpt-3.5-turbo',
         temperature: 0.9,
         prompt: '',
-        maxTokens: 150,
+        maxTokens: 0,
     },
     GoogleAI: {
         label: 'Google AI',
@@ -114,7 +46,7 @@ export const llmProvidersAtom = atom<LLMProviderSettings>({
         model: 'gemini-pro',
         temperature: 0.9,
         prompt: '',
-        maxTokens: 150,
+        maxTokens: 0,
     },
 })
 
