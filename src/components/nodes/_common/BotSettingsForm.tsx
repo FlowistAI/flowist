@@ -2,7 +2,8 @@ import { useFormik } from 'formik'
 import { Input, Select, Button, FormControl, Option, Textarea } from '@mui/joy'
 
 import { InputLabel } from '@mui/material'
-import { BotModelProviderType, botAvatarOptions, botModelOptions, botModelProviderOptions, getDefaultModel, getInitialServiceSource } from '../../../types/bot-types'
+import { botAvatarOptions, botModelOptions, llmProviderOptions, getDefaultModel, getInitialServiceSource } from '../../../types/bot-types'
+import { LLMProviders } from "../../../hooks/Settings/types"
 import { BotNodePreset } from '../../../types/bot-types'
 import { FC } from 'react'
 import { produce } from 'immer'
@@ -82,7 +83,7 @@ const BotSettingsForm: FC<BotSettingsFormProps> = ({ initialValues, onSubmit }) 
                     name="bot.settings.provider"
                     value={formik.values.bot.settings.provider}
                     onChange={(_, newValue) => {
-                        if (!newValue) {return}
+                        if (!newValue) { return }
 
                         const newValues = produce(formik.values, (draft) => {
                             console.log('newValue', newValue)
@@ -94,7 +95,7 @@ const BotSettingsForm: FC<BotSettingsFormProps> = ({ initialValues, onSubmit }) 
                         formik.setValues(newValues)
                     }}
                 >
-                    {botModelProviderOptions.map((option) => (
+                    {llmProviderOptions.map((option) => (
                         <Option key={option.value} value={option.value}>
                             {option.label}
                         </Option>

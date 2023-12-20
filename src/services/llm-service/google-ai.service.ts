@@ -1,4 +1,5 @@
-import { BotModelProviderType, BotSettings } from '../../types/bot-types'
+import { BotSettings } from '../../types/bot-types'
+import { LLMProviders } from "../../hooks/Settings/types"
 import { GoogleGenerativeAI } from '@google/generative-ai'
 import { ChatStreamOptions, QueryStreamOptions } from './llm-service.types'
 import { OpenAIService } from './open-ai.service'
@@ -7,7 +8,7 @@ import { useMemo } from 'react'
 import { Optional } from '../../types/types'
 
 export class GoogleAIService implements LLMService {
-    constructor(private botSettings: BotSettings) {}
+    constructor(private botSettings: BotSettings) { }
 
     async queryStream(opts: QueryStreamOptions) {
         const { input, onChunk, onDone } = opts
@@ -76,7 +77,7 @@ export const useLLM: (botSettings?: BotSettings) => Optional<LLMService> = (
             return undefined
         }
 
-        return botSettings.serviceSource.type === BotModelProviderType.GoogleAI
+        return botSettings.serviceSource.type === LLMProviders.GoogleAI
             ? new GoogleAIService(botSettings)
             : new OpenAIService(botSettings)
     }, [botSettings])

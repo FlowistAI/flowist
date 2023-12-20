@@ -1,7 +1,8 @@
 import { useAtomValue } from 'jotai'
-import { versionAtom } from '../../hooks/Settings'
+import { versionAtom } from '../../hooks/Settings/states'
 import { FC, forwardRef, useImperativeHandle } from 'react'
 import { SettingRefAttrs } from './SettingRefAttrs'
+import { Typography } from '@mui/joy'
 
 const AboutTab: FC<React.RefAttributes<SettingRefAttrs>> = forwardRef(
     (_, ref) => {
@@ -9,24 +10,27 @@ const AboutTab: FC<React.RefAttributes<SettingRefAttrs>> = forwardRef(
 
         useImperativeHandle(ref, () => ({
             save() {
-                console.log('about, save')
+                console.log('about, nothing to save')
             },
         }))
 
         return (
             <div className="about-tab">
-                <h1>GIDE</h1>
-                <p>版本：{version}</p>
+                <Typography level="h1">GIDE</Typography>
+                <p>Version: {version}</p>
                 <p>
-                    作者：
+                    Author:
                     <a
+                        className='text-blue-500 hover:underline ml-2'
                         href="https://github.com/pluveto"
                         target="_blank"
                         rel="noreferrer"
                     >
                         Zijing Zhang
                     </a>
-                    from Incolore Team
+                    <span className="ml-2">
+                        from Incolore Team
+                    </span>
                 </p>
             </div>
         )

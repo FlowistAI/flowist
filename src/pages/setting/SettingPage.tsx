@@ -2,7 +2,7 @@ import { FC, useRef, useState } from 'react'
 import TabList from './TabList'
 import SettingPanel from './SettingPanel'
 import './SettingPage.css'
-import { SettingsSection } from '../../hooks/Settings'
+import { SettingsSection } from '../../hooks/Settings/types'
 import { Button } from '@mui/joy'
 import { SettingRefAttrs } from './SettingRefAttrs'
 
@@ -21,12 +21,12 @@ const SettingPage: FC<SettingPageProps> = ({ onClose }) => {
 
     return (
         <div className="h-full flex flex-col">
-            <div className="setting-page flex-1">
+            <div className="setting-page flex-1 overflow-auto">
                 <TabList activeTab={activeTab} setActiveTab={setActiveTab} />
                 <SettingPanel ref={panelRef} activeTab={activeTab} />
             </div>
 
-            <div className="flex items-center justify-end gap-2">
+            <div className="flex items-center justify-end gap-2 pt-4">
                 <Button color="danger" onClick={onClose}>
                     Close
                 </Button>

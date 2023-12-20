@@ -1,3 +1,6 @@
+import { LLMProvider, LLMProviders } from '../hooks/Settings/types'
+import { OpenAIModelIds, GoogleAIModelIds } from '../hooks/Settings/types'
+
 export type Participant = {
     type: 'bot' | 'user'
     name: string
@@ -6,7 +9,7 @@ export type Participant = {
 
 export type Bot = Participant & {
     type: 'bot'
-    settings: BotSettings<BotModelProvider>
+    settings: BotSettings<LLMProvider>
 }
 
 export type User = Participant & {
@@ -15,30 +18,14 @@ export type User = Participant & {
 
 export type SessionId = string
 
-export type BotSettings<T extends BotModelProvider> = {
+export type BotSettings<T extends LLMProvider> = {
     model: string
     temperature: number
     prompt: string
     maxTokens: number
-    provider: BotModelProvider
+    provider: LLMProvider
     serviceSource: LLMServiceSource<T>
 }
-
-export const OpenAIModelIds = {
-    GPT35Turbo: 'gpt-3.5-turbo',
-    GPT35: 'gpt-3.5',
-    GPT4: 'gpt-4',
-} as const
-
-export type OpenAIModelId = (typeof OpenAIModelIds)[keyof typeof OpenAIModelIds]
-
-export const GoogleAIModelIds = {
-    GeminiPro: 'gemini-pro',
-    TextBison001: 'text-bison-001',
-} as const
-
-export type GoogleAIModelId =
-    (typeof GoogleAIModelIds)[keyof typeof GoogleAIModelIds]
 
 export const botAvatarOptions = [
     {
@@ -55,31 +42,18 @@ export const botAvatarOptions = [
     },
 ]
 
-// export enum BotModelProviderType {
-//     OpenAI = 'openai',
-//     GoogleAI = 'google-ai',
-// }
-
-export const BotModelProviderType = {
-    OpenAI: 'OpenAI',
-    GoogleAI: 'GoogleAI',
-} as const
-
-export type BotModelProvider =
-    typeof BotModelProviderType[keyof typeof BotModelProviderType]
-
-export const botModelProviderOptions = [
+export const llmProviderOptions = [
     {
         label: 'OpenAI (or compatible)',
-        value: BotModelProviderType.OpenAI,
+        value: LLMProviders.OpenAI,
     },
     {
         label: 'Google Gemini',
-        value: BotModelProviderType.GoogleAI,
+        value: LLMProviders.GoogleAI,
     },
 ] as const
 
-export interface LLMServiceSource<T extends BotModelProvider> {
+export interface LLMServiceSource<T extends LLMProvider> {
     type: T
     label: string
     endpoint: string
@@ -87,37 +61,37 @@ export interface LLMServiceSource<T extends BotModelProvider> {
 }
 
 export const OpenAIOfficialServiceSource: LLMServiceSource<'OpenAI'> = {
-    type: BotModelProviderType.OpenAI,
+    type: LLMProviders.OpenAI,
     label: 'OpenAI (official)',
     endpoint: 'http://localhost:8080/https://api.openai.com/v1',
     apiKey: import.meta.env.VITE_OPENAI_API_KEY || '',
 } as const
 
 export const GoogleGeminiOfficialServiceSource: LLMServiceSource<'GoogleAI'> = {
-    type: BotModelProviderType.GoogleAI,
+    type: LLMProviders.GoogleAI,
     label: 'Google Gemini (official)',
     endpoint: 'https://generativelanguage.googleapis.com/v1beta3',
     apiKey: import.meta.env.VITE_GOOGLE_GEMINI_API_KEY || '',
 } as const
 
 export const getInitialServiceSource = (
-    type: BotModelProvider,
-): LLMServiceSource<BotModelProvider> => {
+    type: LLMProvider,
+): LLMServiceSource<LLMProvider> => {
     switch (type) {
-        case BotModelProviderType.OpenAI:
+        case LLMProviders.OpenAI:
             return OpenAIOfficialServiceSource
-        case BotModelProviderType.GoogleAI:
+        case LLMProviders.GoogleAI:
             return GoogleGeminiOfficialServiceSource
         default:
             throw new Error('Unknown provider type')
     }
 }
 
-export const getDefaultModel = (type: BotModelProvider): string => {
+export const getDefaultModel = (type: LLMProvider): string => {
     switch (type) {
-        case BotModelProviderType.OpenAI:
+        case LLMProviders.OpenAI:
             return OpenAIModelIds.GPT35Turbo
-        case BotModelProviderType.GoogleAI:
+        case LLMProviders.GoogleAI:
             return GoogleAIModelIds.GeminiPro
         default:
             throw new Error('Unknown provider type')
@@ -125,7 +99,7 @@ export const getDefaultModel = (type: BotModelProvider): string => {
 }
 
 export const botModelOptions = {
-    [BotModelProviderType.OpenAI]: [
+    [LLMProviders.OpenAI]: [
         {
             label: 'GPT-3.5 Turbo',
             value: OpenAIModelIds.GPT35Turbo,
@@ -139,7 +113,7 @@ export const botModelOptions = {
             value: OpenAIModelIds.GPT4,
         },
     ],
-    [BotModelProviderType.GoogleAI]: [
+    [LLMProviders.GoogleAI]: [
         {
             label: 'gemini-pro',
             value: GoogleAIModelIds.GeminiPro,

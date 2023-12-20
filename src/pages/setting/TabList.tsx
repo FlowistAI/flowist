@@ -1,6 +1,6 @@
 import { FC } from 'react'
 import './TabList.css'
-import { SettingsSection } from '../../hooks/Settings'
+import { SettingsSection } from '../../hooks/Settings/types'
 
 export type TabListProps = {
     activeTab: SettingsSection
