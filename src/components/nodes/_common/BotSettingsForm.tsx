@@ -82,7 +82,8 @@ const BotSettingsForm: FC<BotSettingsFormProps> = ({ initialValues, onSubmit }) 
                     name="bot.settings.provider"
                     value={formik.values.bot.settings.provider}
                     onChange={(_, newValue) => {
-                        if (!newValue) return
+                        if (!newValue) {return}
+
                         const newValues = produce(formik.values, (draft) => {
                             console.log('newValue', newValue)
 

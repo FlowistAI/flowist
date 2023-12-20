@@ -13,9 +13,11 @@ module.exports = {
   parser: '@typescript-eslint/parser',
   plugins: ['unused-imports', 'react-refresh'],
   rules: {
+    'no-dupe-keys': 'error',
     'semi': ['error', 'never'],
     'quotes': ['error', 'single'],
     "curly": ["error", "all"],
+    "no-useless-rename": "error",
     '@typescript-eslint/member-delimiter-style': [
       'error',
       {

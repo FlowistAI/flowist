@@ -112,7 +112,7 @@ export class CommunicationNode {
         this.eventEmitter.on(port, handler)
     }
 
-    handle(port: string, handler: (data: any) => void) {
+    handleSignal(port: string, handler: (data: any) => void) {
         this.eventEmitter.on(port, handler)
 
         return () => {

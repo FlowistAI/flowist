@@ -10,7 +10,7 @@ import { useRecoilState } from 'recoil'
 import { ReactFlowInstanceState } from '../states/react-flow'
 import Toast from '../hooks/Toast/Toast'
 import { ContextMenu } from '../components/ContextMenu'
-import { createMenuItems as createMenuItems } from './App.menu'
+import { createMenuItems } from './App.menu'
 import { AsideMenu } from '../components/AsideMenu'
 
 function App() {
