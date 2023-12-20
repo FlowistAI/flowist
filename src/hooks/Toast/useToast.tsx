@@ -4,9 +4,10 @@ import { toastState, ToastMessage } from './atoms'
 export const useToast = (): ((message: ToastMessage) => void) => {
     const setToast = useSetRecoilState(toastState)
 
-    const showToast = (message: ToastMessage) => {
-        setToast(message)
+    const pushMessage = (message: ToastMessage) => {
+        message.content += ' - ' + new Date().toLocaleTimeString()
+        setToast((prev) => [...prev, message])
     }
 
-    return showToast
+    return pushMessage
 }
