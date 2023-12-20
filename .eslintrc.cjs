@@ -11,10 +11,11 @@ module.exports = {
   ],
   ignorePatterns: ['dist', '.eslintrc.cjs'],
   parser: '@typescript-eslint/parser',
-  plugins: ['react-refresh'],
+  plugins: ['unused-imports', 'react-refresh'],
   rules: {
     'semi': ['error', 'never'],
     'quotes': ['error', 'single'],
+    "curly": ["error", "all"],
     '@typescript-eslint/member-delimiter-style': [
       'error',
       {
@@ -44,5 +45,11 @@ module.exports = {
       { 'blankLine': 'always', 'prev': '*', 'next': 'switch' },
       { 'blankLine': 'always', 'prev': 'block-like', 'next': '*' },
     ],
+    "no-unused-vars": "off", // or "@typescript-eslint/no-unused-vars": "off",
+    "unused-imports/no-unused-imports": "error",
+    "unused-imports/no-unused-vars": [
+      "warn",
+      { "vars": "all", "varsIgnorePattern": "^_", "args": "after-used", "argsIgnorePattern": "^_" }
+    ]
   }
 };
