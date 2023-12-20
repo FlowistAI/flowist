@@ -1,15 +1,37 @@
-import React, { useState } from 'react'
+import { FC, useRef, useState } from 'react'
 import TabList from './TabList'
 import SettingPanel from './SettingPanel'
 import './SettingPage.css'
+import { SettingsSection } from '../../hooks/Settings'
+import { Button } from '@mui/joy'
+import { SettingRefAttrs } from './SettingRefAttrs'
 
-const SettingPage = () => {
-    const [activeTab, setActiveTab] = useState('system')
+type SettingPageProps = {
+    onClose: () => void
+}
+
+const SettingPage: FC<SettingPageProps> = ({ onClose }) => {
+    const [activeTab, setActiveTab] = useState<SettingsSection>('system')
+    const panelRef = useRef<SettingRefAttrs>(null)
+
+    const handleSave = () => {
+        console.log('setting page, save')
+        panelRef.current?.save()
+    }
 
     return (
-        <div className="setting-page">
-            <TabList activeTab={activeTab} setActiveTab={setActiveTab} />
-            <SettingPanel activeTab={activeTab} />
+        <div className="h-full flex flex-col">
+            <div className="setting-page flex-1">
+                <TabList activeTab={activeTab} setActiveTab={setActiveTab} />
+                <SettingPanel ref={panelRef} activeTab={activeTab} />
+            </div>
+
+            <div className="flex items-center justify-end gap-2">
+                <Button color="danger" onClick={onClose}>
+                    Close
+                </Button>
+                <Button onClick={handleSave}>Save</Button>
+            </div>
         </div>
     )
 }

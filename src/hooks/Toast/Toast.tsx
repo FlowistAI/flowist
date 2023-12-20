@@ -3,7 +3,13 @@ import { useRecoilValue, useResetRecoilState } from 'recoil'
 import { Snackbar } from '@mui/joy'
 import { toastState } from './atoms'
 import { InfoIcon } from '@primer/octicons-react'
-import { CheckOutlined, ErrorOutline, InfoOutlined, WarningOutlined } from '@mui/icons-material'
+import {
+    CheckOutlined,
+    ErrorOutline,
+    InfoOutlined,
+    WarningOutlined,
+} from '@mui/icons-material'
+import { Portal } from '@mui/material'
 
 type Color = 'primary' | 'neutral' | 'danger' | 'success' | 'warning'
 const severityMap: Record<string, Color> = {
@@ -36,24 +42,26 @@ const Toast: React.FC = () => {
     const icon = iconMap[severity] ?? <InfoIcon size={24} />
 
     return (
-        <Snackbar
-            anchorOrigin={
-                {
+        <Portal>
+            <Snackbar
+                sx={{
+                    zIndex: 99999,
+                }}
+                anchorOrigin={{
                     vertical: 'top',
                     horizontal: 'center',
-                }
-            }
-            open={!!message
-            }
-            autoHideDuration={3000}
-            onClose={handleClose}
-            variant='soft'
-            color={severity}
-            key={message.content}
-        >
-            {icon}
-            {message.content}
-        </Snackbar >
+                }}
+                open={!!message}
+                autoHideDuration={3000}
+                onClose={handleClose}
+                variant="soft"
+                color={severity}
+                key={message.content}
+            >
+                {icon}
+                {message.content}
+            </Snackbar>
+        </Portal>
     )
 }
 

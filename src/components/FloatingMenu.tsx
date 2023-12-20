@@ -1,6 +1,6 @@
 import './FloatingMenu.css'
 import { useState } from 'react'
-import { Button, Modal } from '@mui/joy'
+import { Modal } from '@mui/joy'
 import SettingPage from '../pages/setting/SettingPage'
 import { SaveOutlined, SettingsOutlined } from '@mui/icons-material'
 import { useNodeManager } from '../hooks/NodeManager'
@@ -14,15 +14,10 @@ interface FloatingMenuProps {
 
 const iconStyle = { width: 24, height: 24, color: 'var(--color-gray-80)' }
 
-export function FloatingMenu({
-    logo = false
-}: FloatingMenuProps) {
+export function FloatingMenu({ logo = false }: FloatingMenuProps) {
+    const handleMouseEnter = () => {}
 
-    const handleMouseEnter = () => {
-    }
-
-    const handleMouseLeave = () => {
-    }
+    const handleMouseLeave = () => {}
 
     const [open, setOpen] = useState(false)
 
@@ -50,12 +45,10 @@ export function FloatingMenu({
             className="floating-menu px-2"
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
-            onContextMenu={
-                (e) => {
-                    e.preventDefault()
-                    e.stopPropagation()
-                }
-            }
+            onContextMenu={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
+            }}
         >
             {logo && (
                 <div className="floating-menu__logo select-none pointer-events-none border-r mr-2">
@@ -74,19 +67,14 @@ export function FloatingMenu({
             <button className="floating-menu__item" onClick={handleOpen}>
                 <SettingsOutlined sx={iconStyle} />
             </button>
-            <Modal
-                open={open}
-                onClose={handleClose}
-            >
-                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white shadow-md p-4"
+            <Modal open={open} onClose={handleClose}>
+                <div
+                    className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white shadow-md p-4"
                     style={{ width: '40rem' }}
                 >
                     <h1 className="text-2xl font-bold">Settings</h1>
                     <div style={{ height: '30rem' }}>
-                        <SettingPage></SettingPage>
-                    </div>
-                    <div className="flex items-center justify-end">
-                        <Button onClick={handleClose}>Close</Button>
+                        <SettingPage onClose={handleClose}></SettingPage>
                     </div>
                 </div>
             </Modal>

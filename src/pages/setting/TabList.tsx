@@ -1,28 +1,33 @@
-import React, { FC } from 'react'
+import { FC } from 'react'
 import './TabList.css'
+import { SettingsSection } from '../../hooks/Settings'
 
 export type TabListProps = {
-    activeTab: string
-    setActiveTab: (tab: string) => void
+    activeTab: SettingsSection
+    setActiveTab: (tab: SettingsSection) => void
 }
 
 export const TabList: FC<TabListProps> = ({ activeTab, setActiveTab }) => {
+    const activeClass = (tab: SettingsSection) => {
+        return activeTab === tab ? 'active' : ''
+    }
+
     return (
         <div className="tab-list">
             <div
-                className={`tab ${activeTab === 'system' ? 'active' : ''}`}
+                className={`tab ${activeClass('system')}`}
                 onClick={() => setActiveTab('system')}
             >
                 System
             </div>
             <div
-                className={`tab ${activeTab === 'model' ? 'active' : ''}`}
-                onClick={() => setActiveTab('model')}
+                className={`tab ${activeClass('llm')}`}
+                onClick={() => setActiveTab('llm')}
             >
                 LLM
             </div>
             <div
-                className={`tab ${activeTab === 'about' ? 'active' : ''}`}
+                className={`tab ${activeClass('about')}`}
                 onClick={() => setActiveTab('about')}
             >
                 About

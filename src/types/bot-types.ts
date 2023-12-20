@@ -65,7 +65,8 @@ export const BotModelProviderType = {
     GoogleAI: 'GoogleAI',
 } as const
 
-export type BotModelProvider = keyof typeof BotModelProviderType
+export type BotModelProvider =
+    typeof BotModelProviderType[keyof typeof BotModelProviderType]
 
 export const botModelProviderOptions = [
     {
