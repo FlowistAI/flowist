@@ -1,16 +1,19 @@
-import { Handle, NodeResizer, Position } from 'reactflow'
+import React, { useEffect, useRef, useState, useCallback } from 'react'
 import { XIcon } from '@primer/octicons-react'
+
+import { Handle, NodeResizer, Position } from 'reactflow'
 import { BotInfo, MessageInput, MessageList } from '../../Chat'
 import { ChatBotNodeData } from '../../../types/chat-node-types'
 import { useChatSession } from '../../../states/chat-states'
 import { useNodeManager } from '../../../hooks/NodeManager'
 import { ChatBotDropDownMenu } from './ChatBotDropdownMenu'
 import { sourceStyle, targetStyle } from '../../../constants/handle-styles'
-import { useCallback, useEffect, useRef, useState } from 'react'
 import { generateUUID } from '../../../util/id-generator'
-import { useLLM } from '../../../services/llm-service/google-ai.service'
+import { useLLM as useLLMService } from '../../../services/llm-service/google-ai.service'
+
 import './ChatBotNode.css'
 import { useCurrentCommunicationNode } from '../../../hooks/NodeManager/useNodeManager'
+import { Invalid } from '../../Invalid'
 
 export type ChatBotNodeProps = {
     data: ChatBotNodeData
@@ -20,15 +23,15 @@ export type ChatBotNodeProps = {
 export function ChatBotNode({ data, selected }: ChatBotNodeProps) {
     const { id } = data
     const { removeNode } = useNodeManager()
-    const { signal, handleSignal: handle } = useCurrentCommunicationNode(id)
+    const { signal, handleSignal } = useCurrentCommunicationNode(id)
     const [input, setInput] = useState<string>('')
 
     useEffect(() => {
-        return handle?.('input', (value: string) => {
+        return handleSignal?.('input', (value: string) => {
             console.log('node', id, 'recevied input', value)
             setInput(value)
         })
-    }, [id, handle])
+    }, [id, handleSignal])
 
     const onReplyDone = useCallback(
         (output: string) => {
@@ -41,7 +44,7 @@ export function ChatBotNode({ data, selected }: ChatBotNodeProps) {
     const { session, addMessage, updateMessage, messages } = useChatSession(id)
 
     const botMessageIdRef = useRef<string | undefined>()
-    const llm = useLLM(session?.bot.settings)
+    const llmService = useLLMService(session?.bot.settings)
     const handleSend = useCallback(
         async (message: string) => {
             if (!session) {
@@ -58,6 +61,7 @@ export function ChatBotNode({ data, selected }: ChatBotNodeProps) {
                 isUser: true,
                 avatar: session.user.avatar,
             })
+
             // add bot message to the list and store the id in the ref
             const id = generateUUID()
             botMessageIdRef.current = id
@@ -67,8 +71,9 @@ export function ChatBotNode({ data, selected }: ChatBotNodeProps) {
                 isUser: false,
                 avatar: session.bot.avatar,
             })
+
             // send message to the bot
-            await llm?.chatStream({
+            await llmService?.chatStream({
                 input: message,
                 historyMessages: messages,
                 onChunk: (chunk: string) => {
@@ -89,27 +94,26 @@ export function ChatBotNode({ data, selected }: ChatBotNodeProps) {
                 },
             })
         },
-        [session, addMessage, llm, messages, updateMessage, onReplyDone],
+        [session, addMessage, llmService, messages, updateMessage, onReplyDone],
     )
 
     if (!session) {
-        return null
+        return <Invalid />
+    }
+
+    const onContextMenu = (e: React.MouseEvent) => {
+        if (e.target !== e.currentTarget) {
+            e.stopPropagation()
+
+            return false
+        }
+
+        e.preventDefault()
+        e.stopPropagation()
     }
 
     return (
-        <div
-            className="chat-bot"
-            onContextMenu={(e) => {
-                if (e.target !== e.currentTarget) {
-                    e.stopPropagation()
-
-                    return false
-                }
-
-                e.preventDefault()
-                e.stopPropagation()
-            }}
-        >
+        <div className="chat-bot" onContextMenu={onContextMenu}>
             <NodeResizer minWidth={300} minHeight={200} isVisible={selected} />
             <Handle
                 type="target"
