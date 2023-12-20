@@ -1,44 +1,54 @@
-import React, { useState, useRef } from 'react'
-import { Pause, FastForward, FastRewind, PlayArrow, VolumeUp } from '@mui/icons-material'
-import Slider from '@mui/material/Slider'
+import {
+    FastForward,
+    FastRewind,
+    Pause,
+    PlayArrow,
+    VolumeDown,
+} from '@mui/icons-material'
+import { useEffect, useState } from 'react'
 import { useAudioPlayer } from 'react-use-audio-player'
-import CustomSlider from './CustomSlider'
+import BoxProgressBar from './BoxProgressBar'
+import { IconOnlyButton } from './IconOnlyButton'
 
-const AudioPlayer = () => {
+type AudioPlayerOptions = {
+    src: string
+}
+
+const AudioPlayer = ({ src }: AudioPlayerOptions) => {
     const {
+        load,
         togglePlayPause,
         seek,
+        playing,
         getPosition,
+        duration,
         setVolume,
     } = useAudioPlayer()
 
-    const isPlaying = getPosition() > 0
+    useEffect(() => {
+        if (!src) {
+            return
+        }
 
-    const [volume, setLocalVolume] = useState(100)
-    const [progress, setProgress] = useState(0) // 假设初始进度是0
+        load(src)
+    }, [src, load])
 
-    const [showVolumeSlider, setShowVolumeSlider] = useState(false)
-    const volumeSliderRef = useRef(null)
+    const percentProgress = (getPosition() / duration) * 100
+
+    const [localVolume, setLocalVolume] = useState(50)
+
+    useEffect(() => {
+        setVolume(localVolume / 100)
+    }, [localVolume, setVolume])
 
     const handlePlayPause = () => {
         togglePlayPause()
     }
 
-    const handleVolumeChange = (event, newValue) => {
+    const handleVolumeChange = (newValue: number) => {
+        console.log(newValue)
+
         setLocalVolume(newValue)
-        setVolume(newValue / 100)
-    }
-
-    const handleVolumeSliderShow = () => {
-        setShowVolumeSlider(true)
-    }
-
-    const handleVolumeSliderHide = () => {
-        setShowVolumeSlider(false)
-    }
-
-    const handleSeekChange = (event, newValue) => {
-        seek(newValue)
     }
 
     const seekForward = () => {
@@ -51,37 +61,39 @@ const AudioPlayer = () => {
         seek(newPosition)
     }
 
+    const handleProgressChange = (newValue: number) => {
+        seek(newValue)
+    }
+
     return (
-        <div className="flex items-center space-x-2 p-2 bg-gray-200">
-            <FastRewind onClick={seekBackward} />
-            {isPlaying ? (
-                <Pause onClick={handlePlayPause} />
-            ) : (
-                <PlayArrow onClick={handlePlayPause} />
-            )}
-            <FastForward onClick={seekForward} />
+        <div className="flex items-center space-x-2 p-2 ">
+            <IconOnlyButton onClick={seekBackward}>
+                <FastRewind />
+            </IconOnlyButton>
+            <IconOnlyButton onClick={handlePlayPause}>
+                {playing ? <Pause /> : <PlayArrow />}
+            </IconOnlyButton>
+            <IconOnlyButton onClick={seekForward}>
+                <FastForward />
+            </IconOnlyButton>
 
-            <CustomSlider
-        min={0}
-        max={100} // 假设最大值是100
-        value={progress}
-        onChange={(newValue) => {
-          setProgress(newValue)
-          seek(newValue)
-        }}
-      />
-
-      {/* 音量控制 */}
-      <Slider
-        ref={volumeSliderRef}
-        className={`w-2 h-10 absolute ${showVolumeSlider ? 'w-24 h-8' : ''}`}
-        value={volume} orientation="vertical" 
-        onChange={handleVolumeChange}
-        onMouseEnter={handleVolumeSliderShow}
-        onMouseLeave={handleVolumeSliderHide}
-        aria-labelledby="continuous-slider"
-        />
-    </div>
+            <BoxProgressBar
+                min={0}
+                max={100}
+                value={percentProgress}
+                onChange={handleProgressChange}
+            />
+            <IconOnlyButton onClick={() => setLocalVolume((prev) => prev - 10)}>
+                <VolumeDown />
+            </IconOnlyButton>
+            <BoxProgressBar
+                className="w-24"
+                min={0}
+                max={100}
+                value={localVolume}
+                onChange={handleVolumeChange}
+            />
+        </div>
     )
 }
 
