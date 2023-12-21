@@ -1,5 +1,14 @@
 import { app, BrowserWindow, dialog, ipcMain } from 'electron'
 import * as path from 'path'
+process.env.DIST = path.join(__dirname, '../dist')
+process.env.VITE_PUBLIC = app.isPackaged
+    ? process.env.DIST
+    : path.join(process.env.DIST, '../public')
+
+if (!app.requestSingleInstanceLock()) {
+    app.quit()
+    process.exit(0)
+}
 
 let mainWindow
 
@@ -14,16 +23,15 @@ function createWindow() {
     mainWindow = new BrowserWindow({
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
-            webSecurity: false,
+            // webSecurity: false,
         },
     })
 
-    // Vite DEV server URL
-    if (process.env.NODE_ENV === 'development') {
-        mainWindow.loadURL('http://localhost:5174')
+    if (process.env.VITE_DEV_SERVER_URL) {
+        mainWindow.loadURL(process.env.VITE_DEV_SERVER_URL)
         mainWindow.webContents.openDevTools()
     } else {
-        mainWindow.loadFile(path.join(__dirname, '../../web/build/index.html'))
+        mainWindow.loadFile(path.join(__dirname, '../dist/index.html'))
     }
 
     mainWindow.on('closed', () => (mainWindow = null))
@@ -35,13 +43,6 @@ app.whenReady().then(() => {
 })
 
 app.on('window-all-closed', () => {
-    if (process.platform !== 'darwin') {
-        app.quit()
-    }
-})
-
-app.on('activate', () => {
-    if (mainWindow == null) {
-        createWindow()
-    }
+    app.quit()
+    mainWindow = null
 })
