@@ -55,7 +55,9 @@ function NavMenuButton({
     const isOnButton = React.useRef(false)
     const internalOpen = React.useRef(open)
 
-    const handleButtonKeyDown = (event: React.KeyboardEvent<HTMLButtonElement>) => {
+    const handleButtonKeyDown = (
+        event: React.KeyboardEvent<HTMLButtonElement>,
+    ) => {
         internalOpen.current = open
 
         if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
@@ -127,9 +129,7 @@ function NavMenuButton({
 
 const IconText = ({ icon, text }: { icon?: React.ReactNode; text: string }) => (
     <>
-        {icon && <span>
-            {icon}
-        </span>}
+        {icon && <span>{icon}</span>}
         {text}
     </>
 )
@@ -171,9 +171,15 @@ export default function MenuIconSideNavExample() {
                         onLeaveMenu={createHandleLeaveMenu(0)}
                         menu={
                             <Menu onClose={() => setMenuIndex(null)}>
-                                <MenuItem {...itemProps}>Application 1</MenuItem>
-                                <MenuItem {...itemProps}>Application 2</MenuItem>
-                                <MenuItem {...itemProps}>Application 3</MenuItem>
+                                <MenuItem {...itemProps}>
+                                    Application f1
+                                </MenuItem>
+                                <MenuItem {...itemProps}>
+                                    Application 2
+                                </MenuItem>
+                                <MenuItem {...itemProps}>
+                                    Application 3
+                                </MenuItem>
                             </Menu>
                         }
                     >
@@ -189,9 +195,16 @@ export default function MenuIconSideNavExample() {
                         menu={
                             <Menu onClose={() => setMenuIndex(null)}>
                                 <MenuItem {...itemProps}>
-                                    <IconText icon={<Output
-                                        sx={{ transform: 'rotate(180deg)' }}
-                                    />} text="Import" />
+                                    <IconText
+                                        icon={
+                                            <Output
+                                                sx={{
+                                                    transform: 'rotate(180deg)',
+                                                }}
+                                            />
+                                        }
+                                        text="Import"
+                                    />
                                 </MenuItem>
                                 <MenuItem {...itemProps}>
                                     <IconText icon={<Output />} text="Export" />
@@ -228,7 +241,9 @@ export default function MenuIconSideNavExample() {
                         onLeaveMenu={createHandleLeaveMenu(3)}
                         menu={
                             <Menu onClose={() => setMenuIndex(null)}>
-                                <MenuItem onClick={handleIsDesktop}>Is Desktop</MenuItem>
+                                <MenuItem onClick={handleIsDesktop}>
+                                    Is Desktop
+                                </MenuItem>
                                 <MenuItem {...itemProps}>Personal 2</MenuItem>
                                 <MenuItem {...itemProps}>Personal 3</MenuItem>
                             </Menu>
@@ -243,9 +258,11 @@ export default function MenuIconSideNavExample() {
 }
 
 export const AsideMenu = React.memo(() => {
-
     return (
-        <aside className="aside-menu flex flex-col items-center gap-4" style={{ backgroundColor: '#fbfcfe' }}>
+        <aside
+            className="aside-menu flex flex-col items-center gap-4"
+            style={{ backgroundColor: '#fbfcfe' }}
+        >
             <div className="select-none pointer-events-none border-r px-4">
                 <img src="logo.png" alt="Logo" width={40} />
             </div>

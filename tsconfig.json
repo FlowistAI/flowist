@@ -20,6 +20,6 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src", "tailwind.config.cjs"],
-  "references": [{ "path": "./tsconfig.node.json" }]
+  "include": ["packages/web/src", "packages/web/tailwind.config.cjs"],
+  "references": [{ "path": "./tsconfig.base.json" }]
 }
