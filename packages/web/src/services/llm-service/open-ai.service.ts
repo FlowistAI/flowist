@@ -1,25 +1,33 @@
 import { BotSettings } from '../../types/bot-types'
 import OpenAI from 'openai'
-import { LLMService, QueryStreamOptions, ChatStreamOptions } from './llm-service.types'
+import {
+    LLMService,
+    QueryStreamOptions,
+    ChatStreamOptions,
+} from './llm-service.types'
 
 export class OpenAIService implements LLMService {
-
-    constructor(private botSettings: BotSettings) {
-    }
+    constructor(private botSettings: BotSettings<'GoogleAI'>) {}
 
     async queryStream(opts: QueryStreamOptions) {
         const { input, onChunk, onDone } = opts
         const model = this.botSettings.model
         const apiKey = this.botSettings.serviceSource.apiKey
         const baseURL = this.botSettings.serviceSource.endpoint
-        const client = new OpenAI({ apiKey, baseURL, dangerouslyAllowBrowser: true })
+        const client = new OpenAI({
+            apiKey,
+            baseURL,
+            dangerouslyAllowBrowser: true,
+        })
 
         const stream = await client.chat.completions.create({
             model,
-            messages: [{
-                'role': 'user',
-                'content': input,
-            }],
+            messages: [
+                {
+                    role: 'user',
+                    content: input,
+                },
+            ],
             stream: true,
         })
 
@@ -40,17 +48,26 @@ export class OpenAIService implements LLMService {
         const model = this.botSettings.model
         const apiKey = this.botSettings.serviceSource.apiKey
         const baseURL = this.botSettings.serviceSource.endpoint
-        const client = new OpenAI({ apiKey, baseURL, dangerouslyAllowBrowser: true })
+        const client = new OpenAI({
+            apiKey,
+            baseURL,
+            dangerouslyAllowBrowser: true,
+        })
 
         const stream = await client.chat.completions.create({
             model,
-            messages: [...historyMessages.map(({ content, isUser }) => ({
-                role: isUser ? 'user' : 'assistant' as 'user' | 'assistant',
-                content,
-            })), {
-                'role': 'user',
-                'content': input,
-            }],
+            messages: [
+                ...historyMessages.map(({ content, isUser }) => ({
+                    role: isUser
+                        ? 'user'
+                        : ('assistant' as 'user' | 'assistant'),
+                    content,
+                })),
+                {
+                    role: 'user',
+                    content: input,
+                },
+            ],
             stream: true,
         })
 
@@ -65,6 +82,3 @@ export class OpenAIService implements LLMService {
         onDone(concated)
     }
 }
-
-
-

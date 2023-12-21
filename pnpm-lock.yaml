@@ -50,6 +50,9 @@ importers:
       dexie-react-hooks:
         specifier: ^1.1.7
         version: 1.1.7(@types/react@18.2.43)(dexie@3.2.4)(react@18.2.0)
+      electron-typescript-ipc:
+        specifier: ^3.0.0
+        version: 3.0.0
       formik:
         specifier: ^2.4.5
         version: 2.4.5(react@18.2.0)
@@ -3094,6 +3097,10 @@ packages:
   /electron-to-chromium@1.4.610:
     resolution: {integrity: sha512-mqi2oL1mfeHYtOdCxbPQYV/PL7YrQlxbvFEZ0Ee8GbDdShimqt2/S6z2RWqysuvlwdOrQdqvE0KZrBTipAeJzg==}
     dev: true
+
+  /electron-typescript-ipc@3.0.0:
+    resolution: {integrity: sha512-YnM2AeUOvZSSxRyieugwBVhyQ1iPcU8vTsCEcn+URf8yv2U0mm8OrsIkrkGQFvM/shl8vUqc1dTW2bLPMBmsUw==}
+    dev: false
 
   /electron-vite@1.0.29(vite@4.5.1):
     resolution: {integrity: sha512-BDTmVTLIri8W4Lz1tn5RAV1slSTinBBb6G77+qKcjkF0vEwdiUp2ntSU6FDqwP9pmy1t96U1CZqIYIStF8H6Jw==}

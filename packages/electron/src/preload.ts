@@ -1,5 +1,5 @@
 import { contextBridge, ipcRenderer } from 'electron'
 
-contextBridge.exposeInMainWorld('electronAPI', {
+contextBridge.exposeInMainWorld('bride', {
     openFile: () => ipcRenderer.invoke('dialog:openFile'),
 })

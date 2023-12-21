@@ -19,7 +19,13 @@ function createWindow() {
     })
 
     // Vite DEV server URL
-    mainWindow.loadURL('http://localhost:5174')
+    if (process.env.NODE_ENV === 'development') {
+        mainWindow.loadURL('http://localhost:3000')
+        mainWindow.webContents.openDevTools()
+    } else {
+        mainWindow.loadFile(path.join(__dirname, '../../web/build/index.html'))
+    }
+
     mainWindow.on('closed', () => (mainWindow = null))
 }
 
