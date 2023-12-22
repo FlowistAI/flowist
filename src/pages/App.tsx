@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useMemo, useRef, useState } from 'react'
 import ReactFlow, {
     Background,
     Controls,
@@ -19,21 +19,24 @@ import { ContextMenu } from '../components/ContextMenu'
 import { createMenuItems } from './App.menu'
 import { AsideMenu } from '../components/AsideMenu'
 import PromptModal from '../hooks/Modal/PromptModal'
+import {
+    ShortcutsHookOptions,
+    useShortcuts,
+} from '../hooks/Shortcut/useShortcut'
+import { createFileService } from '../services/file-service/factory'
 
 function App() {
     const [ctxMenuPos, setCtxMenuPos] =
         useState<Optional<XYPosition>>(undefined)
     const [cvsCurPos, setCvsCurPos] = useState<Optional<XYPosition>>(undefined)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const [reactFlowInstance, setReactFlowInstance] = useRecoilState(
-        ReactFlowInstanceState,
-    )
+    const [flowInst, setFlowInst] = useRecoilState(ReactFlowInstanceState)
 
     const onContextMenu = useCallback(
         (event: React.MouseEvent<HTMLDivElement>) => {
             event.preventDefault()
 
-            if (!reactFlowInstance) {
+            if (!flowInst) {
                 console.error('reactFlowInstance is undefined')
 
                 return
@@ -44,12 +47,12 @@ function App() {
                 y: event.clientY,
             }
             setCtxMenuPos(ctxMenuPos)
-            const cvsPos = reactFlowInstance.screenToFlowPosition(ctxMenuPos)
+            const cvsPos = flowInst.screenToFlowPosition(ctxMenuPos)
             setCvsCurPos(cvsPos)
         },
-        [reactFlowInstance],
+        [flowInst],
     )
-    const reactFlowWrapper = useRef(null)
+    const appWrapperRef = useRef<HTMLDivElement>(null)
 
     const onNodeContextMenu = useCallback<NodeMouseHandler>((event, node) => {
         event.preventDefault()
@@ -62,9 +65,27 @@ function App() {
         cursor: cvsCurPos,
     })
 
+    useShortcuts(
+        useMemo<ShortcutsHookOptions>(
+            () => ({
+                scope: window ?? undefined,
+                bindings: {
+                    'ctrl+s': async () => {
+                        if (nodeManager.isDraft()) {
+                            const service = await createFileService()
+                            if (service) {
+                                await nodeManager.save(service)
+                            }
+                        }
+                    },
+                },
+            }),
+            [nodeManager],
+        ),
+    )
 
     return (
-        <div className="app flex" ref={reactFlowWrapper}>
+        <div className="app flex" ref={appWrapperRef}>
             <div className="border-r fixed left-0 top-0 z-50 flex h-screen w-18 flex-col items-center bg-white py-6 ">
                 <Toast />
                 <PromptModal />
@@ -100,7 +121,7 @@ function App() {
                     }}
                     onInit={(instance) => {
                         console.log('flow instance:', instance)
-                        setReactFlowInstance(instance)
+                        setFlowInst(instance)
                     }}
                     onClick={() => {
                         setCtxMenuPos(undefined)

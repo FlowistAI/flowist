@@ -12,7 +12,7 @@ export type ElectronBridge = {
 export const bridge = {
     get bridge() {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        return (window as any).electronBridge as ElectronBridge | undefined
+        return (window as any).api as ElectronBridge | undefined
     },
 }.bridge
 
@@ -26,3 +26,5 @@ export const bridgedLLMServiceFactory = <T extends LLMProvider>(
 
     throw new Error('Electron bridge not found')
 }
+
+export const isWeb = !bridge

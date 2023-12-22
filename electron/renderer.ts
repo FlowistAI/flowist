@@ -1,6 +1,4 @@
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-(window as any).hello = () => {
-    console.log('hello from renderer')
-}
+const { invoke, handle } = window.api
 
-console.log('renderer')
+invoke.getPing('ping')
+handle.getPong()

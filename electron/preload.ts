@@ -1,5 +1,11 @@
-import { contextBridge, ipcRenderer } from 'electron'
+import { exposeApiToGlobalWindow } from '../src/shared/ipcs'
 
-contextBridge.exposeInMainWorld('electronBridge', {
-    openFile: () => ipcRenderer.invoke('dialog:openFile'),
+const { key, api } = exposeApiToGlobalWindow({
+    exposeAll: true, // expose handlers, invokers and removers
 })
+
+declare global {
+    interface Window {
+        [key]: typeof api
+    }
+}

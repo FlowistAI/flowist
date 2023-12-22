@@ -1,5 +1,9 @@
-import { app, BrowserWindow, dialog, ipcMain } from 'electron'
 import * as path from 'path'
+import { app, BrowserWindow } from 'electron'
+import { ipcMain } from '../src/shared/ipcs'
+
+const { handle, invoke } = ipcMain
+
 process.env.DIST = path.join(__dirname, '../dist')
 process.env.VITE_PUBLIC = app.isPackaged
     ? process.env.DIST
@@ -7,19 +11,21 @@ process.env.VITE_PUBLIC = app.isPackaged
 
 let mainWindow
 
-async function handleFileOpen() {
-    const { canceled, filePaths } = await dialog.showOpenDialog({})
-    if (!canceled) {
-        return filePaths[0]
-    }
-}
-
 function createWindow() {
     mainWindow = new BrowserWindow({
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
+            sandbox: false, // sandbox must be false
             // webSecurity: false,
         },
+    })
+
+    handle.getPing()
+    handle.selectPath()
+    handle.writeFile()
+
+    mainWindow.webContents.on('dom-ready', () => {
+        invoke.getPong(mainWindow, 'pong')
     })
 
     // 800x600 is the default size of our window
@@ -36,7 +42,6 @@ function createWindow() {
 }
 
 app.whenReady().then(() => {
-    ipcMain.handle('dialog:openFile', handleFileOpen)
     createWindow()
 })
 

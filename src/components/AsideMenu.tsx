@@ -11,7 +11,6 @@ import Person from '@mui/icons-material/Person'
 import Dropdown from '@mui/joy/Dropdown'
 import MenuButton from '@mui/joy/MenuButton'
 import { Output, PestControl } from '@mui/icons-material'
-import { isDesktop } from '../util/bridge'
 // The Menu is built on top of Popper v2, so it accepts `modifiers` prop that will be passed to the Popper.
 // https://popper.js.org/docs/v2/modifiers/offset/
 interface MenuButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
@@ -156,9 +155,7 @@ export default function MenuIconSideNavExample() {
             }, 200)
         }
 
-    const handleIsDesktop = () => {
-        console.log('isDesktop', isDesktop())
-    }
+    const handleIsDesktop = () => {}
 
     return (
         <Sheet sx={{ borderRadius: 'sm', py: 1, mr: 0 }}>

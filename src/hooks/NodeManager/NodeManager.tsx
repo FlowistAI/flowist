@@ -1,16 +1,32 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Dispatch, SetStateAction } from 'react'
-import { Connection, Edge, EdgeChange, MarkerType, Node, NodeChange, applyEdgeChanges } from 'reactflow'
+import {
+    Connection,
+    Edge,
+    EdgeChange,
+    MarkerType,
+    Node,
+    NodeChange,
+    applyEdgeChanges,
+} from 'reactflow'
 import { AppNodeType, AppNodeTypes } from '../../constants/nodeTypes'
 import { SubManager } from './SubManager'
-import { CommunicationNode, GraphTelecom, ParsedSourceTargetId, SignalHandler, createSourceTargetId, parseSourceTargetId } from '../../libs/GraphTelecom/GraphTelecom'
+import {
+    CommunicationNode,
+    GraphTelecom,
+    ParsedSourceTargetId,
+    SignalHandler,
+    createSourceTargetId,
+    parseSourceTargetId,
+} from '../../libs/GraphTelecom/GraphTelecom'
 import { NodeIdGenerator } from '../../util/id-generator'
 import { produce } from 'immer'
+import { IFileService } from '../../services/file-service/file.service'
 
-export type NodeAddHandler = (node: Node) => void;
+export type NodeAddHandler = (node: Node) => void
 
-export type EdgeAddHandler = (edge: Edge) => void;
-type OnChange<ChangesType> = (changes: ChangesType[]) => void;
+export type EdgeAddHandler = (edge: Edge) => void
+type OnChange<ChangesType> = (changes: ChangesType[]) => void
 
 export type PortDefinition = {
     input: {
@@ -39,23 +55,29 @@ export type NodeManagerOptions<NodeType extends AppNodeType, NodeData = any> = {
     telecom: GraphTelecom
     portDefs: Record<NodeType, PortDefinition>
     idGeneratorGetter: () => NodeIdGenerator
-    idGeneratorSetter: (setter: (prev: NodeIdGenerator) => NodeIdGenerator) => void
+    idGeneratorSetter: (
+        setter: (prev: NodeIdGenerator) => NodeIdGenerator,
+    ) => void
+}
 
-};
-
-export type AddNodeOptions<NodeType extends AppNodeType, NodeData = any, Preset = any> = {
+export type AddNodeOptions<
+    NodeType extends AppNodeType,
+    NodeData = any,
+    Preset = any,
+> = {
     type: NodeType
     preset?: Preset
     data?: Partial<Node<NodeData, NodeType>>
     onSignal?: SignalHandler
 }
 
-export type NodeManagerSnapshot = ReturnType<NodeManager['snapshot']>;
+export type NodeManagerSnapshot = ReturnType<NodeManager['snapshot']>
 
 export class NodeManager {
     private subManagers
     private telecom
     private portDefs
+    private fileService: IFileService | undefined
 
     private nodeTypes: Record<string, AppNodeType> = {}
     private edgeTypes: Record<string, string> = {}
@@ -64,6 +86,7 @@ export class NodeManager {
     private _addNodeToFlow: NodeAddHandler
     // remove a raw node from the original node list
     private _removeNodeFromFlow: (nodeId: string) => void
+    private path: string | undefined
 
     private _nodes: Node[]
     get nodes() {
@@ -81,7 +104,9 @@ export class NodeManager {
     public readonly onEdgesChange: OnChange<EdgeChange>
 
     private idGeneratorGetter: () => NodeIdGenerator
-    private idGeneratorSetter: (setter: (prev: NodeIdGenerator) => NodeIdGenerator) => void
+    private idGeneratorSetter: (
+        setter: (prev: NodeIdGenerator) => NodeIdGenerator,
+    ) => void
 
     private constructor(options: NodeManagerOptions<AppNodeTypes>) {
         this.subManagers = options.subManagers
@@ -90,13 +115,14 @@ export class NodeManager {
         this.idGeneratorGetter = options.idGeneratorGetter
         this.idGeneratorSetter = options.idGeneratorSetter
 
-
         this._addNodeToFlow = (node: Node) => {
             options.setNodes((nodes) => nodes.concat(node))
         }
 
         this._removeNodeFromFlow = (nodeId: string) => {
-            options.setNodes((nodes) => nodes.filter(node => node.id !== nodeId))
+            options.setNodes((nodes) =>
+                nodes.filter((node) => node.id !== nodeId),
+            )
         }
 
         this._nodes = options.nodes
@@ -111,7 +137,9 @@ export class NodeManager {
         }
 
         this._removeEdge = (edgeId: string) => {
-            options.setEdges((edges) => edges.filter(edge => edge.id !== edgeId))
+            options.setEdges((edges) =>
+                edges.filter((edge) => edge.id !== edgeId),
+            )
         }
 
         this._edges = options.edges
@@ -119,18 +147,30 @@ export class NodeManager {
         this.onEdgesChange = (changes) => {
             // TODO: should not handle edge style here
             return options.setEdges((eds) => {
-                const newEdges = produce(eds, draft => {
+                const newEdges = produce(eds, (draft) => {
                     for (const edge of draft) {
-                        const change = changes.find(change => change.type === 'select' && change.id === edge.id)
+                        const change = changes.find(
+                            (change) =>
+                                change.type === 'select' &&
+                                change.id === edge.id,
+                        )
 
-                        if (!(change && change.type === 'select' && edge.style)) {
+                        if (
+                            !(change && change.type === 'select' && edge.style)
+                        ) {
                             continue
                         }
 
                         if (change.selected) {
-                            edge.style.strokeWidth = parseFloat(edge.style.strokeWidth as unknown as string) * 1.2
+                            edge.style.strokeWidth =
+                                parseFloat(
+                                    edge.style.strokeWidth as unknown as string,
+                                ) * 1.2
                         } else {
-                            edge.style.strokeWidth = parseFloat(edge.style.strokeWidth as unknown as string) / 1.2
+                            edge.style.strokeWidth =
+                                parseFloat(
+                                    edge.style.strokeWidth as unknown as string,
+                                ) / 1.2
                         }
                     }
                 })
@@ -147,10 +187,24 @@ export class NodeManager {
         this.getCommunicationNode = this.getCommunicationNode.bind(this)
         this.snapshot = this.snapshot.bind(this)
         this.restore = this.restore.bind(this)
-
+        this.save = this.save.bind(this)
+        this.isDraft = this.isDraft.bind(this)
     }
 
-    static from(prev: NodeManager | undefined, options: NodeManagerOptions<AppNodeTypes>) {
+    public isDraft() {
+        return this.path === undefined
+    }
+
+    public async save(svc: IFileService) {
+        this.fileService = svc
+        await svc.selectSavePath('')
+        this.fileService.saveFile(JSON.stringify(this.snapshot()))
+    }
+
+    static from(
+        prev: NodeManager | undefined,
+        options: NodeManagerOptions<AppNodeTypes>,
+    ) {
         const manager = new NodeManager(options)
 
         if (!prev) {
@@ -163,6 +217,7 @@ export class NodeManager {
 
         manager.nodeTypes = prev.nodeTypes
         manager.edgeTypes = prev.edgeTypes
+        manager.fileService = prev.fileService
 
         return manager
     }
@@ -172,20 +227,30 @@ export class NodeManager {
 
         return {
             idGenerator: { index: this.idGeneratorGetter().index },
-            nodeMap: Object.fromEntries(this.nodes.map(node => [node.id, node])),
-            edgeMap: Object.fromEntries(this.edges.map(edge => [edge.id, edge])),
+            nodeMap: Object.fromEntries(
+                this.nodes.map((node) => [node.id, node]),
+            ),
+            edgeMap: Object.fromEntries(
+                this.edges.map((edge) => [edge.id, edge]),
+            ),
             partitions: {
-                ...Object.fromEntries(Object.entries(this.subManagers).map(([type, subManager]) => {
-                    return [type, subManager.snapshot()]
-                }))
-            }
+                ...Object.fromEntries(
+                    Object.entries(this.subManagers).map(
+                        ([type, subManager]) => {
+                            return [type, subManager.snapshot()]
+                        },
+                    ),
+                ),
+            },
         }
     }
 
     restore(snapshot: NodeManagerSnapshot) {
         console.log('idgen restore', snapshot.idGenerator.index)
 
-        this.idGeneratorSetter(() => new NodeIdGenerator(snapshot.idGenerator.index))
+        this.idGeneratorSetter(
+            () => new NodeIdGenerator(snapshot.idGenerator.index),
+        )
         console.log('NodeManagerrestore', snapshot)
 
         if (this.nodes.length > 0) {
@@ -209,8 +274,12 @@ export class NodeManager {
                 throw new Error('node.type is undefined')
             }
 
-            if (!(Object.values(AppNodeTypes).includes(node.type as AppNodeTypes))) {
-                throw new Error(`node.type ${node.type} is not a valid AppNodeTypes`)
+            if (
+                !Object.values(AppNodeTypes).includes(node.type as AppNodeTypes)
+            ) {
+                throw new Error(
+                    `node.type ${node.type} is not a valid AppNodeTypes`,
+                )
             }
 
             this.addNode(node)
@@ -250,14 +319,21 @@ export class NodeManager {
     }
 
     private _addNodeToTeleGraph(id: string, type: AppNodeType) {
-        this.telecom.registerNode(CommunicationNode.fromDefinition({
-            id: id,
-            ports: { ...this.portDefs[type] }
-        }))
+        this.telecom.registerNode(
+            CommunicationNode.fromDefinition({
+                id: id,
+                ports: { ...this.portDefs[type] },
+            }),
+        )
     }
 
     private _addEdgeToTeleGraph(edge: Edge) {
-        this.telecom.connect(edge.source, edge.sourceHandle!, edge.target, edge.targetHandle!) // it throws
+        this.telecom.connect(
+            edge.source,
+            edge.sourceHandle!,
+            edge.target,
+            edge.targetHandle!,
+        ) // it throws
     }
 
     private _removeEdgeFromTeleGraph(edgeId: string) {
@@ -293,8 +369,10 @@ export class NodeManager {
     }
 
     private _removeAttachedEdges(nodeId: string) {
-        const edges = this.edges.filter(edge => edge.source === nodeId || edge.target === nodeId)
-        edges.forEach(edge => {
+        const edges = this.edges.filter(
+            (edge) => edge.source === nodeId || edge.target === nodeId,
+        )
+        edges.forEach((edge) => {
             this.removeEdge(edge.id)
         })
     }
@@ -334,18 +412,28 @@ export class NodeManager {
             return
         }
 
-        this.telecom.connect(edge.source, edge.sourceHandle!, edge.target, edge.targetHandle!) // it throws
+        this.telecom.connect(
+            edge.source,
+            edge.sourceHandle!,
+            edge.target,
+            edge.targetHandle!,
+        ) // it throws
         this.addEdge(edge)
     }
 
     onDisconnect(id: string) {
-        const edge = this.edges.find(edge => edge.id === id)
+        const edge = this.edges.find((edge) => edge.id === id)
 
         if (!edge) {
             throw new Error(`edge ${id} not found`)
         }
 
-        this.telecom.disconnect(edge.source, edge.sourceHandle!, edge.target, edge.targetHandle!) // it throws
+        this.telecom.disconnect(
+            edge.source,
+            edge.sourceHandle!,
+            edge.target,
+            edge.targetHandle!,
+        ) // it throws
         this.removeEdge(id)
     }
 
@@ -354,11 +442,20 @@ export class NodeManager {
     }
 
     public deleteSelectedEdges() {
-        this.onEdgesChange(this.edges.filter(edge => edge.selected).map(edge => ({ type: 'remove', id: edge.id })))
+        this.onEdgesChange(
+            this.edges
+                .filter((edge) => edge.selected)
+                .map((edge) => ({ type: 'remove', id: edge.id })),
+        )
     }
 
     private createEdge(connection: Connection): Edge | undefined {
-        const id = createSourceTargetId(connection.source, connection.sourceHandle, connection.target, connection.targetHandle)
+        const id = createSourceTargetId(
+            connection.source,
+            connection.sourceHandle,
+            connection.target,
+            connection.targetHandle,
+        )
         let parsed: ParsedSourceTargetId
 
         try {

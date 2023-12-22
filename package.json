@@ -31,6 +31,7 @@
     "electron-typescript-ipc": "^3.0.0",
     "formik": "^2.4.5",
     "immer": "^10.0.3",
+    "interprocess": "^0.2.6",
     "jotai": "^2.6.0",
     "localforage": "^1.10.0",
     "mui-nested-menu": "^3.2.2",
