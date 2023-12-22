@@ -76,6 +76,8 @@ function App() {
                             if (service) {
                                 await nodeManager.save(service)
                             }
+                        } else {
+                            await nodeManager.save()
                         }
                     },
                 },

@@ -192,12 +192,22 @@ export class NodeManager {
     }
 
     public isDraft() {
-        return this.path === undefined
+        return this.fileService === undefined
     }
 
-    public async save(svc: IFileService) {
-        this.fileService = svc
-        await svc.selectSavePath('')
+    public async save(svc?: IFileService) {
+        if (svc) {
+            this.fileService = svc
+        }
+
+        if (!this.fileService) {
+            throw new Error('file service is undefined')
+        }
+
+        if (!this.fileService.isSelected()) {
+            await this.fileService.selectSavePath('')
+        }
+
         this.fileService.saveFile(JSON.stringify(this.snapshot()))
     }
 

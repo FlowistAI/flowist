@@ -18,4 +18,8 @@ export default class ElectronFileService implements IFileService {
     async selectSavePath() {
         this.savePath = (await window.api.invoke.selectPath()).path
     }
+
+    isSelected() {
+        return !!this.savePath
+    }
 }
