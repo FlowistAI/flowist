@@ -1,7 +1,14 @@
 # GIDE
 
+## Setup
+
+```bash
+pnpm i
 ```
-packages/
-    web/
-    electron/
+
+## Run
+
+```bash
+pnpm dev:web
+pnpm dev:electron
 ```
