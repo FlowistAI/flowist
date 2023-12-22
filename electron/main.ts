@@ -23,6 +23,8 @@ function createWindow() {
     handle.getPing()
     handle.selectPath()
     handle.writeFile()
+    handle.selectOpenPath()
+    handle.readFile()
 
     mainWindow.webContents.on('dom-ready', () => {
         invoke.getPong(mainWindow, 'pong')

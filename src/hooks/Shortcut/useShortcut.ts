@@ -69,7 +69,13 @@ export function useShortcuts({
 
     const handleEvent = useCallback(
         (event: KeyboardEvent) => {
-            locateBinding(event)?.handler(event)
+            const binding = locateBinding(event)
+            if (!binding) {
+                return
+            }
+
+            binding.handler(event)
+            event.preventDefault()
         },
         [locateBinding],
     )

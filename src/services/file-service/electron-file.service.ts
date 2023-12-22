@@ -22,4 +22,20 @@ export default class ElectronFileService implements IFileService {
     isSelected() {
         return !!this.savePath
     }
+
+    async selectOpenPath() {
+        this.savePath = (await window.api.invoke.selectOpenPath()).path
+    }
+
+    async readFile() {
+        if (!this.savePath) {
+            throw new Error('Open path not selected')
+        }
+
+        const { content } = await window.api.invoke.readFile({
+            path: this.savePath,
+        })
+
+        return content
+    }
 }

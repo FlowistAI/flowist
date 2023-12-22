@@ -211,6 +211,26 @@ export class NodeManager {
         this.fileService.saveFile(JSON.stringify(this.snapshot()))
     }
 
+    public async load(svc?: IFileService) {
+        if (svc) {
+            this.fileService = svc
+        }
+
+        if (!this.fileService) {
+            throw new Error('file service is undefined')
+        }
+
+        await this.fileService.selectOpenPath()
+
+        const data = await this.fileService.readFile()
+
+        if (!data) {
+            return
+        }
+
+        this.restore(JSON.parse(data))
+    }
+
     static from(
         prev: NodeManager | undefined,
         options: NodeManagerOptions<AppNodeTypes>,

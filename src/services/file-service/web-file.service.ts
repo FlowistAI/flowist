@@ -33,4 +33,28 @@ export default class WebFileService implements IFileService {
     isSelected() {
         return !!this.handle
     }
+
+    async selectOpenPath() {
+        try {
+            const fileHandle = await (window as any).showOpenFilePicker()
+            this.handle = fileHandle
+        } catch (error) {
+            console.error('Failed to select open path:', error)
+        }
+    }
+
+    async readFile() {
+        if (!this.handle) {
+            throw new Error('Open path not selected')
+        }
+
+        try {
+            const file = await this.handle.getFile()
+            const content = await file.text()
+
+            return content
+        } catch (error) {
+            console.error('Failed to read file:', error)
+        }
+    }
 }

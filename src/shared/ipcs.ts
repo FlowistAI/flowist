@@ -36,6 +36,33 @@ export const { ipcMain, ipcRenderer, exposeApiToGlobalWindow } =
                 )
                 await writeFile(path, content)
             },
+            async selectOpenPath() {
+                const { dialog } = await import('electron')
+
+                const result = await dialog.showOpenDialog({
+                    properties: ['openFile'],
+                })
+
+                if (result.canceled) {
+                    throw new Error('File open cancelled')
+                }
+
+                const path = result.filePaths[0]
+                console.log(path)
+
+                return { path }
+            },
+            async readFile(_, data: { path: string }) {
+                const { path } = data
+
+                const readFile = await import('fs').then(
+                    (m) => m.promises.readFile,
+                )
+
+                const content = await readFile(path, { encoding: 'utf-8' })
+
+                return { content }
+            },
         },
 
         renderer: {

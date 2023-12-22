@@ -8,7 +8,6 @@ import ReactFlow, {
 } from 'reactflow'
 import 'reactflow/dist/style.css'
 import './App.css'
-import { FloatingMenu } from '../components/FloatingMenu'
 import { Optional } from '../types/types'
 import { COMPONENT_BY_NODE_TYPE } from '../constants/nodeTypes'
 import { useNodeManager } from '../hooks/NodeManager'
@@ -80,6 +79,12 @@ function App() {
                             await nodeManager.save()
                         }
                     },
+                    'ctrl+o': async () => {
+                        const service = await createFileService()
+                        if (service) {
+                            await nodeManager.load(service)
+                        }
+                    },
                 },
             }),
             [nodeManager],
@@ -91,7 +96,7 @@ function App() {
             <div className="border-r fixed left-0 top-0 z-50 flex h-screen w-18 flex-col items-center bg-white py-6 ">
                 <Toast />
                 <PromptModal />
-                <FloatingMenu />
+                {/* <FloatingMenu /> */}
                 <ContextMenu
                     position={ctxMenuPos}
                     isOpen={ctxMenuPos !== undefined}
