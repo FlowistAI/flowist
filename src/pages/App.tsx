@@ -10,7 +10,7 @@ import 'reactflow/dist/style.css'
 import './App.css'
 import { Optional } from '../types/types'
 import { COMPONENT_BY_NODE_TYPE } from '../constants/nodeTypes'
-import { useNodeManager } from '../hooks/NodeManager'
+import { useDocumentManager } from '../hooks/DocumentManager'
 import { useRecoilState } from 'recoil'
 import { ReactFlowInstanceState } from '../states/react-flow'
 import Toast from '../hooks/Toast/Toast'
@@ -58,9 +58,9 @@ function App() {
         console.log('node:', node)
     }, [])
 
-    const nodeManager = useNodeManager()
+    const documentManager = useDocumentManager()
     const menuItems = createMenuItems({
-        nodeManager: nodeManager,
+        documentManager: documentManager,
         cursor: cvsCurPos,
     })
 
@@ -70,24 +70,24 @@ function App() {
                 scope: window ?? undefined,
                 bindings: {
                     'ctrl+s': async () => {
-                        if (nodeManager.isDraft()) {
+                        if (documentManager.isDraft()) {
                             const service = await createFileService()
                             if (service) {
-                                await nodeManager.save(service)
+                                await documentManager.save(service)
                             }
                         } else {
-                            await nodeManager.save()
+                            await documentManager.save()
                         }
                     },
                     'ctrl+o': async () => {
                         const service = await createFileService()
                         if (service) {
-                            await nodeManager.load(service)
+                            await documentManager.load(service)
                         }
                     },
                 },
             }),
-            [nodeManager],
+            [documentManager],
         ),
     )
 
@@ -110,11 +110,11 @@ function App() {
                     onContextMenu={onContextMenu}
                     onNodeContextMenu={onNodeContextMenu}
                     nodeTypes={COMPONENT_BY_NODE_TYPE}
-                    nodes={nodeManager.nodes}
-                    onNodesChange={nodeManager.onNodesChange}
-                    edges={nodeManager.edges}
-                    onEdgesChange={nodeManager.onEdgesChange}
-                    onConnect={nodeManager.onConnect}
+                    nodes={documentManager.nodes}
+                    onNodesChange={documentManager.onNodesChange}
+                    edges={documentManager.edges}
+                    onEdgesChange={documentManager.onEdgesChange}
+                    onConnect={documentManager.onConnect}
                     onKeyUp={(event) => {
                         //FIXME: event.target should be the child of the react-flow div
                         if (
@@ -122,7 +122,7 @@ function App() {
                             event.target.classList.contains('react-flow__edge')
                         ) {
                             if (event.key === 'Delete') {
-                                nodeManager.deleteSelectedEdges()
+                                documentManager.deleteSelectedEdges()
                             }
                         }
                     }}

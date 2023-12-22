@@ -41,7 +41,10 @@ export type PortDefinition = {
     }
 }
 
-export type NodeManagerOptions<NodeType extends AppNodeType, NodeData = any> = {
+export type DocumentManagerOptions<
+    NodeType extends AppNodeType,
+    NodeData = any,
+> = {
     // node
     nodes: Node[]
     setNodes: Dispatch<SetStateAction<Node<NodeData>[]>>
@@ -71,9 +74,9 @@ export type AddNodeOptions<
     onSignal?: SignalHandler
 }
 
-export type NodeManagerSnapshot = ReturnType<NodeManager['snapshot']>
+export type DocumentManagerSnapshot = ReturnType<DocumentManager['snapshot']>
 
-export class NodeManager {
+export class DocumentManager {
     private subManagers
     private telecom
     private portDefs
@@ -108,7 +111,7 @@ export class NodeManager {
         setter: (prev: NodeIdGenerator) => NodeIdGenerator,
     ) => void
 
-    private constructor(options: NodeManagerOptions<AppNodeTypes>) {
+    private constructor(options: DocumentManagerOptions<AppNodeTypes>) {
         this.subManagers = options.subManagers
         this.telecom = options.telecom
         this.portDefs = options.portDefs
@@ -232,10 +235,10 @@ export class NodeManager {
     }
 
     static from(
-        prev: NodeManager | undefined,
-        options: NodeManagerOptions<AppNodeTypes>,
+        prev: DocumentManager | undefined,
+        options: DocumentManagerOptions<AppNodeTypes>,
     ) {
-        const manager = new NodeManager(options)
+        const manager = new DocumentManager(options)
 
         if (!prev) {
             return manager
@@ -275,13 +278,13 @@ export class NodeManager {
         }
     }
 
-    restore(snapshot: NodeManagerSnapshot) {
+    restore(snapshot: DocumentManagerSnapshot) {
         console.log('idgen restore', snapshot.idGenerator.index)
 
         this.idGeneratorSetter(
             () => new NodeIdGenerator(snapshot.idGenerator.index),
         )
-        console.log('NodeManagerrestore', snapshot)
+        console.log('DocumentManagerrestore', snapshot)
 
         if (this.nodes.length > 0) {
             throw new Error('already initialized')

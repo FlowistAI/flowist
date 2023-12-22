@@ -4,7 +4,7 @@ import { Bot, SessionId, User } from '../types/bot-types'
 import { QueryBotNodeData, QuerySession } from '../types/query-node.types'
 import { BotNodePreset } from '../types/bot-types'
 import { ChatBotNodeService } from './chat-bot-node.service'
-import { SubManager } from '../hooks/NodeManager/SubManager'
+import { SubManager } from '../hooks/DocumentManager/SubManager'
 import { NodeIdGenerator } from '../util/id-generator'
 
 export type CreateNodeOptions = {
@@ -26,7 +26,6 @@ export type QueryBotNodeServiceProps = {
 export class QueryBotNodeService implements SubManager<AppNodeTypes.QueryBot> {
     static readonly DefaultBot: Bot = ChatBotNodeService.DefaultBot
     static readonly DefaultUser: User = ChatBotNodeService.DefaultUser
-
 
     sessionCreateHandler: (sess: QuerySession) => void
     sessionDestroyHandler: (sessId: SessionId) => void
@@ -85,15 +84,14 @@ export class QueryBotNodeService implements SubManager<AppNodeTypes.QueryBot> {
 
     snapshot(): QueryParitionSnapshot {
         return {
-            sessions: this.sessionsGetter()
+            sessions: this.sessionsGetter(),
         }
     }
 
     restore(snapshot: QueryParitionSnapshot) {
         console.log('QueryBot Partition restore', snapshot)
-        snapshot.sessions.forEach(sess => {
+        snapshot.sessions.forEach((sess) => {
             this.sessionCreateHandler(sess)
         })
     }
 }
-

@@ -1,7 +1,7 @@
 import { ChatBotNode } from '../components/nodes/ChatBotNode/ChatBotNode'
 import { TextToSpeechNode } from '../nodes/text-to-speech/component/TextToSpeechNode'
 import { QueryBotNode } from '../components/nodes/QueryBotNode/QueryBotNode'
-import { PortDefinition } from '../hooks/NodeManager/NodeManager'
+import { PortDefinition } from '../hooks/DocumentManager/DocumentManager'
 
 export const COMPONENT_BY_NODE_TYPE = {
     'chat-bot': ChatBotNode,
@@ -9,8 +9,7 @@ export const COMPONENT_BY_NODE_TYPE = {
     'text-to-speech': TextToSpeechNode,
 } as const
 
-
-export type AppNodeType = keyof typeof COMPONENT_BY_NODE_TYPE;
+export type AppNodeType = keyof typeof COMPONENT_BY_NODE_TYPE
 
 export enum AppNodeTypes {
     ChatBot = 'chat-bot',
@@ -20,14 +19,14 @@ export enum AppNodeTypes {
 
 export const STANDARD_IO_PORTS = {
     input: {
-        'input': {
+        input: {
             id: 'input',
-        }
+        },
     },
     output: {
-        'output': {
+        output: {
             id: 'output',
-        }
+        },
     },
 } as const
 

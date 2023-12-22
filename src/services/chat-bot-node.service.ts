@@ -10,7 +10,7 @@ import { LLMProviders } from '../hooks/Settings/types'
 import { GoogleAIModelIds } from '../hooks/Settings/types'
 import { ChatBotNodeData, ChatSession } from '../types/chat-node.types'
 import { BotNodePreset } from '../types/bot-types'
-import { SubManager } from '../hooks/NodeManager/SubManager'
+import { SubManager } from '../hooks/DocumentManager/SubManager'
 import { NodeIdGenerator } from '../util/id-generator'
 
 export type CreateNodeOptions = {

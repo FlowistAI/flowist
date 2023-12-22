@@ -1,12 +1,12 @@
 import { useContext } from 'react'
-import { NodeManagerContext } from './NodeManagerProvider'
+import { DocumentManagerContext } from './DocumentManagerProvider'
 
-export const useNodeManager = () => {
-    const mgr = useContext(NodeManagerContext)
+export const useDocumentManager = () => {
+    const mgr = useContext(DocumentManagerContext)
 
     if (mgr === undefined) {
         throw new Error(
-            'useNodeManager must be used within a NodeManagerProvider',
+            'useDocumentManager must be used within a DocumentManagerProvider',
         )
     }
 
@@ -14,7 +14,7 @@ export const useNodeManager = () => {
 }
 
 export const useCurrentCommunicationNode = (id: string) => {
-    const mgr = useNodeManager()
+    const mgr = useDocumentManager()
     const { handleSignal, signal } = mgr.getCommunicationNode(id) ?? {}
 
     return { handleSignal, signal }

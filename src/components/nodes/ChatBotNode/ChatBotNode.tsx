@@ -5,14 +5,14 @@ import { Handle, NodeResizer, Position } from 'reactflow'
 import { BotInfo, MessageInput, MessageList } from '../../Chat'
 import { ChatBotNodeData } from '../../../types/chat-node.types'
 import { useChatSession } from '../../../states/chat-states'
-import { useNodeManager } from '../../../hooks/NodeManager'
+import { useDocumentManager } from '../../../hooks/DocumentManager'
 import { ChatBotDropDownMenu } from './ChatBotDropdownMenu'
 import { sourceStyle, targetStyle } from '../../../constants/handle-styles'
 import { generateUUID } from '../../../util/id-generator'
 import { useLLM as useLLMService } from '../../../services/llm-service/google-ai.service'
 
 import './ChatBotNode.css'
-import { useCurrentCommunicationNode } from '../../../hooks/NodeManager/useNodeManager'
+import { useCurrentCommunicationNode } from '../../../hooks/DocumentManager/useDocumentManager'
 import { Invalid } from '../../Invalid'
 
 export type ChatBotNodeProps = {
@@ -22,7 +22,7 @@ export type ChatBotNodeProps = {
 
 export function ChatBotNode({ data, selected }: ChatBotNodeProps) {
     const { id } = data
-    const { removeNode } = useNodeManager()
+    const { removeNode } = useDocumentManager()
     const { signal, handleSignal } = useCurrentCommunicationNode(id)
     const [input, setInput] = useState<string>('')
 

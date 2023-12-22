@@ -7,7 +7,7 @@ import {
 } from './text-to-speech-node.types'
 import { BotNodePreset } from '../../types/bot-types'
 import { ChatBotNodeService } from '../../services/chat-bot-node.service'
-import { SubManager } from '../../hooks/NodeManager/SubManager'
+import { SubManager } from '../../hooks/DocumentManager/SubManager'
 import { NodeIdGenerator } from '../../util/id-generator'
 
 export type CreateNodeOptions = {

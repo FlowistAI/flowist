@@ -4,7 +4,7 @@ import './QueryBotNode.css'
 import { QueryBotNodeData } from '../../../types/query-node.types'
 import { querySessionsState } from '../../../states/query-states'
 import { useRecoilValue } from 'recoil'
-import { useNodeManager } from '../../../hooks/NodeManager'
+import { useDocumentManager } from '../../../hooks/DocumentManager'
 import { QueryBotDropDownMenu } from './QueryBotDropdownMenu'
 import { useEffect, useState } from 'react'
 import { sourceStyle, targetStyle } from '../../../constants/handle-styles'
@@ -13,7 +13,7 @@ import { TextArea } from '../../TextArea'
 import { Button } from '@mui/joy'
 import { replacePrompt } from '../../../util/misc.util'
 import { useLLM } from '../../../services/llm-service/google-ai.service'
-import { useCurrentCommunicationNode } from '../../../hooks/NodeManager/useNodeManager'
+import { useCurrentCommunicationNode } from '../../../hooks/DocumentManager/useDocumentManager'
 
 export type QueryBotNodeProps = {
     data: QueryBotNodeData
@@ -34,7 +34,7 @@ type Signal<T extends NodePorts> = T extends NodePorts.Input
 
 export function QueryBotNode({ data, selected }: QueryBotNodeProps) {
     const { id } = data
-    const { removeNode } = useNodeManager()
+    const { removeNode } = useDocumentManager()
     const { signal, handleSignal } = useCurrentCommunicationNode(id)
 
     const session = useRecoilValue(querySessionsState).find(
