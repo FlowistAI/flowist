@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import ReactFlow, {
     Background,
     Controls,
@@ -46,7 +46,6 @@ function App() {
             setCtxMenuPos(ctxMenuPos)
             const cvsPos = reactFlowInstance.screenToFlowPosition(ctxMenuPos)
             setCvsCurPos(cvsPos)
-            // 显示上下文菜单
         },
         [reactFlowInstance],
     )
@@ -55,7 +54,6 @@ function App() {
     const onNodeContextMenu = useCallback<NodeMouseHandler>((event, node) => {
         event.preventDefault()
         console.log('node:', node)
-        // 显示上下文菜单
     }, [])
 
     const nodeManager = useNodeManager()
@@ -63,6 +61,7 @@ function App() {
         nodeManager: nodeManager,
         cursor: cvsCurPos,
     })
+
 
     return (
         <div className="app flex" ref={reactFlowWrapper}>

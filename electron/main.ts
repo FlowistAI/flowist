@@ -5,11 +5,6 @@ process.env.VITE_PUBLIC = app.isPackaged
     ? process.env.DIST
     : path.join(process.env.DIST, '../public')
 
-if (!app.requestSingleInstanceLock()) {
-    app.quit()
-    process.exit(0)
-}
-
 let mainWindow
 
 async function handleFileOpen() {
@@ -26,6 +21,9 @@ function createWindow() {
             // webSecurity: false,
         },
     })
+
+    // 800x600 is the default size of our window
+    mainWindow.setSize(800 + 600, 600)
 
     if (process.env.VITE_DEV_SERVER_URL) {
         mainWindow.loadURL(process.env.VITE_DEV_SERVER_URL)
