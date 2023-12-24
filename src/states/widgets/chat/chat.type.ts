@@ -4,6 +4,7 @@ export type ChatSession = {
     id: SessionId // also as node id
     bot: Bot
     user: Participant
+    sending: boolean
     messages: ChatMessage[]
 }
 

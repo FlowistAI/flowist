@@ -4,8 +4,6 @@ import { GoogleGenerativeAI } from '@google/generative-ai'
 import { ChatStreamOptions, QueryStreamOptions } from './llm-service.types'
 import { OpenAIService } from './open-ai.service'
 import { LLMService } from './llm-service.types'
-import { useMemo } from 'react'
-import { Optional } from '../../types/types'
 
 export class GoogleAIService implements LLMService {
     constructor(private botSettings: BotSettings<'GoogleAI'>) {}
@@ -70,16 +68,18 @@ export class GoogleAIService implements LLMService {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const useLLM: <T extends LLMProvider>(
-    botSettings?: BotSettings<T>,
-) => Optional<LLMService> = (botSettings) => {
-    return useMemo(() => {
-        if (!botSettings) {
-            return undefined
-        }
+export const createLLMService: <T extends LLMProvider>(
+    botSettings: BotSettings<T>,
+) => LLMService = (botSettings) => {
+    const type = botSettings.serviceSource.type
 
-        return botSettings.serviceSource.type === LLMProviders.GoogleAI
-            ? new GoogleAIService(botSettings as BotSettings<'GoogleAI'>)
-            : new OpenAIService(botSettings as BotSettings<'OpenAI'>)
-    }, [botSettings])
+    if (type === LLMProviders.GoogleAI) {
+        return new GoogleAIService(botSettings as BotSettings<'GoogleAI'>)
+    }
+
+    if (type === LLMProviders.OpenAI) {
+        return new OpenAIService(botSettings as BotSettings<'OpenAI'>)
+    }
+
+    throw new Error(`LLM provider ${type} not supported`)
 }

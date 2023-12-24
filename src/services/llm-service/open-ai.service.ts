@@ -5,6 +5,7 @@ import {
     QueryStreamOptions,
     ChatStreamOptions,
 } from './llm-service.types'
+import { joinUrl } from '../../util/misc.util'
 
 export class OpenAIService implements LLMService {
     constructor(private botSettings: BotSettings<'OpenAI'>) {}
@@ -13,7 +14,7 @@ export class OpenAIService implements LLMService {
         const { input, onChunk, onDone } = opts
         const model = this.botSettings.model
         const apiKey = this.botSettings.serviceSource.apiKey
-        const baseURL = this.botSettings.serviceSource.endpoint
+        const baseURL = joinUrl(this.botSettings.serviceSource.endpoint, 'v1')
         const client = new OpenAI({
             apiKey,
             baseURL,
@@ -47,7 +48,9 @@ export class OpenAIService implements LLMService {
 
         const model = this.botSettings.model
         const apiKey = this.botSettings.serviceSource.apiKey
-        const baseURL = this.botSettings.serviceSource.endpoint
+        const baseURL = joinUrl(this.botSettings.serviceSource.endpoint, 'v1')
+        console.log('baseURL')
+
         const client = new OpenAI({
             apiKey,
             baseURL,

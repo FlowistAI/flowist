@@ -4,14 +4,14 @@ import './QueryBotNode.css'
 import { QueryBotDropDownMenu } from './QueryBotDropdownMenu'
 import { useEffect, useState } from 'react'
 import { sourceStyle, targetStyle } from '../../../constants/handle-styles'
-import { BotInfo } from '../../Chat'
-import { TextArea } from '../../TextArea'
+import { BotInfo } from '../_common/Chat'
+import { TextArea } from '../../ui/TextArea'
 import { Button } from '@mui/joy'
 import { replacePrompt } from '../../../util/misc.util'
-import { useLLM } from '../../../services/llm-service/google-ai.service'
 import { useCommunicate, useDocument } from '../../../states/document.atom'
 import { useQueryBot } from '../../../states/widgets/query/query.atom'
 import { QueryBotNodeData } from '../../../states/widgets/query/query.type'
+import { createLLMService } from '../../../services/llm-service/google-ai.service'
 
 export type QueryBotNodeProps = {
     data: QueryBotNodeData
@@ -38,11 +38,13 @@ export function QueryBotNode({ data, selected }: QueryBotNodeProps) {
     const { dispatch } = useQueryBot()
     const session = dispatch({ type: 'getSession', id })
     const botSettings = session?.bot.settings
-    const queryAI = useLLM(botSettings)
     const [input, setInput] = useState<string>('')
     const [output, setOutput] = useState<string>('')
 
     const handleQuery = (input: string) => {
+        if (!botSettings) {return}
+
+        const queryAI = createLLMService(botSettings)
         if (!queryAI) {
             return
         }
