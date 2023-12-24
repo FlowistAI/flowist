@@ -1,8 +1,8 @@
-import { useSetRecoilState } from 'recoil'
-import { toastState, ToastMessage } from './atoms'
+import { useSetAtom } from 'jotai'
+import { toastState, ToastMessage } from './toast.atom'
 
 export const useToast = (): ((message: ToastMessage) => void) => {
-    const setToast = useSetRecoilState(toastState)
+    const setToast = useSetAtom(toastState)
 
     const pushMessage = (message: ToastMessage) => {
         message.content += ' - ' + new Date().toLocaleTimeString()

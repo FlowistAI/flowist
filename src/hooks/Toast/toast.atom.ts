@@ -1,4 +1,4 @@
-import { atom } from 'recoil'
+import { atom } from 'jotai'
 
 export type ToastType = 'info' | 'warning' | 'success' | 'error'
 
@@ -7,7 +7,4 @@ export interface ToastMessage {
     content: string
 }
 
-export const toastState = atom<ToastMessage[]>({
-    key: 'toastState',
-    default: [],
-})
+export const toastState = atom<ToastMessage[]>([])

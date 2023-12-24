@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { useRecoilValue, useSetRecoilState } from 'recoil'
 import { Snackbar, SnackbarCloseReason } from '@mui/joy'
-import { ToastMessage, toastState } from './atoms'
+import { ToastMessage, toastState } from './toast.atom'
 import { InfoIcon } from '@primer/octicons-react'
 import {
     CheckOutlined,
@@ -10,6 +9,7 @@ import {
     WarningOutlined,
 } from '@mui/icons-material'
 import { Portal } from '@mui/material'
+import { useAtom } from 'jotai'
 
 type Color = 'primary' | 'neutral' | 'danger' | 'success' | 'warning'
 const severityMap: Record<string, Color> = {
@@ -27,8 +27,7 @@ const iconMap: Record<Color, React.ReactNode> = {
 }
 
 const Toast: React.FC = () => {
-    const messages = useRecoilValue(toastState)
-    const setMessages = useSetRecoilState(toastState)
+    const [messages, setMessages] = useAtom(toastState)
     const [open, setOpen] = useState(false)
     const [currentMessage, setCurrentMessage] = useState<
         ToastMessage | undefined

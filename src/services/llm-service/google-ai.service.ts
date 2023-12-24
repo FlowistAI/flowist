@@ -1,4 +1,4 @@
-import { BotSettings } from '../../types/bot-types'
+import { BotSettings } from '../../states/bot.type'
 import { LLMProvider, LLMProviders } from '../../hooks/Settings/types'
 import { GoogleGenerativeAI } from '@google/generative-ai'
 import { ChatStreamOptions, QueryStreamOptions } from './llm-service.types'

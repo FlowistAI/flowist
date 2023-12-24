@@ -36,8 +36,8 @@ export default class WebFileService implements IFileService {
 
     async selectOpenPath() {
         try {
-            const fileHandle = await (window as any).showOpenFilePicker()
-            this.handle = fileHandle
+            const fileHandles = await (window as any).showOpenFilePicker()
+            this.handle = fileHandles[0]
         } catch (error) {
             console.error('Failed to select open path:', error)
         }
@@ -47,6 +47,8 @@ export default class WebFileService implements IFileService {
         if (!this.handle) {
             throw new Error('Open path not selected')
         }
+
+        console.log(this.handle)
 
         try {
             const file = await this.handle.getFile()

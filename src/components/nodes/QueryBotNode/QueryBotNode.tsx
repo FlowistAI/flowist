@@ -1,10 +1,6 @@
 import { Handle, NodeResizer, Position } from 'reactflow'
 import { XIcon } from '@primer/octicons-react'
 import './QueryBotNode.css'
-import { QueryBotNodeData } from '../../../types/query-node.types'
-import { querySessionsState } from '../../../states/query-states'
-import { useRecoilValue } from 'recoil'
-import { useDocumentManager } from '../../../hooks/DocumentManager'
 import { QueryBotDropDownMenu } from './QueryBotDropdownMenu'
 import { useEffect, useState } from 'react'
 import { sourceStyle, targetStyle } from '../../../constants/handle-styles'
@@ -13,7 +9,9 @@ import { TextArea } from '../../TextArea'
 import { Button } from '@mui/joy'
 import { replacePrompt } from '../../../util/misc.util'
 import { useLLM } from '../../../services/llm-service/google-ai.service'
-import { useCurrentCommunicationNode } from '../../../hooks/DocumentManager/useDocumentManager'
+import { useCommunicate, useDocument } from '../../../states/document.atom'
+import { useQueryBot } from '../../../states/widgets/query/query.atom'
+import { QueryBotNodeData } from '../../../states/widgets/query/query.type'
 
 export type QueryBotNodeProps = {
     data: QueryBotNodeData
@@ -34,13 +32,13 @@ type Signal<T extends NodePorts> = T extends NodePorts.Input
 
 export function QueryBotNode({ data, selected }: QueryBotNodeProps) {
     const { id } = data
-    const { removeNode } = useDocumentManager()
-    const { signal, handleSignal } = useCurrentCommunicationNode(id)
+    const { dispatch: setDocument } = useDocument()
+    const { signal, handleSignal } = useCommunicate(id)
 
-    const session = useRecoilValue(querySessionsState).find(
-        (session) => session.id === id,
-    )
-    const queryAI = useLLM(session?.bot.settings)
+    const { dispatch } = useQueryBot()
+    const session = dispatch({ type: 'getSession', id })
+    const botSettings = session?.bot.settings
+    const queryAI = useLLM(botSettings)
     const [input, setInput] = useState<string>('')
     const [output, setOutput] = useState<string>('')
 
@@ -76,6 +74,10 @@ export function QueryBotNode({ data, selected }: QueryBotNodeProps) {
         return null
     }
 
+    const handleClose = () => {
+        setDocument({ type: 'remove-widget', id })
+    }
+
     return (
         <div
             className="chat-bot"
@@ -107,10 +109,7 @@ export function QueryBotNode({ data, selected }: QueryBotNodeProps) {
                 <span className="chat-bot__title">
                     {session.bot.name ?? 'Chat'}
                 </span>
-                <button
-                    className="chat-bot__close"
-                    onClick={() => removeNode(data.id)}
-                >
+                <button className="chat-bot__close" onClick={handleClose}>
                     <span>
                         <XIcon size={16} />
                     </span>

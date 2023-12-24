@@ -4,12 +4,11 @@ import { KebabHorizontalIcon } from '@primer/octicons-react'
 import { FC, useState } from 'react'
 import SettingsIcon from '@mui/icons-material/Settings'
 import SaveAsIcon from '@mui/icons-material/SaveAs'
-import { useRecoilValue, useSetRecoilState } from 'recoil'
-import { produce } from 'immer'
-import { querySessionsState } from '../../../states/query-states'
 import BotSettingsForm from '../_common/BotSettingsForm'
-import { BotNodePreset } from '../../../types/bot-types'
 import { useToast } from '../../../hooks/Toast/useToast'
+import { useAtom } from 'jotai'
+import { querySessionsAtom } from '../../../states/widgets/query/query.atom'
+import { BotNodePreset } from '../../../states/widgets/chat/chat.type'
 
 export type QueryBotDropDownMenuProps = {
     sessionId: string
@@ -17,10 +16,10 @@ export type QueryBotDropDownMenuProps = {
 
 export const QueryBotDropDownMenu: FC<QueryBotDropDownMenuProps> = ({ sessionId }) => {
     const [open, setOpen] = useState<boolean>(false)
-    const session = useRecoilValue(querySessionsState).find(session => session.id === sessionId)
-    const setSessions = useSetRecoilState(querySessionsState)
+    const [sessions, setSessions] = useAtom(querySessionsAtom)
     const toast = useToast()
 
+    const session = sessions.find((session) => session.id === sessionId)
     if (!session) {
         console.log(`QueryBotDropDownMenu: session not found for id ${sessionId}, ignore if just deleted`)
 
@@ -28,13 +27,10 @@ export const QueryBotDropDownMenu: FC<QueryBotDropDownMenuProps> = ({ sessionId 
     }
 
     const saveBotSettings = (values: BotNodePreset) => {
-        setSessions((prev) => produce(prev, (draft) => {
-            const session = draft.find(s => s.id === sessionId)
-
-            if (session) {
-                session.bot = values.bot
-            }
-        }))
+        setSessions({type: 'update', session: {
+            id: sessionId,
+            ...values
+        }})
         toast({ type: 'success', content: 'Bot settings saved' })
         setOpen(false)
     }

@@ -4,32 +4,31 @@ import ReactFlow, {
     Controls,
     MiniMap,
     NodeMouseHandler,
+    ReactFlowInstance,
     XYPosition,
 } from 'reactflow'
 import 'reactflow/dist/style.css'
 import './App.css'
 import { Optional } from '../types/types'
-import { COMPONENT_BY_NODE_TYPE } from '../constants/nodeTypes'
-import { useDocumentManager } from '../hooks/DocumentManager'
-import { useRecoilState } from 'recoil'
-import { ReactFlowInstanceState } from '../states/react-flow'
 import Toast from '../hooks/Toast/Toast'
 import { ContextMenu } from '../components/ContextMenu'
-import { createMenuItems } from './App.menu'
+import { useMenuItems } from './App.menu'
 import { AsideMenu } from '../components/AsideMenu'
 import PromptModal from '../hooks/Modal/PromptModal'
 import {
     ShortcutsHookOptions,
     useShortcuts,
 } from '../hooks/Shortcut/useShortcut'
-import { createFileService } from '../services/file-service/factory'
+import { useDocument } from '../states/document.atom'
+import { WidgetComponents } from '../states/widgets/widget.atom'
 
 function App() {
     const [ctxMenuPos, setCtxMenuPos] =
         useState<Optional<XYPosition>>(undefined)
     const [cvsCurPos, setCvsCurPos] = useState<Optional<XYPosition>>(undefined)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const [flowInst, setFlowInst] = useRecoilState(ReactFlowInstanceState)
+    const [flowInst, setFlowInst] =
+        useState<Optional<ReactFlowInstance>>(undefined)
 
     const onContextMenu = useCallback(
         (event: React.MouseEvent<HTMLDivElement>) => {
@@ -58,38 +57,27 @@ function App() {
         console.log('node:', node)
     }, [])
 
-    const documentManager = useDocumentManager()
-    const menuItems = createMenuItems({
-        documentManager: documentManager,
+    const menuItems = useMenuItems({
         cursor: cvsCurPos,
     })
+
+    const { state: document, dispatch: setDocument } = useDocument()
 
     useShortcuts(
         useMemo<ShortcutsHookOptions>(
             () => ({
                 scope: window ?? undefined,
                 bindings: {
-                    'ctrl+s': async () => {
-                        if (documentManager.isDraft()) {
-                            const service = await createFileService()
-                            if (service) {
-                                await documentManager.save(service)
-                            }
-                        } else {
-                            await documentManager.save()
-                        }
-                    },
-                    'ctrl+o': async () => {
-                        const service = await createFileService()
-                        if (service) {
-                            await documentManager.load(service)
-                        }
-                    },
+                    'ctrl+s': () => setDocument({ type: 'save' }),
+                    'ctrl+o': () => setDocument({ type: 'load' }),
                 },
             }),
-            [documentManager],
+            [setDocument],
         ),
     )
+
+    const nodes = document.nodes
+    const edges = document.edges
 
     return (
         <div className="app flex" ref={appWrapperRef}>
@@ -109,12 +97,24 @@ function App() {
                 <ReactFlow
                     onContextMenu={onContextMenu}
                     onNodeContextMenu={onNodeContextMenu}
-                    nodeTypes={COMPONENT_BY_NODE_TYPE}
-                    nodes={documentManager.nodes}
-                    onNodesChange={documentManager.onNodesChange}
-                    edges={documentManager.edges}
-                    onEdgesChange={documentManager.onEdgesChange}
-                    onConnect={documentManager.onConnect}
+                    nodeTypes={WidgetComponents}
+                    nodes={nodes}
+                    onNodesChange={(changes) => {
+                        setDocument({
+                            type: 'flow-change',
+                            nodeChanges: changes,
+                        })
+                    }}
+                    edges={edges}
+                    onEdgesChange={(changes) => {
+                        setDocument({
+                            type: 'flow-change',
+                            edgeChanges: changes,
+                        })
+                    }}
+                    onConnect={(params) => {
+                        setDocument({ type: 'connect', connection: params })
+                    }}
                     onKeyUp={(event) => {
                         //FIXME: event.target should be the child of the react-flow div
                         if (
@@ -122,7 +122,7 @@ function App() {
                             event.target.classList.contains('react-flow__edge')
                         ) {
                             if (event.key === 'Delete') {
-                                documentManager.deleteSelectedEdges()
+                                setDocument({ type: 'disconnectSelection' })
                             }
                         }
                     }}

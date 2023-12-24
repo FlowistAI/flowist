@@ -125,6 +125,22 @@ export const botModelOptions = {
     ],
 }
 
-export type BotNodePreset = {
-    bot: Bot
+export const DefaultBot: Bot = {
+    type: 'bot',
+    name: 'Gemini Pro',
+    avatar: 'google-ai.png',
+    settings: {
+        model: GoogleAIModelIds.GeminiPro,
+        temperature: 0.7,
+        maxTokens: 0,
+        prompt: '',
+        provider: LLMProviders.GoogleAI,
+        serviceSource: GoogleGeminiOfficialServiceSource,
+    },
+}
+
+export const DefaultUser: User = {
+    type: 'user',
+    name: 'User',
+    avatar: 'user-avatar.jpg',
 }

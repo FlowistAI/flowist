@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import {
     Box,
     Button,
@@ -15,7 +15,13 @@ import { produce } from 'immer'
 
 const PromptModal: React.FC = () => {
     const [state, setState] = useAtom(promptModalAtom)
-    const [input, setInput] = React.useState(state.data?.defaultValue ?? '')
+    const [input, setInput] = React.useState('')
+
+    useEffect(() => {
+        if (!input && state.data?.defaultValue) {
+            setInput(state.data.defaultValue)
+        }
+    }, [input, state.data?.defaultValue])
 
     const handleClose = (ok: boolean) => {
         if (!ok) {
@@ -25,8 +31,11 @@ const PromptModal: React.FC = () => {
         setState((prev) => {
             return produce(prev, (draft) => {
                 draft.open = false
+                draft.data = null
             })
         })
+
+        setInput('')
     }
 
     const { open, data } = state
@@ -79,14 +88,6 @@ const PromptModal: React.FC = () => {
                                 data?.onChange?.(e.target.value)
                                 setInput(e.target.value)
                             }}
-                            // onKeyUp={(e) => {
-                            //     const target = e as unknown as HTMLInputElement
-                            //     if (e.key === 'Enter') {
-                            //         if (data?.onOk?.(target.value) !== false) {
-                            //             handleClose(true)
-                            //         }
-                            //     }
-                            // }}
                             sx={{ mt: 2 }}
                         />
                     )}
@@ -100,14 +101,6 @@ const PromptModal: React.FC = () => {
                                 data?.onChange?.(e.target.value)
                                 setInput(e.target.value)
                             }}
-                            // onKeyUp={(e) => {
-                            //     const target = e as unknown as HTMLInputElement
-                            //     if (e.key === 'Enter') {
-                            //         if (data?.onOk?.(target.value) !== false) {
-                            //             handleClose(true)
-                            //         }
-                            //     }
-                            // }}
                             sx={{ mt: 2 }}
                         />
                     )}
