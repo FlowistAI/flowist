@@ -1,7 +1,7 @@
 import { Nullable, Optional } from '../../types/types'
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-type Handler<T> = (value?: T) => void;
+type Handler<T> = (value?: T) => void
 
 export class EventEmitter<T> {
     private handlersMap: Map<keyof T, Set<Handler<T[keyof T]>>>
@@ -17,7 +17,7 @@ export class EventEmitter<T> {
             return
         }
 
-        handlers.forEach(h => h(value))
+        handlers.forEach((h) => h(value))
     }
 
     on<K extends keyof T>(eventName: K, callback: Handler<T[keyof T]>): void {
@@ -48,15 +48,15 @@ export class EventEmitter<T> {
 
 /**
  * There are nodes in the graph, each nodes has ports including input and output ports.
- * A node can send event to its output ports, and receive event from its input ports, 
+ * A node can send event to its output ports, and receive event from its input ports,
  * and it don't care who are the receivers or senders.
- * 
+ *
  * Node ID is unique in the graph. and port ID is unique in the node but not unique in the graph.
- * 
+ *
  * Channels are the connections between nodes, and they are one-way.
  */
 
-type Signal = any; // Define Signal type as needed
+type Signal = any // Define Signal type as needed
 
 interface CommunicationPort {
     id: string
@@ -64,7 +64,7 @@ interface CommunicationPort {
     type: 'input' | 'output'
 }
 
-export type SignalHandler = (portId: string, signal: Signal) => void;
+export type SignalHandler = (portId: string, signal: Signal) => void
 
 export type CommunicationNodeDefinition = {
     id: string
@@ -80,7 +80,7 @@ export type CommunicationNodeDefinition = {
             }
         }
     }
-};
+}
 
 export class CommunicationNode {
     id: string
@@ -98,14 +98,23 @@ export class CommunicationNode {
             this.eventEmitter.emit(port, data)
         }
 
-        this._sendSignal = () => { throw new Error('sendSignal not ready') }
+        this._sendSignal = () => {
+            throw new Error('sendSignal not ready')
+        }
 
         // this.setHandler.bind(this);
         // this.resethandler.bind(this);
         // bind all methods
         Object.getOwnPropertyNames(CommunicationNode.prototype)
-            .filter(prop => typeof ((this as any)[prop] as any) === 'function')
-            .forEach(prop => (this as any)[prop] = ((this as any)[prop] as any).bind(this))
+            .filter(
+                (prop) => typeof ((this as any)[prop] as any) === 'function',
+            )
+            .forEach(
+                (prop) =>
+                    ((this as any)[prop] = ((this as any)[prop] as any).bind(
+                        this,
+                    )),
+            )
     }
 
     setHandler(port: string, handler: (data: any) => void) {
@@ -124,7 +133,9 @@ export class CommunicationNode {
         this.eventEmitter.off(port, handler)
     }
 
-    static fromDefinition(definition: CommunicationNodeDefinition): CommunicationNode {
+    static fromDefinition(
+        definition: CommunicationNodeDefinition,
+    ): CommunicationNode {
         const node = new CommunicationNode(definition.id)
         Object.entries(definition.ports.input).forEach(([portId]) => {
             node.addInputPort(portId)
@@ -141,7 +152,9 @@ export class CommunicationNode {
     }
 
     tearDown() {
-        this._sendSignal = () => { throw new Error('sendSignal not ready') }
+        this._sendSignal = () => {
+            throw new Error('sendSignal not ready')
+        }
     }
 
     addInputPort(portId: string): void {
@@ -164,49 +177,63 @@ export class CommunicationNode {
 
     signal(outputPortId: string, signal: Signal): void {
         // Find the output port with the given ID
-        const outputPort = this.outputPorts.find(port => port.id === outputPortId)
+        const outputPort = this.outputPorts.find(
+            (port) => port.id === outputPortId,
+        )
 
         if (outputPort) {
             // Emit a signal event with the output port ID and signal
-            console.log(`Node ${this.id} sending signal from port ${outputPort.id}`, signal)
+            console.log(
+                `Node ${this.id} sending signal from port ${outputPort.id}`,
+                signal,
+            )
             this._sendSignal(outputPort.id, signal)
         } else {
-            throw new Error(`Output port ${outputPortId} not found in node ${this.id}`)
+            throw new Error(
+                `Output port ${outputPortId} not found in node ${this.id}`,
+            )
         }
     }
 }
 
-type NodeId = string;
-type PortId = string;
-type NodePortId = string; // nodeId:portId
-type CommunicateMsg = { from: NodePortId; to: NodePortId; signal: Signal };
-type PortListener = (signal: CommunicateMsg) => void;
-type SourceTargetId = string; // sourceNodeId:sourcePortId-targetNodeId:targetPortId
+type NodeId = string
+type PortId = string
+type NodePortId = string // nodeId:portId
+type CommunicateMsg = { from: NodePortId; to: NodePortId; signal: Signal }
+type PortListener = (signal: CommunicateMsg) => void
+type SourceTargetId = string // sourceNodeId:sourcePortId-targetNodeId:targetPortId
 
-export type ParsedSourceTargetId = [NodeId, PortId, NodeId, PortId];
+export type ParsedSourceTargetId = [NodeId, PortId, NodeId, PortId]
 
 export function createSourceTargetId(
-    sourceNodeId?: Nullable<string>, sourcePortId?: Nullable<string>,
-    targetNodeId?: Nullable<string>, targetPortId?: Nullable<string>
+    sourceNodeId?: Nullable<string>,
+    sourcePortId?: Nullable<string>,
+    targetNodeId?: Nullable<string>,
+    targetPortId?: Nullable<string>,
 ): SourceTargetId {
-    return `${sourceNodeId ?? ''}:${sourcePortId ?? ''}-${targetNodeId ?? ''}:${targetPortId ?? ''}`
+    return `${sourceNodeId ?? ''}:${sourcePortId ?? ''}-${targetNodeId ?? ''}:${
+        targetPortId ?? ''
+    }`
 }
 
 export function parseSourceTargetId(sourceTargetId: SourceTargetId) {
-    const r = sourceTargetId.split('-').map(s => s.split(':')).flat()
+    const r = sourceTargetId
+        .split('-')
+        .map((s) => s.split(':'))
+        .flat()
 
     if (r.length !== 4) {
         throw new Error(`Invalid length of sourceTargetId: ${sourceTargetId}`)
     }
 
-    if (r.some(s => s === '')) {
-        throw new Error(`Invalid partial empty sourceTargetId: ${sourceTargetId}`
-            + ' do you forget to set port id?'
+    if (r.some((s) => s === '')) {
+        throw new Error(
+            `Invalid partial empty sourceTargetId: ${sourceTargetId}` +
+                ' do you forget to set port id?',
         )
     }
 
     return r as [string, string, string, string]
-
 }
 
 export class GraphTelecom {
@@ -232,12 +259,22 @@ export class GraphTelecom {
         node.setUp((outputPortId, signal) => {
             const outputNodePortId = `${node.id}:${outputPortId}`
             const connectionInfo = this.getConnectionInfo(node.id)
-            Object.entries(connectionInfo.outgoing).forEach(([targetNodeId, targetPortId]) => {
-                console.log('GraphTelecom send signal', { from: outputNodePortId, to: `${targetNodeId}:${targetPortId}`, signal })
+            Object.entries(connectionInfo.outgoing).forEach(
+                ([targetNodeId, targetPortId]) => {
+                    console.log('GraphTelecom send signal', {
+                        from: outputNodePortId,
+                        to: `${targetNodeId}:${targetPortId}`,
+                        signal,
+                    })
 
-                const inputNodePortId = `${targetNodeId}:${targetPortId}`
-                this.eventEmitter.emit('signal', { from: outputNodePortId, to: inputNodePortId, signal })
-            })
+                    const inputNodePortId = `${targetNodeId}:${targetPortId}`
+                    this.eventEmitter.emit('signal', {
+                        from: outputNodePortId,
+                        to: inputNodePortId,
+                        signal,
+                    })
+                },
+            )
         })
     }
 
@@ -248,7 +285,7 @@ export class GraphTelecom {
             throw new Error(`Node ${nodeId} not found in the graph`)
         }
 
-        node.inputPorts.forEach(port => {
+        node.inputPorts.forEach((port) => {
             const listenerKey = `${nodeId}:${port.id}`
             const listener = this.portListeners.get(listenerKey)
 
@@ -258,7 +295,7 @@ export class GraphTelecom {
             }
         })
 
-        node.outputPorts.forEach(port => {
+        node.outputPorts.forEach((port) => {
             this.portListeners.forEach((listener, key) => {
                 if (key.startsWith(`${nodeId}:${port.id}-`)) {
                     this.eventEmitter.off('signal', listener)
@@ -271,24 +308,45 @@ export class GraphTelecom {
         this.nodes.delete(nodeId)
     }
 
-    connect(outputNodeId: string, outputPortId: string, inputNodeId: string, inputPortId: string): void {
-        console.log('GraphTelecom connect', { outputNodeId, outputPortId, inputNodeId, inputPortId })
+    connect(
+        outputNodeId: string,
+        outputPortId: string,
+        inputNodeId: string,
+        inputPortId: string,
+    ): void {
+        console.log('GraphTelecom connect', {
+            outputNodeId,
+            outputPortId,
+            inputNodeId,
+            inputPortId,
+        })
 
         const outputNode = this.nodes.get(outputNodeId)
         const inputNode = this.nodes.get(inputNodeId)
 
         if (!outputNode || !inputNode) {
-            throw new Error(`Output node ${outputNodeId} or input node ${inputNodeId} not found in the graph`)
+            throw new Error(
+                `Output node ${outputNodeId} or input node ${inputNodeId} not found in the graph`,
+            )
         }
 
         const outputNodePortId = `${outputNodeId}:${outputPortId}`
         const inputNodePortId = `${inputNodeId}:${inputPortId}`
 
+        // if already connected, throw error
+        if (this.portListeners.has(`${outputNodePortId}-${inputNodePortId}`)) {
+            throw new Error(
+                `Output port ${outputNodePortId} and input port ${inputNodePortId} already connected`,
+            )
+        }
+
         const listener: PortListener = ({ from, to, signal }) => {
             console.log('GraphTelecom receive signal', { from, to, signal })
 
             if (!from || !to) {
-                throw new Error(`Invalid signal: ${JSON.stringify({ from, to, signal })}`)
+                throw new Error(
+                    `Invalid signal: ${JSON.stringify({ from, to, signal })}`,
+                )
             }
 
             if (from === outputNodePortId && to === inputNodePortId) {
@@ -296,31 +354,49 @@ export class GraphTelecom {
             }
         }
 
-        this.portListeners.set(`${outputNodePortId}-${inputNodePortId}`, listener)
+        this.portListeners.set(
+            `${outputNodePortId}-${inputNodePortId}`,
+            listener,
+        )
         this.eventEmitter.on('signal', listener)
     }
 
-    disconnect(outputNodeId: string, outputPortId: string, inputNodeId: string, inputPortId: string): void {
+    disconnect(
+        outputNodeId: string,
+        outputPortId: string,
+        inputNodeId: string,
+        inputPortId: string,
+    ): void {
         const outputNode = this.nodes.get(outputNodeId)
         const inputNode = this.nodes.get(inputNodeId)
 
         if (!outputNode || !inputNode) {
-            throw new Error(`Output node ${outputNodeId} or input node ${inputNodeId} not found in the graph`)
+            throw new Error(
+                `Output node ${outputNodeId} or input node ${inputNodeId} not found in the graph`,
+            )
         }
 
         const outputNodePortId = `${outputNodeId}:${outputPortId}`
         const inputNodePortId = `${inputNodeId}:${inputPortId}`
 
-        const listener = this.portListeners.get(`${outputNodePortId}-${inputNodePortId}`)
+        const listener = this.portListeners.get(
+            `${outputNodePortId}-${inputNodePortId}`,
+        )
 
         if (!listener) {
-            throw new Error(`No listener for output port ${outputNodePortId} and input port ${inputNodePortId}`)
+            throw new Error(
+                `No listener for output port ${outputNodePortId} and input port ${inputNodePortId}`,
+            )
         }
 
         this.eventEmitter.off('signal', listener)
         this.portListeners.delete(`${outputNodePortId}-${inputNodePortId}`)
-        console.log('GraphTelecom disconnect', { outputNodeId, outputPortId, inputNodeId, inputPortId })
-
+        console.log('GraphTelecom disconnect', {
+            outputNodeId,
+            outputPortId,
+            inputNodeId,
+            inputPortId,
+        })
     }
 
     getConnectionInfo(nodeId: string) {
@@ -333,7 +409,10 @@ export class GraphTelecom {
         }
         this.portListeners.forEach((_, key) => {
             // outgoing connections
-            const [fromNode, fromPort, toNode, toPort] = key.split('-').map(s => s.split(':')).flat()
+            const [fromNode, fromPort, toNode, toPort] = key
+                .split('-')
+                .map((s) => s.split(':'))
+                .flat()
 
             if (fromNode === nodeId) {
                 connectionInfo.outgoing[toNode] = toPort
@@ -343,7 +422,6 @@ export class GraphTelecom {
             if (toNode === nodeId) {
                 connectionInfo.incoming[fromNode] = fromPort
             }
-
         })
 
         return connectionInfo
@@ -361,16 +439,23 @@ export class GraphTelecom {
         return sourceNodeId in connectionInfo.incoming
     }
 
-    isSendingToPort(nodeId: string, targetNodeId: string, targetPortId: string) {
+    isSendingToPort(
+        nodeId: string,
+        targetNodeId: string,
+        targetPortId: string,
+    ) {
         const connectionInfo = this.getConnectionInfo(nodeId)
 
         return connectionInfo.outgoing[targetNodeId] === targetPortId
     }
 
-    isReceivingFromPort(nodeId: string, sourceNodeId: string, sourcePortId: string) {
+    isReceivingFromPort(
+        nodeId: string,
+        sourceNodeId: string,
+        sourcePortId: string,
+    ) {
         const connectionInfo = this.getConnectionInfo(nodeId)
 
         return connectionInfo.incoming[sourceNodeId] === sourcePortId
     }
-
 }

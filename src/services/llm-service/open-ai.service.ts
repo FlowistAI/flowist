@@ -1,4 +1,4 @@
-import { BotSettings } from '../../types/bot-types'
+import { BotSettings } from '../../states/bot.type'
 import OpenAI from 'openai'
 import {
     LLMService,

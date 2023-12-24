@@ -1,4 +1,4 @@
-import { SessionId, Bot, Participant } from './bot-types'
+import { SessionId, Bot, Participant } from '../../bot.type'
 
 export type ChatSession = {
     id: SessionId // also as node id
@@ -17,4 +17,8 @@ export type ChatMessage = {
 
 export type ChatBotNodeData = {
     id: SessionId
+}
+
+export type BotNodePreset = {
+    bot: Bot
 }

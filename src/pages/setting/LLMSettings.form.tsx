@@ -9,7 +9,7 @@ import {
     FormHelperText,
     Textarea,
 } from '@mui/joy';
-import { llmProviderOptions } from '../../types/bot-types';
+import { llmProviderOptions } from '../../states/bot.type';
 import { GoogleAIModelIds, LLMSection, OpenAIModelIds } from '../../hooks/Settings/types';
 import { forwardRef, useImperativeHandle } from 'react';
 

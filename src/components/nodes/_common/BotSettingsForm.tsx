@@ -8,9 +8,9 @@ import {
     llmProviderOptions,
     getDefaultModel,
     getInitialServiceSource,
-} from '../../../types/bot-types'
+} from '../../../states/bot.type'
 import { LLMProvider } from '../../../hooks/Settings/types'
-import { BotNodePreset } from '../../../types/bot-types'
+import { BotNodePreset } from '../../../states/bot.type'
 import { FC } from 'react'
 import { produce } from 'immer'
 

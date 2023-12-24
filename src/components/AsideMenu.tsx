@@ -5,12 +5,12 @@ import IconButton from '@mui/joy/IconButton'
 import List from '@mui/joy/List'
 import ListItem from '@mui/joy/ListItem'
 import Sheet from '@mui/joy/Sheet'
-import Apps from '@mui/icons-material/Apps'
 import Settings from '@mui/icons-material/Settings'
 import Person from '@mui/icons-material/Person'
 import Dropdown from '@mui/joy/Dropdown'
 import MenuButton from '@mui/joy/MenuButton'
-import { Output, PestControl } from '@mui/icons-material'
+import { Article, Output, PestControl } from '@mui/icons-material'
+import { useDocument } from '../states/document.atom'
 // The Menu is built on top of Popper v2, so it accepts `modifiers` prop that will be passed to the Popper.
 // https://popper.js.org/docs/v2/modifiers/offset/
 interface MenuButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
@@ -138,6 +138,7 @@ export default function MenuIconSideNavExample() {
     const itemProps = {
         onClick: () => setMenuIndex(null),
     }
+    const { dispatch } = useDocument()
     const createHandleLeaveMenu =
         (index: number) => (getIsOnButton: () => boolean) => {
             setTimeout(() => {
@@ -162,25 +163,26 @@ export default function MenuIconSideNavExample() {
             <List>
                 <ListItem>
                     <NavMenuButton
-                        label="Apps"
+                        label="Document"
                         open={menuIndex === 0}
                         onOpen={() => setMenuIndex(0)}
                         onLeaveMenu={createHandleLeaveMenu(0)}
                         menu={
                             <Menu onClose={() => setMenuIndex(null)}>
-                                <MenuItem {...itemProps}>
-                                    Application f1
+                                <MenuItem
+                                    onClick={() => dispatch({ type: 'load' })}
+                                >
+                                    Open
                                 </MenuItem>
-                                <MenuItem {...itemProps}>
-                                    Application 2
-                                </MenuItem>
-                                <MenuItem {...itemProps}>
-                                    Application 3
+                                <MenuItem
+                                    onClick={() => dispatch({ type: 'save' })}
+                                >
+                                    Save
                                 </MenuItem>
                             </Menu>
                         }
                     >
-                        <Apps />
+                        <Article />
                     </NavMenuButton>
                 </ListItem>
                 <ListItem>

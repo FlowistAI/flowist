@@ -8,14 +8,14 @@ import {
     Tooltip,
 } from '@mui/joy'
 import React, { useCallback, useEffect, useRef } from 'react'
-import { Bot } from '../types/bot-types'
-import { ChatMessage } from '../types/chat-node.types'
+import { Bot } from '../states/bot.type'
 import './Chat.css'
 import { MoreHoriz, Send } from '@mui/icons-material'
-import { useChatSession } from '../states/chat-states'
 import { useClipboard } from '@nextui-org/use-clipboard'
 import { useToast } from '../hooks/Toast/useToast'
 import { useModal } from '../hooks/Modal/usePromptModal'
+import { ChatMessage } from '../states/widgets/chat/chat.type'
+import { useChatBot } from '../states/widgets/chat/chat.atom'
 
 export interface AvatarProps {
     src: string
@@ -137,8 +137,8 @@ export const Message: React.FC<MessageProps> = ({
     </>
 )
 
-const useMessageMenuActionHandler = (sessionId: string) => {
-    const sess = useChatSession(sessionId)
+const useMessageMenuActionHandler = (sid: string) => {
+    const { dispatch } = useChatBot()
 
     const { copy, error } = useClipboard()
     const toast = useToast()
@@ -146,7 +146,13 @@ const useMessageMenuActionHandler = (sessionId: string) => {
 
     const handleAction = useCallback(
         (messageId: string, action: MessageMenuActionType) => {
-            const message = sess.getMessage(messageId)
+            const message = dispatch({
+                type: 'getMessage',
+                sid,
+                mid: messageId,
+            })
+            console.log(message?.content)
+
             if (!message) {
                 console.error('Message not found', messageId)
 
@@ -192,7 +198,16 @@ const useMessageMenuActionHandler = (sessionId: string) => {
                         prompt: 'Input new message content',
                         defaultValue: message.content,
                         onOk(value) {
-                            sess.updateMessage(messageId, () => value)
+                            // sess.updateMessage(messageId, () => value)
+                            dispatch({
+                                type: 'updateMessage',
+                                sid,
+                                mid: messageId,
+                                message: {
+                                    ...message,
+                                    content: value,
+                                },
+                            })
                             toast({
                                 type: 'success',
                                 content: 'Message updated',
@@ -203,7 +218,8 @@ const useMessageMenuActionHandler = (sessionId: string) => {
                 }
 
                 case MessageMenuActions.Delete: {
-                    sess.deleteMessage(messageId)
+                    // sess.deleteMessage(messageId)
+                    dispatch({ type: 'deleteMessage', sid, mid: messageId })
                     toast({
                         type: 'success',
                         content: 'Message deleted',
@@ -212,57 +228,86 @@ const useMessageMenuActionHandler = (sessionId: string) => {
                 }
 
                 case MessageMenuActions.InsertContextDelimiterAbove: {
-                    sess.insertMessage({
+                    // sess.insertMessage({
+                    //     message: {
+                    //         id: 'context-delimiter',
+                    //         content: '---',
+                    //         isUser: true,
+                    //         avatar: '',
+                    //     },
+                    //     beforeMessageId: messageId,
+                    // })
+                    dispatch({
+                        type: 'insertMessageBefore',
+                        sid,
                         message: {
                             id: 'context-delimiter',
                             content: '---',
                             isUser: true,
                             avatar: '',
                         },
-                        beforeMessageId: messageId,
+                        beforeMid: messageId,
                     })
                     break
                 }
 
                 case MessageMenuActions.InsertContextDelimiterBelow: {
-                    sess.insertMessage({
+                    // sess.insertMessage({
+                    //     message: {
+                    //         id: 'context-delimiter',
+                    //         content: '---',
+                    //         isUser: true,
+                    //         avatar: '',
+                    //     },
+                    //     afterMessageId: messageId,
+                    // })
+                    dispatch({
+                        type: 'insertMessageAfter',
+                        sid,
                         message: {
                             id: 'context-delimiter',
                             content: '---',
                             isUser: true,
                             avatar: '',
                         },
-                        afterMessageId: messageId,
+                        afterMid: messageId,
                     })
                     break
                 }
 
                 case MessageMenuActions.ClearMessagesAbove: {
-                    sess.clearMessageBefore(messageId)
+                    // sess.clearMessageBefore(messageId)
+                    dispatch({
+                        type: 'clearMessageBefore',
+                        sid,
+                        beforeMid: messageId,
+                    })
                     break
                 }
 
                 case MessageMenuActions.ClearMessagesBelow: {
-                    sess.clearMessageAfter(messageId)
+                    // sess.clearMessageAfter(messageId)
+                    dispatch({
+                        type: 'clearMessageAfter',
+                        sid,
+                        afterMid: messageId,
+                    })
                     break
                 }
             }
         },
-        [copy, error, modal, sess, toast],
+        [copy, dispatch, error, modal, sid, toast],
     )
 
     return handleAction
 }
 
 export interface MessageListProps {
-    sessionId: string
+    sid: string
     messages: ChatMessage[]
 }
 
-export const MessageList: React.FC<MessageListProps> = ({
-    sessionId,
-    messages,
-}) => {
+export const MessageList: React.FC<MessageListProps> = ({ sid, messages }) => {
     const messagesEndRef = useRef<HTMLDivElement>(null)
 
     const scrollToBottom = () => {
@@ -273,7 +318,7 @@ export const MessageList: React.FC<MessageListProps> = ({
         scrollToBottom()
     }, [messages])
 
-    const handleMessageMenuAction = useMessageMenuActionHandler(sessionId)
+    const handleMessageMenuAction = useMessageMenuActionHandler(sid)
 
     return (
         <div className="messages nodrag">

@@ -1,5 +1,5 @@
 import { LLMProvider } from '../hooks/Settings/types'
-import { BotSettings } from '../types/bot-types'
+import { BotSettings } from '../states/bot.type'
 
 export type ElectronBridge = {
     // llmServiceFactory: <T extends LLMProvider>(
