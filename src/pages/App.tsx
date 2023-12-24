@@ -12,7 +12,7 @@ import './App.css'
 import { Optional } from '../types/types'
 import Toast from '../hooks/Toast/Toast'
 import { ContextMenu } from '../components/ContextMenu'
-import { useMenuItems } from './App.menu'
+import { useMenuItems } from './App.context-menu'
 import { AsideMenu } from '../components/AsideMenu'
 import PromptModal from '../hooks/Modal/PromptModal'
 import {

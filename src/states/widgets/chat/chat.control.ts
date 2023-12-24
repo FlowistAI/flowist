@@ -18,6 +18,7 @@ export const ChatBotNodeControl = {
             id,
             bot: preset?.bot ?? DefaultBot,
             user: undefined /* fill later */ ?? DefaultUser,
+            sending: false,
             messages: [],
         }
 

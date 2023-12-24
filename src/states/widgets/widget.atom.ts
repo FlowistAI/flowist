@@ -6,7 +6,7 @@ import { queryBotAtom } from './query/query.atom'
 import { QueryBotWidgetControl } from './query/query.control'
 import { ttsDataAtom } from './tts/tts'
 import { TTSWidgetControl } from './tts/tts.control'
-import { ChatBotNode } from '../../components/nodes/ChatBotNode/ChatBotNode'
+import { ChatBotNode } from '../../components/nodes/ChatBotWidget/ChatBotNode'
 import { TextToSpeechNode } from '../../nodes/text-to-speech/component/TextToSpeechNode'
 import { QueryBotNode } from '../../components/nodes/QueryBotNode/QueryBotNode'
 
