@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid'
 /**
  * A simple id generator, which generates id in the form of
  *  A, B, C, ..., Z, AA, AB, AC, ..., AZ, BA, BB, BC, ... like Excel
- * 
+ *
  */
 export class NodeIdGenerator {
     private _index: number
@@ -36,3 +36,5 @@ export class NodeIdGenerator {
 
 // for business realated id
 export const generateUUID = () => uuidv4()
+
+export type UUID = string

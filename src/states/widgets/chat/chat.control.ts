@@ -4,7 +4,7 @@ import { JotaiContext } from '../../index.type'
 import { WidgetType, WidgetTypes } from '../widget.atom'
 import { DefaultBot, DefaultUser } from '../../bot.type'
 import { ChatBotData, chatBotAtom, chatSessionsAtom } from './chat.atom'
-import { BotNodePreset, ChatSession } from './chat.type'
+import { ChatSession } from './chat.type'
 import { Node } from 'reactflow'
 
 export const ChatBotNodeControl = {
@@ -12,11 +12,10 @@ export const ChatBotNodeControl = {
         { set }: JotaiContext,
         id: string,
         options: AddWidgetOptions<WidgetType>,
-        preset?: BotNodePreset,
     ): Node {
         const session: ChatSession = {
             id,
-            bot: preset?.bot ?? DefaultBot,
+            bot: options.preset?.bot ?? DefaultBot,
             user: undefined /* fill later */ ?? DefaultUser,
             sending: false,
             messages: [],

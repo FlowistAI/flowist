@@ -2,3 +2,38 @@
   width: 100%;
   height: 100%;
 }
+
+/* sidebar start */
+.sidebar {
+  transform: translateX(-100%);
+  opacity: 0;
+  transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+}
+
+.sidebar-enter {
+  transform: translateX(0%);
+  opacity: 1;
+}
+
+.sidebar-exit {
+  transform: translateX(-100%);
+  opacity: 0;
+}
+
+
+/* sidebar end */
+.icon-circle-button {
+  border: none;
+  background: none;
+  cursor: pointer;
+  padding: 2px;
+}
+
+.icon-circle-button:hover {
+  background-color: var(--color-gray-30);
+  border-radius: 9999px;
+}
+
+.icon-circle-button:active {
+  background-color: var(--color-gray-20);
+}

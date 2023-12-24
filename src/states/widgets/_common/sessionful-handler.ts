@@ -1,17 +1,14 @@
 import { Getter, PrimitiveAtom, Setter } from 'jotai'
+import { HasId } from '../../../types/types'
 
-export type IdentObj = {
-    id: string
-}
-
-export type SessionfulAction<T extends IdentObj> =
+export type SessionfulAction<T extends HasId> =
     | { type: 'add'; session: T }
     | { type: 'remove'; id: string }
     | { type: 'update'; session: Partial<T> & Required<Pick<T, 'id'>> }
     | { type: 'restore'; sessions: T[] }
 
 export const createSessionfulHandler =
-    <T extends IdentObj>(a: PrimitiveAtom<T[]>) =>
+    <T extends HasId>(a: PrimitiveAtom<T[]>) =>
     (_get: Getter, set: Setter, action: SessionfulAction<T>) => {
         if (action.type == 'add') {
             return set(a, (prev) => [...prev, action.session])

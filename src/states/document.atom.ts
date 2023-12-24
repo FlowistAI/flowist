@@ -104,7 +104,9 @@ function handleAction<T extends DocumentAction<WidgetType>>(
 ): ActionResultMapping[T['type']] {
     // (get, set, action: DocumentAction<WidgetType>) => {
     const ctx = { get, set }
-    console.log('document action', action)
+    if (action.type !== 'flow-change') {
+        console.log('document action', action)
+    }
 
     switch (action.type) {
         case 'add-widget':

@@ -1,4 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useCallback, useMemo, useRef, useState } from 'react'
+import { useDrop } from 'react-dnd'
+
 import ReactFlow, {
     Background,
     Controls,
@@ -13,7 +16,7 @@ import { Optional } from '../types/types'
 import Toast from '../hooks/Toast/Toast'
 import { ContextMenu } from '../components/ContextMenu'
 import { useMenuItems } from './App.context-menu'
-import { AsideMenu } from '../components/AsideMenu'
+import { AsideMenu } from './App.nav-menu'
 import PromptModal from '../hooks/Modal/PromptModal'
 import {
     ShortcutsHookOptions,
@@ -21,6 +24,7 @@ import {
 } from '../hooks/Shortcut/useShortcut'
 import { useDocument } from '../states/document.atom'
 import { WidgetComponents } from '../states/widgets/widget.atom'
+import { PresetDropItem, Presets } from './App.presets-sidebar'
 
 function App() {
     const [ctxMenuPos, setCtxMenuPos] =
@@ -32,6 +36,18 @@ function App() {
 
     const onContextMenu = useCallback(
         (event: React.MouseEvent<HTMLDivElement>) => {
+            const className = (event.target as HTMLDivElement)?.className
+            console.log(className)
+
+            if (
+                typeof className != 'string' ||
+                className !== 'react-flow__pane'
+            ) {
+                console.log('ignore')
+
+                return
+            }
+
             event.preventDefault()
 
             if (!flowInst) {
@@ -61,6 +77,37 @@ function App() {
         cursor: cvsCurPos,
     })
 
+    const [, drop] = useDrop({
+        accept: 'item',
+        drop: (item: PresetDropItem, monitor) => {
+            if (!flowInst) {
+                return
+            }
+
+            const pos = monitor.getClientOffset()
+            if (!pos) {
+                return
+            }
+
+            const canvasPos = flowInst.screenToFlowPosition(pos)
+            const preset = item.data
+            console.log('preset', preset)
+
+            setDocument({
+                type: 'add-widget',
+                options: {
+                    type: item.data.type,
+                    data: { position: canvasPos },
+                    preset,
+                },
+            })
+        },
+        collect: (monitor) => ({
+            isOver: monitor.isOver(),
+            canDrop: monitor.canDrop(),
+        }),
+    })
+
     const { state: document, dispatch: setDocument } = useDocument()
 
     useShortcuts(
@@ -81,7 +128,7 @@ function App() {
 
     return (
         <div className="app flex" ref={appWrapperRef}>
-            <div className="border-r fixed left-0 top-0 z-50 flex h-screen w-18 flex-col items-center bg-white py-6 ">
+            <div className="fixed left-0 top-0 z-50 h-screen w-18 flex items-center bg-white ">
                 <Toast />
                 <PromptModal />
                 {/* <FloatingMenu /> */}
@@ -91,9 +138,12 @@ function App() {
                     onClose={() => setCtxMenuPos(undefined)}
                     items={menuItems}
                 />
-                <AsideMenu />
+                <div className="border-r py-6 h-full">
+                    <AsideMenu />
+                </div>
+                <Presets />
             </div>
-            <main className="flex-1 h-full">
+            <main className="flex-1 h-full" ref={drop}>
                 <ReactFlow
                     onContextMenu={onContextMenu}
                     onNodeContextMenu={onNodeContextMenu}

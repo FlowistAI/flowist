@@ -15,8 +15,12 @@ import BotSettingsForm from '../_common/BotSettingsForm'
 import { useToast } from '../../../hooks/Toast/useToast'
 import { useAtom } from 'jotai'
 import { chatSessionsAtom } from '../../../states/widgets/chat/chat.atom'
-import { BotNodePreset } from '../../../states/widgets/chat/chat.type'
+import { BotWrapped } from '../../../states/widgets/chat/chat.type'
 import { SaveAs } from '@mui/icons-material'
+import { usePresets } from '../../../states/preset.atom'
+import { generateUUID } from '../../../util/id-generator'
+import { PresetData } from '../../../states/widgets/widget.atom'
+import { PresetSaveForm, PresetSaveFormData } from '../_common/PresetSaveForm'
 
 export type ChatBotDropDownMenuProps = {
     sessionId: string
@@ -25,16 +29,18 @@ export type ChatBotDropDownMenuProps = {
 export const ChatBotDropDownMenu: FC<ChatBotDropDownMenuProps> = ({
     sessionId,
 }) => {
-    const [open, setOpen] = useState<boolean>(false)
+    const [settingsOpen, setSettingsOpen] = useState<boolean>(false)
+    const [savePresetOpen, setSavePresetOpen] = useState<boolean>(false)
     const [sessions, setSessions] = useAtom(chatSessionsAtom)
     const session = sessions.find((session) => session.id === sessionId)
     const toast = useToast()
+    const { dispatch: dispatchPresets } = usePresets()
 
     if (!session) {
         return null
     }
 
-    const saveBotSettings = (values: BotNodePreset) => {
+    const saveBotSettings = (values: BotWrapped) => {
         setSessions({
             type: 'update',
             session: {
@@ -43,7 +49,24 @@ export const ChatBotDropDownMenu: FC<ChatBotDropDownMenuProps> = ({
             },
         })
         toast({ type: 'success', content: 'Bot settings saved' })
-        setOpen(false)
+        setSettingsOpen(false)
+    }
+
+    const savePreset = (form: PresetSaveFormData) => {
+        const presetData: PresetData = {
+            id: generateUUID(),
+            type: 'chat-bot',
+            ...form,
+            settings: session.bot.settings,
+        }
+
+        dispatchPresets({
+            type: 'add',
+            preset: presetData,
+        })
+
+        toast({ type: 'success', content: 'Preset saved' })
+        setSavePresetOpen(false)
     }
 
     return (
@@ -58,13 +81,13 @@ export const ChatBotDropDownMenu: FC<ChatBotDropDownMenuProps> = ({
                     </div>
                 </MenuButton>
                 <Menu>
-                    <MenuItem onClick={() => setOpen(true)}>
+                    <MenuItem onClick={() => setSettingsOpen(true)}>
                         <ListItemDecorator>
                             <SettingsIcon />
                         </ListItemDecorator>
                         Settings
                     </MenuItem>
-                    <MenuItem>
+                    <MenuItem onClick={() => setSavePresetOpen(true)}>
                         <ListItemDecorator>
                             <SaveAs />
                         </ListItemDecorator>
@@ -72,7 +95,8 @@ export const ChatBotDropDownMenu: FC<ChatBotDropDownMenuProps> = ({
                     </MenuItem>
                 </Menu>
             </Dropdown>
-            <Modal open={open} onClose={() => setOpen(false)}>
+            {/* Modal bot settings */}
+            <Modal open={settingsOpen} onClose={() => setSettingsOpen(false)}>
                 <ModalDialog>
                     <ModalClose variant="plain" sx={{ m: 1 }} />
                     <Typography
@@ -88,6 +112,33 @@ export const ChatBotDropDownMenu: FC<ChatBotDropDownMenuProps> = ({
                     <BotSettingsForm
                         initialValues={session}
                         onSubmit={saveBotSettings}
+                    />
+                </ModalDialog>
+            </Modal>
+            {/* Modal save preset */}
+            <Modal
+                open={savePresetOpen}
+                onClose={() => setSavePresetOpen(false)}
+            >
+                <ModalDialog>
+                    <ModalClose variant="plain" sx={{ m: 1 }} />
+                    <Typography
+                        component="h2"
+                        id="modal-title"
+                        level="h4"
+                        textColor="inherit"
+                        fontWeight="lg"
+                        mb={1}
+                    >
+                        Save as a Preset
+                    </Typography>
+                    <PresetSaveForm
+                        initialValues={{
+                            name: session.bot.name,
+                            icon: session.bot.avatar,
+                            description: session.bot.settings.prompt,
+                        }}
+                        onSubmit={savePreset}
                     />
                 </ModalDialog>
             </Modal>

@@ -23,7 +23,7 @@ export type BotSettings<T extends LLMProvider> = {
     temperature: number
     prompt: string
     maxTokens: number
-    provider: LLMProvider
+    provider: LLMProvider // if undefined, fallback to global settings
     serviceSource: LLMServiceSource<T>
 }
 

@@ -349,7 +349,6 @@ export const MessageInput: React.FC<MessageInputProps> = ({
     setInput: setInputOut,
 }) => {
     const [inputInner, setInputInner] = React.useState('')
-    console.log('inputOut', inputOut, 'inputInner', inputInner)
 
     const realInput = inputOut ?? inputInner
     const realSetInput = setInputOut ?? setInputInner

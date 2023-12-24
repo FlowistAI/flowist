@@ -16,7 +16,7 @@ import BotSettingsForm from '../_common/BotSettingsForm'
 import { useToast } from '../../../hooks/Toast/useToast'
 import { useAtom } from 'jotai'
 import { querySessionsAtom } from '../../../states/widgets/query/query.atom'
-import { BotNodePreset } from '../../../states/widgets/chat/chat.type'
+import { BotWrapped } from '../../../states/widgets/chat/chat.type'
 
 export type QueryBotDropDownMenuProps = {
     sessionId: string
@@ -38,7 +38,7 @@ export const QueryBotDropDownMenu: FC<QueryBotDropDownMenuProps> = ({
         return null
     }
 
-    const saveBotSettings = (values: BotNodePreset) => {
+    const saveBotSettings = (values: BotWrapped) => {
         setSessions({
             type: 'update',
             session: {

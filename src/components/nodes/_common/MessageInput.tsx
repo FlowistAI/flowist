@@ -21,7 +21,6 @@ export const MessageInput: React.FC<MessageInputProps> = ({
     setInput: setInputOut,
 }) => {
     const [inputInner, setInputInner] = React.useState('')
-    console.log('inputOut', inputOut, 'inputInner', inputInner)
 
     const realInput = inputOut ?? inputInner
     const realSetInput = setInputOut ?? setInputInner
@@ -53,7 +52,12 @@ export const MessageInput: React.FC<MessageInputProps> = ({
 
     return (
         <div className="message-input  gap-2">
-            <Button className="nodrag" onClick={onClear} disabled={!allowClear}>
+            <Button
+                color="danger"
+                className="nodrag"
+                onClick={onClear}
+                disabled={!allowClear}
+            >
                 <DeleteForever fontSize="small" />{' '}
             </Button>
             <div className="nodrag flex-1">

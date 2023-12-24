@@ -9,8 +9,8 @@ import { TTSWidgetControl } from './tts/tts.control'
 import { ChatBotNode } from '../../components/nodes/ChatBotWidget/ChatBotNode'
 import { TextToSpeechNode } from '../../nodes/text-to-speech/component/TextToSpeechNode'
 import { QueryBotNode } from '../../components/nodes/QueryBotNode/QueryBotNode'
-
-export type WidgetType = (typeof WidgetTypes)[keyof typeof WidgetTypes]
+import { BotSettings } from '../bot.type'
+import { LLMProvider } from '../../hooks/Settings/types'
 
 export const STANDARD_IO_PORTS: PortDefinition = {
     input: {
@@ -49,6 +49,31 @@ export const WidgetTypes = {
     TextToSpeech: 'text-to-speech',
     QueryBot: 'query-bot',
 } as const
+
+export type WidgetType = (typeof WidgetTypes)[keyof typeof WidgetTypes]
+
+interface CommonPresetData {
+    type: WidgetType
+    id: string
+    name: string
+    icon?: string
+    description?: string
+}
+
+type SpecificPresetData =
+    | {
+          type: 'chat-bot'
+          settings: BotSettings<LLMProvider>
+      }
+    | {
+          type: 'text-to-speech'
+      }
+    | {
+          type: 'query-bot'
+          bot: BotSettings<LLMProvider>
+      }
+
+export type PresetData = CommonPresetData & SpecificPresetData
 
 export const WidgetComponents = {
     [WidgetTypes.ChatBot]: ChatBotNode,

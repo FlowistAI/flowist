@@ -20,6 +20,6 @@ export type ChatBotNodeData = {
     id: SessionId
 }
 
-export type BotNodePreset = {
+export type BotWrapped = {
     bot: Bot
 }

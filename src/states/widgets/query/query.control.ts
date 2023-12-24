@@ -4,7 +4,7 @@ import { Node } from 'reactflow'
 import { DefaultBot, DefaultUser } from '../../bot.type'
 import { AddWidgetOptions } from '../../document.atom'
 import { JotaiContext } from '../../index.type'
-import { BotNodePreset } from '../chat/chat.type'
+import { BotWrapped } from '../chat/chat.type'
 import { WidgetType, WidgetTypes } from '../widget.atom'
 import { QueryBotData, queryBotAtom, querySessionsAtom } from './query.atom'
 import { QuerySession } from './query.type'
@@ -14,7 +14,7 @@ export const QueryBotWidgetControl = {
         { set }: JotaiContext,
         id: string,
         options: AddWidgetOptions<WidgetType>,
-        preset?: BotNodePreset,
+        preset?: BotWrapped,
     ): Node {
         const session: QuerySession = {
             id,

@@ -27,22 +27,19 @@ export function ChatBotNode({ data, selected }: ChatBotNodeProps) {
 
     useEffect(() => {
         return handleSignal?.('input', (value: string) => {
-            console.log('node', sid, 'recevied input', value)
             setInput(value)
         })
     }, [sid, handleSignal])
 
     const onReplyDone = useCallback(
         (output: string) => {
-            console.log('node', sid, 'reply done', output)
             signal?.('output', output)
         },
-        [sid, signal],
+        [signal],
     )
 
     const { dispatch, state } = useChatBot()
     const session = dispatch({ type: 'getSession', sid: sid })
-    console.log(sid, state)
 
     const messages = dispatch({ type: 'getMessages', sid })
     const sending = session?.sending ?? false
@@ -60,9 +57,9 @@ export function ChatBotNode({ data, selected }: ChatBotNodeProps) {
     }
 
     const onContextMenu = (e: React.MouseEvent) => {
-        if (e.target !== e.currentTarget) {
-            e.stopPropagation()
+        console.log('cc')
 
+        if (e.target !== e.currentTarget) {
             return false
         }
 
@@ -74,10 +71,7 @@ export function ChatBotNode({ data, selected }: ChatBotNodeProps) {
         setDocument({ type: 'remove-widget', id: sid })
     }
 
-    console.log('sending', sending)
-
     const allowClearAllMessages = !sending
-    console.log('allowClearAllMessages', allowClearAllMessages)
 
     const handleClearAllMessages = () => {
         dispatch({ type: 'clearMessages', sid })

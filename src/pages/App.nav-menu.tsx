@@ -9,14 +9,17 @@ import Settings from '@mui/icons-material/Settings'
 import Person from '@mui/icons-material/Person'
 import Dropdown from '@mui/joy/Dropdown'
 import MenuButton from '@mui/joy/MenuButton'
-import { Article, Output, PestControl } from '@mui/icons-material'
+import { Article, Inbox, Output, PestControl } from '@mui/icons-material'
 import { useDocument } from '../states/document.atom'
+import { useAtomValue, useSetAtom } from 'jotai'
+import { showPresetsSidebarAtom } from '../states/preset.atom'
 // The Menu is built on top of Popper v2, so it accepts `modifiers` prop that will be passed to the Popper.
 // https://popper.js.org/docs/v2/modifiers/offset/
 interface MenuButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
     children: React.ReactNode
     menu: React.ReactElement
     open: boolean
+    active?: boolean
     onOpen: (
         event?:
             | React.MouseEvent<HTMLButtonElement>
@@ -47,6 +50,7 @@ function NavMenuButton({
     menu,
     open,
     onOpen,
+    active,
     onLeaveMenu,
     label,
     ...props
@@ -81,9 +85,13 @@ function NavMenuButton({
                 onMouseDown={() => {
                     internalOpen.current = open
                 }}
-                onClick={() => {
+                onClick={(e) => {
                     if (!internalOpen.current) {
                         onOpen()
+                    }
+
+                    if (props.onClick) {
+                        props.onClick(e)
                     }
                 }}
                 onMouseEnter={() => {
@@ -95,7 +103,8 @@ function NavMenuButton({
                 }}
                 onKeyDown={handleButtonKeyDown}
                 sx={{
-                    bgcolor: open ? 'neutral.plainHoverBg' : undefined,
+                    bgcolor:
+                        open || active ? 'neutral.plainHoverBg' : undefined,
                     '&:focus-visible': {
                         bgcolor: 'neutral.plainHoverBg',
                     },
@@ -114,7 +123,7 @@ function NavMenuButton({
                         'aria-label': label,
                     },
                 },
-                placement: 'right-start',
+                placement: 'right',
                 sx: {
                     width: 288,
                     [`& .${menuClasses.listbox}`]: {
@@ -134,18 +143,19 @@ const IconText = ({ icon, text }: { icon?: React.ReactNode; text: string }) => (
 )
 
 export default function MenuIconSideNavExample() {
-    const [menuIndex, setMenuIndex] = React.useState<null | number>(null)
+    const [menuIndex, setMenuIndex] = React.useState<null | string>(null)
     const itemProps = {
-        onClick: () => setMenuIndex(null),
+        sx: { userSelect: 'none' },
     }
     const { dispatch } = useDocument()
+    const isPresetsOpen = useAtomValue(showPresetsSidebarAtom)
     const createHandleLeaveMenu =
-        (index: number) => (getIsOnButton: () => boolean) => {
+        (index: string) => (getIsOnButton: () => boolean) => {
             setTimeout(() => {
                 const isOnButton = getIsOnButton()
 
                 if (!isOnButton) {
-                    setMenuIndex((latestIndex: null | number) => {
+                    setMenuIndex((latestIndex: null | string) => {
                         if (index === latestIndex) {
                             return null
                         }
@@ -153,31 +163,40 @@ export default function MenuIconSideNavExample() {
                         return latestIndex
                     })
                 }
-            }, 200)
+            }, 0)
         }
 
     const handleIsDesktop = () => {}
 
+    const setShowPresetsSidebar = useSetAtom(showPresetsSidebarAtom)
+    const togglePresetsSidebar = () => {
+        console.log('toggle sidebar presets')
+
+        setShowPresetsSidebar((prev) => !prev)
+    }
+
     return (
-        <Sheet sx={{ borderRadius: 'sm', py: 1, mr: 0 }}>
+        <Sheet sx={{ borderRadius: 'sm', py: 1, mr: 0, userSelect: 'none' }}>
             <List>
                 <ListItem>
                     <NavMenuButton
                         label="Document"
-                        open={menuIndex === 0}
-                        onOpen={() => setMenuIndex(0)}
-                        onLeaveMenu={createHandleLeaveMenu(0)}
+                        open={menuIndex === 'Document'}
+                        onOpen={() => setMenuIndex('Document')}
+                        onLeaveMenu={createHandleLeaveMenu('Document')}
                         menu={
                             <Menu onClose={() => setMenuIndex(null)}>
                                 <MenuItem
+                                    {...itemProps}
                                     onClick={() => dispatch({ type: 'load' })}
                                 >
-                                    Open
+                                    Open Document
                                 </MenuItem>
                                 <MenuItem
+                                    {...itemProps}
                                     onClick={() => dispatch({ type: 'save' })}
                                 >
-                                    Save
+                                    Save Document
                                 </MenuItem>
                             </Menu>
                         }
@@ -185,12 +204,26 @@ export default function MenuIconSideNavExample() {
                         <Article />
                     </NavMenuButton>
                 </ListItem>
+
+                <ListItem>
+                    <NavMenuButton
+                        label="Presets"
+                        open={menuIndex === 'Presets'}
+                        onOpen={() => setMenuIndex('Presets')}
+                        onClick={togglePresetsSidebar}
+                        onLeaveMenu={createHandleLeaveMenu('Presets')}
+                        active={isPresetsOpen}
+                        menu={<></>}
+                    >
+                        <Inbox />
+                    </NavMenuButton>
+                </ListItem>
                 <ListItem>
                     <NavMenuButton
                         label="Settings"
-                        open={menuIndex === 1}
-                        onOpen={() => setMenuIndex(1)}
-                        onLeaveMenu={createHandleLeaveMenu(1)}
+                        open={menuIndex === 'Settings'}
+                        onOpen={() => setMenuIndex('Settings')}
+                        onLeaveMenu={createHandleLeaveMenu('Settings')}
                         menu={
                             <Menu onClose={() => setMenuIndex(null)}>
                                 <MenuItem {...itemProps}>
@@ -218,9 +251,9 @@ export default function MenuIconSideNavExample() {
                 <ListItem>
                     <NavMenuButton
                         label="Personal"
-                        open={menuIndex === 2}
-                        onOpen={() => setMenuIndex(2)}
-                        onLeaveMenu={createHandleLeaveMenu(2)}
+                        open={menuIndex === 'Personal'}
+                        onOpen={() => setMenuIndex('Personal')}
+                        onLeaveMenu={createHandleLeaveMenu('Personal')}
                         menu={
                             <Menu onClose={() => setMenuIndex(null)}>
                                 <MenuItem {...itemProps}>Personal 1</MenuItem>
@@ -235,9 +268,9 @@ export default function MenuIconSideNavExample() {
                 <ListItem>
                     <NavMenuButton
                         label="Debug"
-                        open={menuIndex === 3}
-                        onOpen={() => setMenuIndex(3)}
-                        onLeaveMenu={createHandleLeaveMenu(3)}
+                        open={menuIndex === 'Debug'}
+                        onOpen={() => setMenuIndex('Debug')}
+                        onLeaveMenu={createHandleLeaveMenu('Debug')}
                         menu={
                             <Menu onClose={() => setMenuIndex(null)}>
                                 <MenuItem onClick={handleIsDesktop}>
@@ -258,18 +291,20 @@ export default function MenuIconSideNavExample() {
 
 export const AsideMenu = React.memo(() => {
     return (
-        <aside
-            className="aside-menu flex flex-col items-center gap-4"
-            style={{ backgroundColor: '#fbfcfe' }}
-        >
-            <div className="select-none pointer-events-none border-r px-4">
-                <img src="logo.png" alt="Logo" width={40} />
-            </div>
-            <div className="aside-menu__content">
-                <div className="aside-menu__content__item">
-                    <MenuIconSideNavExample />
+        <div className="flex h-full">
+            <aside
+                className="aside-menu flex flex-col items-center gap-4 z-10"
+                style={{ backgroundColor: '#fbfcfe' }}
+            >
+                <div className="select-none pointer-events-none border-r">
+                    <img src="logo.png" alt="Logo" width={40} />
                 </div>
-            </div>
-        </aside>
+                <div className="aside-menu__content">
+                    <div className="aside-menu__content__item">
+                        <MenuIconSideNavExample />
+                    </div>
+                </div>
+            </aside>
+        </div>
     )
 })

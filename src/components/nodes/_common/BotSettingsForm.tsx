@@ -10,16 +10,16 @@ import {
     getInitialServiceSource,
 } from '../../../states/bot.type'
 import { LLMProvider } from '../../../hooks/Settings/types'
-import { BotNodePreset } from '../../../states/bot.type'
 import { FC } from 'react'
 import { produce } from 'immer'
+import { BotWrapped } from '../../../states/widgets/chat/chat.type'
 
 type Errors<T> = {
     [P in keyof T]?: T[P] extends object ? Errors<T[P]> : string
 }
 
-const validate = (values: BotNodePreset) => {
-    const errors: Errors<BotNodePreset> = {}
+const validate = (values: BotWrapped) => {
+    const errors: Errors<BotWrapped> = {}
 
     if (!values.bot.name) {
         errors.bot = { ...errors.bot, name: 'Bot Name is required' }
@@ -41,8 +41,8 @@ const validate = (values: BotNodePreset) => {
 }
 
 export type BotSettingsFormProps = {
-    initialValues: BotNodePreset
-    onSubmit: (values: BotNodePreset) => void
+    initialValues: BotWrapped
+    onSubmit: (values: BotWrapped) => void
 }
 
 const BotSettingsForm: FC<BotSettingsFormProps> = ({
