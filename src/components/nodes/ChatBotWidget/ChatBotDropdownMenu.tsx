@@ -16,6 +16,7 @@ import { useToast } from '../../../hooks/Toast/useToast'
 import { useAtom } from 'jotai'
 import { chatSessionsAtom } from '../../../states/widgets/chat/chat.atom'
 import { BotNodePreset } from '../../../states/widgets/chat/chat.type'
+import { SaveAs } from '@mui/icons-material'
 
 export type ChatBotDropDownMenuProps = {
     sessionId: string
@@ -65,7 +66,7 @@ export const ChatBotDropDownMenu: FC<ChatBotDropDownMenuProps> = ({
                     </MenuItem>
                     <MenuItem>
                         <ListItemDecorator>
-                            <SaveAsIcon />
+                            <SaveAs />
                         </ListItemDecorator>
                         Save as a Preset
                     </MenuItem>
