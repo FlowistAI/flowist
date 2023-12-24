@@ -38,6 +38,10 @@ export type ChatBotAction =
           afterMid: string
       }
     | {
+          type: 'clearMessages'
+          sid: string
+      }
+    | {
           type: 'clearMessageBefore'
           sid: string
           beforeMid: string
@@ -80,6 +84,7 @@ type ActionResultMapping = {
     getContextMessages: ReturnType<typeof handleGetContextMessages>
     insertMessageBefore: ReturnType<typeof handleInsertMessageBefore>
     insertMessageAfter: ReturnType<typeof handleInsertMessageAfter>
+    clearMessages: ReturnType<typeof handleClearMessages>
     clearMessageBefore: ReturnType<typeof handleClearMessageBefore>
     clearMessageAfter: ReturnType<typeof handleClearMessageAfter>
     sendMessage: ReturnType<typeof handleSendMessageAsync>
@@ -165,6 +170,11 @@ function handleAction<T extends ChatBotAction>(
                 action.sid,
                 action.message,
                 action.afterMid,
+            ) as ActionResultMapping[T['type']]
+        case 'clearMessages':
+            return handleClearMessages(
+                ctx,
+                action.sid,
             ) as ActionResultMapping[T['type']]
         case 'clearMessageBefore':
             return handleClearMessageBefore(
@@ -370,6 +380,17 @@ function handleInsertMessageAfter(
 
                 return acc
             }, [] as ChatMessage[]),
+        },
+    })
+}
+
+function handleClearMessages(ctx: JotaiContext, sid: string) {
+    const { set } = ctx
+    set(chatSessionsAtom, {
+        type: 'update',
+        session: {
+            id: sid,
+            messages: [],
         },
     })
 }

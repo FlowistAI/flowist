@@ -3,7 +3,8 @@ import React, { useCallback, useEffect, useState } from 'react'
 
 import { Handle, NodeResizer, Position } from 'reactflow'
 import { sourceStyle, targetStyle } from '../../../constants/handle-styles'
-import { BotInfo, MessageInput, MessageList } from '../_common/Chat'
+import { BotInfo, MessageList } from '../_common/Chat'
+import { MessageInput } from '../_common/MessageInput'
 import { ChatBotDropDownMenu } from './ChatBotDropdownMenu'
 
 import { useCommunicate, useDocument } from '../../../states/document.atom'
@@ -73,6 +74,15 @@ export function ChatBotNode({ data, selected }: ChatBotNodeProps) {
         setDocument({ type: 'remove-widget', id: sid })
     }
 
+    console.log('sending', sending)
+
+    const allowClearAllMessages = !sending
+    console.log('allowClearAllMessages', allowClearAllMessages)
+
+    const handleClearAllMessages = () => {
+        dispatch({ type: 'clearMessages', sid })
+    }
+
     return (
         <div className="chat-bot" onContextMenu={onContextMenu}>
             <NodeResizer minWidth={300} minHeight={200} isVisible={selected} />
@@ -103,6 +113,8 @@ export function ChatBotNode({ data, selected }: ChatBotNodeProps) {
                     <MessageInput
                         onSendMessage={handleSend}
                         allowSend={!sending}
+                        onClear={handleClearAllMessages}
+                        allowClear={allowClearAllMessages}
                         input={input}
                         setInput={setInput}
                     />

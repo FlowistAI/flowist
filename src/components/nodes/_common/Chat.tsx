@@ -1,16 +1,8 @@
-import {
-    Button,
-    Dropdown,
-    Menu,
-    MenuButton,
-    MenuItem,
-    Textarea,
-    Tooltip,
-} from '@mui/joy'
+import { Dropdown, Menu, MenuButton, MenuItem, Tooltip } from '@mui/joy'
 import React, { useCallback, useEffect, useRef } from 'react'
 import { Bot } from '../../../states/bot.type'
 import './Chat.css'
-import { MoreHoriz, Send } from '@mui/icons-material'
+import { MoreHoriz } from '@mui/icons-material'
 import { useClipboard } from '@nextui-org/use-clipboard'
 import { useToast } from '../../../hooks/Toast/useToast'
 import { useModal } from '../../../hooks/Modal/usePromptModal'
@@ -66,7 +58,9 @@ export interface MessageProps {
     onAction?: MessageMenuActionHandler
 }
 
-const textAreaStyle = { flex: 1 } as React.CSSProperties
+export const textAreaStyle = {
+    flex: 1,
+} as React.CSSProperties
 
 export type MessageMenuProps = {
     message: ChatMessage
@@ -337,71 +331,6 @@ export const MessageList: React.FC<MessageListProps> = ({ sid, messages }) => {
                 />
             ))}
             <div ref={messagesEndRef} />
-        </div>
-    )
-}
-
-export interface MessageInputProps {
-    onSendMessage?: (message: string) => void
-    input?: string
-    allowSend?: boolean
-    setInput?: (input: string) => void
-}
-
-export const MessageInput: React.FC<MessageInputProps> = ({
-    onSendMessage,
-    input: inputOut,
-    allowSend = true,
-    setInput: setInputOut,
-}) => {
-    const [inputInner, setInputInner] = React.useState('')
-    console.log('inputOut', inputOut, 'inputInner', inputInner)
-
-    const realInput = inputOut ?? inputInner
-    const realSetInput = setInputOut ?? setInputInner
-
-    const handleSend = useCallback(() => {
-        console.log('send ', realInput)
-        if (realInput.trim()) {
-            onSendMessage?.(realInput)
-            realSetInput('')
-        }
-    }, [realInput, onSendMessage, realSetInput])
-
-    const handleKeyUp = useCallback(
-        (e: React.KeyboardEvent) => {
-            // ctrl + enter
-            if (e.ctrlKey && e.key === 'Enter') {
-                handleSend()
-            }
-        },
-        [handleSend],
-    )
-
-    const handleChange = useCallback(
-        (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-            realSetInput(e.target.value)
-        },
-        [realSetInput],
-    )
-
-    return (
-        <div className="message-input nodrag gap-2">
-            <Textarea
-                sx={textAreaStyle}
-                placeholder="Write your message (Ctrl+Enter to submit)"
-                maxRows={10}
-                value={realInput}
-                onChange={handleChange}
-                onKeyUp={handleKeyUp}
-            />
-            <Button
-                color="primary"
-                onClick={handleSend}
-                disabled={realInput.trim() === '' || !allowSend}
-            >
-                <Send fontSize="small" /> <div className="pl-2 mt-1">Send</div>
-            </Button>
         </div>
     )
 }
