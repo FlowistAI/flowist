@@ -23,6 +23,7 @@ export type BaseLLMSettings = {
 
 export type LLMSettingsFormProps = {
     initialValues: LLMSection
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     validationSchema: any
     onSubmit: (values: LLMSection) => void
 }

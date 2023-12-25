@@ -1,4 +1,10 @@
-import { LLMProvider, LLMProviders } from './settings/settings.type'
+import { JotaiContext } from './index.type'
+import { appSettingAtom } from './settings/settings.atom'
+import {
+    LLMProvider,
+    LLMProviders,
+    LLMSettings,
+} from './settings/settings.type'
 import { OpenAIModelIds, GoogleAIModelIds } from './settings/settings.type'
 
 export type Participant = {
@@ -127,18 +133,102 @@ export const botModelOptions = {
     ],
 }
 
-export const DefaultBot: Bot = {
-    type: 'bot',
-    name: 'Gemini Pro',
-    avatar: 'google-ai.png',
-    settings: {
-        model: GoogleAIModelIds.GeminiPro,
-        temperature: 0.7,
-        maxTokens: 0,
-        prompt: '',
-        provider: LLMProviders.GoogleAI,
-        serviceSource: GoogleGeminiOfficialServiceSource,
-    },
+// export const DefaultBot: Bot = {
+//     type: 'bot',
+//     name: 'Gemini Pro',
+//     avatar: 'google-ai.png',
+//     settings: {
+//         model: GoogleAIModelIds.GeminiPro,
+//         temperature: 0.7,
+//         maxTokens: 0,
+//         prompt: '',
+//         provider: LLMProviders.GoogleAI,
+//         serviceSource: GoogleGeminiOfficialServiceSource,
+//     },
+// }
+
+export const getDefaultBot = (ctx: JotaiContext) => {
+    const settings = ctx.get(appSettingAtom)
+    const provider = settings.llm.defaultProvider
+    const llmSettings = settings.llm.providers[provider]
+
+    const bot: Bot = {
+        type: 'bot',
+        name: llmSettings.model,
+        avatar: getDefaultBotAvatar(provider, llmSettings.model),
+        settings: {
+            // model: GoogleAIModelIds.GeminiPro,
+            // temperature: 0.7,
+            // maxTokens: 0,
+            // prompt: '',
+            // provider,
+            model: llmSettings.model,
+            temperature: llmSettings.temperature,
+            maxTokens: llmSettings.maxTokens,
+            prompt: llmSettings.prompt,
+            provider,
+            serviceSource: patchInitialServiceSource(provider, llmSettings),
+        },
+    }
+
+    return bot
+}
+
+export const getDefaultBotAvatar = (provider: LLMProvider, model: string) => {
+    switch (provider) {
+        case LLMProviders.OpenAI:
+            switch (model) {
+                case OpenAIModelIds.GPT35Turbo:
+                    return 'chatgpt3.png'
+                case OpenAIModelIds.GPT35:
+                    return 'chatgpt3.png'
+                case OpenAIModelIds.GPT4:
+                    return 'gpt4.png'
+                default:
+                    throw new Error('Unknown model')
+            }
+
+        case LLMProviders.GoogleAI:
+            switch (model) {
+                case GoogleAIModelIds.GeminiPro:
+                    return 'google-ai.png'
+                case GoogleAIModelIds.TextBison001:
+                    return 'google-ai.png'
+                default:
+                    throw new Error('Unknown model')
+            }
+
+        default:
+            throw new Error('Unknown provider type')
+    }
+}
+
+export const patchInitialServiceSource = <T extends LLMProvider>(
+    provider: T,
+    llmSettings: LLMSettings<T>,
+): LLMServiceSource<T> => {
+    switch (provider) {
+        case LLMProviders.OpenAI: {
+            const k: LLMServiceSource<'OpenAI'> = {
+                ...OpenAIOfficialServiceSource,
+                ...llmSettings,
+            }
+
+            return k as LLMServiceSource<T>
+        }
+
+        case LLMProviders.GoogleAI: {
+            const l: LLMServiceSource<'GoogleAI'> = {
+                ...GoogleGeminiOfficialServiceSource,
+                ...llmSettings,
+            }
+
+            return l as LLMServiceSource<T>
+        }
+
+        default:
+            throw new Error('Unknown provider type')
+    }
 }
 
 export const DefaultUser: User = {

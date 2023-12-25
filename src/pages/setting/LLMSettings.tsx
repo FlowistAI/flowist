@@ -15,12 +15,6 @@ import { SettingRefAttrs } from './SettingRefAttrs'
 
 const ModelSettings: FC<React.RefAttributes<SettingRefAttrs>> = forwardRef(
     (_, ref) => {
-        // const [defaultPrompt, setDefaultPrompt] = useState('')
-        // const [apiSource, setApiSource] = useState('official')
-        // const [apiKey, setApiKey] = useState('')
-        // const [defaultModel, setDefaultModel] = useState('GPT3.5')
-        // const [customApiUrl, setCustomApiUrl] = useState('')
-
         const [llmDefaultPrompt, setLlmDefaultPrompt] =
             useAtom(llmDefaultPromptAtom)
         const [llmDefaultProvider, setLlmDefaultProvider] = useAtom(

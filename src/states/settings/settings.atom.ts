@@ -68,7 +68,7 @@ export const ttsProvidersAtom = atom<TTSProviderSettings>({
 
 export const versionAtom = atom<string>('0.0.1')
 
-export const systemSettingAtom = atom<SettingsData>((get) => ({
+export const appSettingAtom = atom<SettingsData>((get) => ({
     system: {
         name: get(systemNameAtom),
         language: get(systemLanguageAtom),

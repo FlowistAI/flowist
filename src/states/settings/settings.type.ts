@@ -80,6 +80,8 @@ export type LLMSettings<TProvider extends LLMProvider> =
         ? GoggleAILLMSettings
         : never
 
+export type LLMSettingsType = LLMSettings<LLMProvider>
+
 /**
  * TTS section
  */

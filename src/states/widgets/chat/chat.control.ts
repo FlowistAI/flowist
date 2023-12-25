@@ -2,40 +2,26 @@
 import { AddWidgetOptions } from '../../document.atom'
 import { JotaiContext } from '../../index.type'
 import { PresetData, WidgetType, WidgetTypes } from '../widget.atom'
-import { Bot, DefaultBot, DefaultUser } from '../../bot.type'
+import { DefaultUser, getDefaultBot } from '../../bot.type'
 import { ChatBotData, chatBotAtom, chatSessionsAtom } from './chat.atom'
 import { ChatSession } from './chat.type'
 import { Node } from 'reactflow'
-
-export const botFromPreset = (
-    preset: PresetData & { type: 'chat-bot' },
-): Bot => {
-    return {
-        ...DefaultBot,
-        ...{
-            name: preset.name,
-            avatar: preset.icon ?? DefaultBot.avatar,
-        },
-        settings: {
-            ...DefaultBot.settings,
-            ...preset.settings,
-        },
-    }
-}
+import { botFromPreset } from '../_common/bot-from-preset'
 
 export const ChatBotNodeControl = {
     create(
-        { set }: JotaiContext,
+        ctx: JotaiContext,
         id: string,
         options: AddWidgetOptions<WidgetType>,
     ): Node {
+        const { set } = ctx
         const preset = options.preset as
             | (PresetData & { type: 'chat-bot' })
             | undefined
-
+        const defaultBot = getDefaultBot(ctx)
         const session: ChatSession = {
             id,
-            bot: preset ? botFromPreset(preset) : DefaultBot,
+            bot: botFromPreset(defaultBot, preset),
             user: undefined /* fill later */ ?? DefaultUser,
             sending: false,
             messages: [],

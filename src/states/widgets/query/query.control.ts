@@ -1,24 +1,28 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { Node } from 'reactflow'
-import { DefaultBot, DefaultUser } from '../../bot.type'
+import { DefaultUser, getDefaultBot } from '../../bot.type'
 import { AddWidgetOptions } from '../../document.atom'
 import { JotaiContext } from '../../index.type'
-import { BotWrapped } from '../chat/chat.type'
-import { WidgetType, WidgetTypes } from '../widget.atom'
+import { PresetData, WidgetType, WidgetTypes } from '../widget.atom'
 import { QueryBotData, queryBotAtom, querySessionsAtom } from './query.atom'
 import { QuerySession } from './query.type'
+import { botFromPreset } from '../_common/bot-from-preset'
 
 export const QueryBotWidgetControl = {
     create(
-        { set }: JotaiContext,
+        ctx: JotaiContext,
         id: string,
         options: AddWidgetOptions<WidgetType>,
-        preset?: BotWrapped,
     ): Node {
+        const { set } = ctx
+        const defaultBot = getDefaultBot(ctx)
+        const preset = options.preset as
+            | (PresetData & { type: 'chat-bot' })
+            | undefined
         const session: QuerySession = {
             id,
-            bot: preset?.bot ?? DefaultBot,
+            bot: botFromPreset(defaultBot, preset),
             user: undefined /* fill later */ ?? DefaultUser,
             input: '',
             output: '',
