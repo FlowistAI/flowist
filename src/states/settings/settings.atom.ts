@@ -1,5 +1,5 @@
 import { atom } from 'jotai'
-import { LLMProvider } from './types'
+import { LLMProvider } from './settings.type'
 import {
     SupportedLang,
     Theme,
@@ -8,7 +8,7 @@ import {
     TTSProviderSettings,
     TTSSettings,
     SettingsData,
-} from './types'
+} from './settings.type'
 
 /**
  * System section

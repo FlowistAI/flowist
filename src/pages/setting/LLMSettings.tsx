@@ -3,9 +3,12 @@ import { FC, forwardRef } from 'react'
 import {
     llmDefaultPromptAtom,
     llmDefaultProviderAtom,
-    llmProvidersAtom
-} from '../../hooks/Settings/states'
-import { LLMSection, llmSectionSchema } from '../../hooks/Settings/types'
+    llmProvidersAtom,
+} from '../../states/settings/settings.atom'
+import {
+    LLMSection,
+    llmSectionSchema,
+} from '../../states/settings/settings.type'
 import './LLMSettings.css'
 import LLMSettingsForm from './LLMSettings.form'
 import { SettingRefAttrs } from './SettingRefAttrs'
@@ -18,9 +21,11 @@ const ModelSettings: FC<React.RefAttributes<SettingRefAttrs>> = forwardRef(
         // const [defaultModel, setDefaultModel] = useState('GPT3.5')
         // const [customApiUrl, setCustomApiUrl] = useState('')
 
-
-        const [llmDefaultPrompt, setLlmDefaultPrompt] = useAtom(llmDefaultPromptAtom)
-        const [llmDefaultProvider, setLlmDefaultProvider] = useAtom(llmDefaultProviderAtom)
+        const [llmDefaultPrompt, setLlmDefaultPrompt] =
+            useAtom(llmDefaultPromptAtom)
+        const [llmDefaultProvider, setLlmDefaultProvider] = useAtom(
+            llmDefaultProviderAtom,
+        )
         const [llmProviders, setLlmProviders] = useAtom(llmProvidersAtom)
 
         const handleSubmit = (values: LLMSection) => {
@@ -41,7 +46,6 @@ const ModelSettings: FC<React.RefAttributes<SettingRefAttrs>> = forwardRef(
                 validationSchema={llmSectionSchema}
                 onSubmit={handleSubmit}
             />
-
         )
     },
 )

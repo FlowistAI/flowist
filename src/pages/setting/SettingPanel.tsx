@@ -3,7 +3,7 @@ import SystemSettings from './SystemSettings'
 import ModelSettings from './LLMSettings'
 import AboutTab from './AboutTab'
 import './SettingPanel.css'
-import { SettingsSection } from '../../hooks/Settings/types'
+import { SettingsSection } from '../../states/settings/settings.type'
 import { SettingRefAttrs } from './SettingRefAttrs'
 import { useToast } from '../../hooks/Toast/useToast'
 

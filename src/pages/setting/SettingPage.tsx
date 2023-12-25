@@ -2,7 +2,7 @@ import { FC, useRef, useState } from 'react'
 import TabList from './TabList'
 import SettingPanel from './SettingPanel'
 import './SettingPage.css'
-import { SettingsSection } from '../../hooks/Settings/types'
+import { SettingsSection } from '../../states/settings/settings.type'
 import { Button } from '@mui/joy'
 import { SettingRefAttrs } from './SettingRefAttrs'
 

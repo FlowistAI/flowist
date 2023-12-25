@@ -1,5 +1,5 @@
 import { useAtomValue } from 'jotai'
-import { versionAtom } from '../../hooks/Settings/states'
+import { versionAtom } from '../../states/settings/settings.atom'
 import { FC, forwardRef, useImperativeHandle } from 'react'
 import { SettingRefAttrs } from './SettingRefAttrs'
 import { Typography } from '@mui/joy'
@@ -21,16 +21,14 @@ const AboutTab: FC<React.RefAttributes<SettingRefAttrs>> = forwardRef(
                 <p>
                     Author:
                     <a
-                        className='text-blue-500 hover:underline ml-2'
+                        className="text-blue-500 hover:underline ml-2"
                         href="https://github.com/pluveto"
                         target="_blank"
                         rel="noreferrer"
                     >
                         Zijing Zhang
                     </a>
-                    <span className="ml-2">
-                        from Incolore Team
-                    </span>
+                    <span className="ml-2">from Incolore Team</span>
                 </p>
             </div>
         )

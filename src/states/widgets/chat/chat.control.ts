@@ -1,11 +1,27 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { AddWidgetOptions } from '../../document.atom'
 import { JotaiContext } from '../../index.type'
-import { WidgetType, WidgetTypes } from '../widget.atom'
-import { DefaultBot, DefaultUser } from '../../bot.type'
+import { PresetData, WidgetType, WidgetTypes } from '../widget.atom'
+import { Bot, DefaultBot, DefaultUser } from '../../bot.type'
 import { ChatBotData, chatBotAtom, chatSessionsAtom } from './chat.atom'
 import { ChatSession } from './chat.type'
 import { Node } from 'reactflow'
+
+export const botFromPreset = (
+    preset: PresetData & { type: 'chat-bot' },
+): Bot => {
+    return {
+        ...DefaultBot,
+        ...{
+            name: preset.name,
+            avatar: preset.icon ?? DefaultBot.avatar,
+        },
+        settings: {
+            ...DefaultBot.settings,
+            ...preset.settings,
+        },
+    }
+}
 
 export const ChatBotNodeControl = {
     create(
@@ -13,9 +29,13 @@ export const ChatBotNodeControl = {
         id: string,
         options: AddWidgetOptions<WidgetType>,
     ): Node {
+        const preset = options.preset as
+            | (PresetData & { type: 'chat-bot' })
+            | undefined
+
         const session: ChatSession = {
             id,
-            bot: options.preset?.bot ?? DefaultBot,
+            bot: preset ? botFromPreset(preset) : DefaultBot,
             user: undefined /* fill later */ ?? DefaultUser,
             sending: false,
             messages: [],

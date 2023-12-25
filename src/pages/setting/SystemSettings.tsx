@@ -6,8 +6,11 @@ import {
     systemLanguageAtom,
     systemNameAtom,
     systemThemeAtom,
-} from '../../hooks/Settings/states'
-import { SystemSection, systemSectionSchema } from '../../hooks/Settings/types'
+} from '../../states/settings/settings.atom'
+import {
+    SystemSection,
+    systemSectionSchema,
+} from '../../states/settings/settings.type'
 import { SettingRefAttrs } from './SettingRefAttrs'
 import { SystemSettingsForm } from './SystemSettings.form'
 

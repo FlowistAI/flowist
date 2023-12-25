@@ -10,7 +10,7 @@ import { ChatBotNode } from '../../components/nodes/ChatBotWidget/ChatBotNode'
 import { TextToSpeechNode } from '../../nodes/text-to-speech/component/TextToSpeechNode'
 import { QueryBotNode } from '../../components/nodes/QueryBotNode/QueryBotNode'
 import { BotSettings } from '../bot.type'
-import { LLMProvider } from '../../hooks/Settings/types'
+import { LLMProvider } from '../settings/settings.type'
 
 export const STANDARD_IO_PORTS: PortDefinition = {
     input: {

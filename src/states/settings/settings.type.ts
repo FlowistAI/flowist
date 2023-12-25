@@ -13,7 +13,7 @@ import {
     llmProvidersAtom,
     ttsDefaultProviderAtom,
     ttsProvidersAtom,
-} from './states'
+} from './settings.atom'
 
 import { atom } from 'jotai'
 

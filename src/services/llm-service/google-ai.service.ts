@@ -1,5 +1,5 @@
 import { BotSettings } from '../../states/bot.type'
-import { LLMProvider, LLMProviders } from '../../hooks/Settings/types'
+import { LLMProvider, LLMProviders } from '../../states/settings/settings.type'
 import { GoogleGenerativeAI } from '@google/generative-ai'
 import { ChatStreamOptions, QueryStreamOptions } from './llm-service.types'
 import { OpenAIService } from './open-ai.service'

@@ -22,6 +22,7 @@ import { NodeIdGenerator } from '../util/id-generator'
 import { JotaiContext } from './index.type'
 import {
     PORT_DEFINITIONS,
+    PresetData,
     WidgetData,
     WidgetType,
     widgetHandlersAtom,
@@ -43,7 +44,7 @@ export type Document = {
 export type AddWidgetOptions<T extends WidgetType, NodeData = any> = {
     type: T
     data?: Partial<Node<NodeData, T>>
-    preset?: any
+    preset?: PresetData
 }
 
 export const useDocument = () => ({

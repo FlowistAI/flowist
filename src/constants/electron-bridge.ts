@@ -1,4 +1,4 @@
-import { LLMProvider } from '../hooks/Settings/types'
+import { LLMProvider } from '../states/settings/settings.type'
 import { BotSettings } from '../states/bot.type'
 
 export type ElectronBridge = {

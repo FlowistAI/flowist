@@ -1,5 +1,5 @@
-import { LLMProvider, LLMProviders } from '../hooks/Settings/types'
-import { OpenAIModelIds, GoogleAIModelIds } from '../hooks/Settings/types'
+import { LLMProvider, LLMProviders } from './settings/settings.type'
+import { OpenAIModelIds, GoogleAIModelIds } from './settings/settings.type'
 
 export type Participant = {
     type: 'bot' | 'user'

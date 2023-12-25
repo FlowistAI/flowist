@@ -1,7 +1,7 @@
 import { Getter, Setter, atom, useAtom } from 'jotai'
 import { PresetData } from './widgets/widget.atom'
 import { JotaiContext } from './index.type'
-import { GoogleAIModelIds, LLMProviders } from '../hooks/Settings/types'
+import { GoogleAIModelIds, LLMProviders } from './settings/settings.type'
 import { GoogleGeminiOfficialServiceSource } from './bot.type'
 import { atomWithStorage } from 'jotai/utils'
 import { OptionalId } from '../types/types'

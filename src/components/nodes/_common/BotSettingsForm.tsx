@@ -9,7 +9,7 @@ import {
     getDefaultModel,
     getInitialServiceSource,
 } from '../../../states/bot.type'
-import { LLMProvider } from '../../../hooks/Settings/types'
+import { LLMProvider } from '../../../states/settings/settings.type'
 import { FC } from 'react'
 import { produce } from 'immer'
 import { BotWrapped } from '../../../states/widgets/chat/chat.type'
