@@ -10,9 +10,11 @@ import {
 } from '@mui/joy'
 import { SystemSection } from '../../states/settings/settings.type'
 import { SettingRefAttrs } from './SettingRefAttrs'
+import { t } from 'i18next'
 
 export type SystemSettingsFormProps = {
     initialValues: SystemSection
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     validationSchema: any
     onSubmit: (values: SystemSection) => void
 } & React.RefAttributes<SettingRefAttrs>
@@ -34,7 +36,7 @@ export const SystemSettingsForm: FC<SystemSettingsFormProps> = forwardRef(
         return (
             <form onSubmit={formik.handleSubmit}>
                 <FormControl component="fieldset" style={{ marginTop: '20px' }}>
-                    <FormLabel component="legend">System Name</FormLabel>
+                    <FormLabel component="legend">{t('System Name')}</FormLabel>
                     <Input
                         fullWidth
                         id="name"
