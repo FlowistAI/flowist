@@ -3,10 +3,6 @@ import { useState } from 'react'
 import { Modal } from '@mui/joy'
 import SettingPage from '../pages/setting/SettingPage'
 import { SaveOutlined, SettingsOutlined } from '@mui/icons-material'
-import { useDocumentManager } from '../hooks/DocumentManager'
-import { persistData, retrieveData } from '../constants/persistence'
-import { DocumentManagerSnapshot } from '../hooks/DocumentManager/DocumentManager'
-import { useToast } from '../hooks/Toast/useToast'
 import BrowserUpdatedOutlinedIcon from '@mui/icons-material/BrowserUpdatedOutlined'
 interface FloatingMenuProps {
     logo?: boolean
@@ -23,22 +19,9 @@ export function FloatingMenu({ logo = false }: FloatingMenuProps) {
 
     const handleOpen = () => setOpen(true)
     const handleClose = () => setOpen(false)
-    const nm = useDocumentManager()
-    const toast = useToast()
-    const handleSave = async () => {
-        await persistData('nm-data', nm.snapshot())
-        toast({ type: 'success', content: 'Saved' })
-    }
+    const handleSave = async () => {}
 
-    const handleLoad = async () => {
-        const data = await retrieveData<DocumentManagerSnapshot>('nm-data')
-
-        if (data) {
-            console.log('restore from data', data)
-
-            nm.restore(data)
-        }
-    }
+    const handleLoad = async () => {}
 
     return (
         <div

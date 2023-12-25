@@ -13,6 +13,8 @@ import { Article, Inbox, Output, PestControl } from '@mui/icons-material'
 import { useDocument } from '../states/document.atom'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { showPresetsSidebarAtom } from '../states/preset.atom'
+import { GearIcon } from '@primer/octicons-react'
+import { useSettingsModal } from '../states/settings/settings.atom'
 // The Menu is built on top of Popper v2, so it accepts `modifiers` prop that will be passed to the Popper.
 // https://popper.js.org/docs/v2/modifiers/offset/
 interface MenuButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
@@ -142,6 +144,7 @@ export default function MenuIconSideNavExample() {
         sx: { userSelect: 'none' },
     }
     const { dispatch } = useDocument()
+    const { open: openAppSettings } = useSettingsModal()
     const isPresetsOpen = useAtomValue(showPresetsSidebarAtom)
     const createHandleLeaveMenu =
         (index: string) => (getIsOnButton: () => boolean) => {
@@ -238,7 +241,15 @@ export default function MenuIconSideNavExample() {
                                 <MenuItem {...itemProps}>
                                     <IconText icon={<Output />} text="Export" />
                                 </MenuItem>
-                                <MenuItem {...itemProps}>Setting 3</MenuItem>
+                                <MenuItem
+                                    {...itemProps}
+                                    onClick={() => openAppSettings()}
+                                >
+                                    <IconText
+                                        icon={<GearIcon />}
+                                        text="App Settings"
+                                    />
+                                </MenuItem>
                             </Menu>
                         }
                     >

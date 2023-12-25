@@ -13,6 +13,7 @@ let mainWindow
 
 function createWindow() {
     mainWindow = new BrowserWindow({
+        icon: path.join(process.env.VITE_PUBLIC!, 'logo.png'),
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
             sandbox: false, // sandbox must be false

@@ -10,7 +10,7 @@ type SettingPageProps = {
     onClose: () => void
 }
 
-const SettingPage: FC<SettingPageProps> = ({ onClose }) => {
+export const SettingPage: FC<SettingPageProps> = ({ onClose }) => {
     const [activeTab, setActiveTab] = useState<SettingsSection>('system')
     const panelRef = useRef<SettingRefAttrs>(null)
 

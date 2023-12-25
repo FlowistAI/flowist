@@ -25,6 +25,7 @@ import {
 import { useDocument } from '../states/document.atom'
 import { WidgetComponents } from '../states/widgets/widget.atom'
 import { PresetDropItem, Presets } from './App.presets-sidebar'
+import { SettingsModal } from './setting/useSettingsModal'
 
 function App() {
     const [ctxMenuPos, setCtxMenuPos] =
@@ -132,6 +133,7 @@ function App() {
                 <Toast />
                 <PromptModal />
                 {/* <FloatingMenu /> */}
+                <SettingsModal />
                 <ContextMenu
                     position={ctxMenuPos}
                     isOpen={ctxMenuPos !== undefined}

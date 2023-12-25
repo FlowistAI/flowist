@@ -1,4 +1,4 @@
-import { atom } from 'jotai'
+import { atom, useSetAtom } from 'jotai'
 import { LLMProvider } from './settings.type'
 import {
     SupportedLang,
@@ -88,3 +88,13 @@ export const systemSettingAtom = atom<SettingsData>((get) => ({
         version: get(versionAtom),
     },
 }))
+
+export const settingsModalOpenAtom = atom<boolean>(false)
+
+export const useSettingsModal = () => {
+    const setOpen = useSetAtom(settingsModalOpenAtom)
+
+    return {
+        open: () => setOpen(true),
+    }
+}
