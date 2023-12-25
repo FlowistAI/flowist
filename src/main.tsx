@@ -12,10 +12,12 @@ import '@fontsource/roboto/700.css'
 
 import { Composed } from './providers/composed'
 
+import './i18n/i18n'
+
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <Composed>
-      <App />
-    </Composed>
-  </React.StrictMode>
+    <React.StrictMode>
+        <Composed>
+            <App />
+        </Composed>
+    </React.StrictMode>,
 )
