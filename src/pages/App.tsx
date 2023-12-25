@@ -25,8 +25,11 @@ import {
 import { useDocument } from '../states/document.atom'
 import { WidgetComponents } from '../states/widgets/widget.atom'
 import { PresetDropItem, Presets } from './App.presets-sidebar'
+import { useContextMenu } from '../components/ui/useEditContextMenu'
 
 function App() {
+    const { renderContextMenu } = useContextMenu()
+
     const [ctxMenuPos, setCtxMenuPos] =
         useState<Optional<XYPosition>>(undefined)
     const [cvsCurPos, setCvsCurPos] = useState<Optional<XYPosition>>(undefined)
@@ -129,6 +132,7 @@ function App() {
     return (
         <div className="app flex" ref={appWrapperRef}>
             <div className="fixed left-0 top-0 z-50 h-screen w-18 flex items-center bg-white ">
+                {renderContextMenu}
                 <Toast />
                 <PromptModal />
                 {/* <FloatingMenu /> */}

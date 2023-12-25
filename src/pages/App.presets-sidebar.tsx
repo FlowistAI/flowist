@@ -31,7 +31,7 @@ export const Presets = () => {
 
     return (
         <div
-            className={`border-r py-6 h-full w-64 flex px-4 flex-col sidebar ${sidebarClass}`}
+            className={`border-r py-6 h-full w-72 flex px-4 flex-col sidebar ${sidebarClass}`}
             onTransitionEnd={onTransitionEnd}
         >
             <div className="flex w-full headline">
@@ -49,7 +49,10 @@ export const Presets = () => {
                 <div className="flex-1">
                     <Input
                         value={query}
-                        onChange={(e) => setQuery(e.target.value)}
+                        onChange={(e) => {
+                            console.log('update search')
+                            setQuery(e.target.value)
+                        }}
                         placeholder="Search"
                         fullWidth
                     />
