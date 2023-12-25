@@ -33,7 +33,7 @@ export const llmDefaultProviderAtom = atom<LLMProvider>('OpenAI')
 export const llmProvidersAtom = atom<LLMProviderSettings>({
     OpenAI: {
         label: 'OpenAI',
-        endpoint: 'https://api.openai.com/v1',
+        endpoint: 'https://api.openai-proxy.org',
         apiKey: import.meta.env.VITE_OPENAI_API_KEY || '',
         model: 'gpt-3.5-turbo',
         temperature: 0.9,

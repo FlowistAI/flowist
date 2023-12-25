@@ -34,13 +34,7 @@ const modifiers = [
         name: 'offset',
         options: {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            offset: ({ placement }: any) => {
-                if (placement.includes('end')) {
-                    return [8, 20]
-                }
-
-                return [-8, 20]
-            },
+            offset: [0, 0],
         },
     },
 ]
@@ -176,7 +170,10 @@ export default function MenuIconSideNavExample() {
     }
 
     return (
-        <Sheet sx={{ borderRadius: 'sm', py: 1, mr: 0, userSelect: 'none' }}>
+        <Sheet
+            onMouseLeave={() => setMenuIndex(null)}
+            sx={{ borderRadius: 'sm', py: 1, mr: 0, userSelect: 'none' }}
+        >
             <List>
                 <ListItem>
                     <NavMenuButton

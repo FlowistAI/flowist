@@ -63,8 +63,10 @@ export interface LLMServiceSource<T extends LLMProvider> {
 export const OpenAIOfficialServiceSource: LLMServiceSource<'OpenAI'> = {
     type: LLMProviders.OpenAI,
     label: 'OpenAI (official)',
-    endpoint: 'http://localhost:8080/https://api.openai.com/v1',
-    apiKey: import.meta.env.VITE_OPENAI_API_KEY || '',
+    endpoint: 'https://api.openai-proxy.org',
+    apiKey:
+        import.meta.env.VITE_OPENAI_API_KEY ||
+        'sk-P8TA141tTz0ukjfNFMIQwuAtHvDeO3UA8What2Fjv8Zkv9LU',
 } as const
 
 export const GoogleGeminiOfficialServiceSource: LLMServiceSource<'GoogleAI'> = {

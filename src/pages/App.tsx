@@ -128,7 +128,7 @@ function App() {
 
     return (
         <div className="app flex" ref={appWrapperRef}>
-            <div className="fixed left-0 top-0 z-50 h-screen w-18 flex items-center bg-white ">
+            <div className="fixed left-0 top-0 z-50 h-screen w-0 flex items-center ">
                 <Toast />
                 <PromptModal />
                 {/* <FloatingMenu /> */}
@@ -138,7 +138,7 @@ function App() {
                     onClose={() => setCtxMenuPos(undefined)}
                     items={menuItems}
                 />
-                <div className="border-r py-6 h-full">
+                <div className="bg-white border-r py-6 h-full">
                     <AsideMenu />
                 </div>
                 <Presets />

@@ -31,7 +31,7 @@ export const Presets = () => {
 
     return (
         <div
-            className={`border-r py-6 h-full w-64 flex px-4 flex-col sidebar ${sidebarClass}`}
+            className={`bg-white border-r py-6 h-full w-64 flex px-4 flex-col sidebar ${sidebarClass}`}
             onTransitionEnd={onTransitionEnd}
         >
             <div className="flex w-full headline">
