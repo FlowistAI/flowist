@@ -3,8 +3,9 @@ import { ChatMessage, ChatSession } from './chat.type'
 import { JotaiContext } from '../../index.type'
 import { produce } from 'immer'
 import { generateUUID } from '../../../util/id-generator'
-import { createLLMService } from '../../../services/llm-service/google-ai.service'
+import { createLLMService } from '../../../services/llm-service/createLLMService'
 import { createSessionfulHandler } from '../_common/sessionful-handler'
+import { getCorsProxyIfEnabled } from '../../settings/settings.atom'
 
 const _chatSessionsAtom = atom<ChatSession[]>([])
 
@@ -537,8 +538,9 @@ async function handleSendMessageAsync(
 
         const botSettings = session.bot.settings
         const contextMessages = handleGetContextMessages(ctx, sid)
+        const corsProxy = getCorsProxyIfEnabled(get)
         // send message to the bot
-        await createLLMService(botSettings).chatStream({
+        await createLLMService(botSettings, corsProxy).chatStream({
             input: content,
             historyMessages: contextMessages,
             onChunk: (chunk: string) => {
@@ -610,7 +612,8 @@ async function handleRegenerate(
         const botSettings = session.bot.settings
 
         // send message to the bot
-        await createLLMService(botSettings).chatStream({
+        const corsProxy = getCorsProxyIfEnabled(get)
+        await createLLMService(botSettings, corsProxy).chatStream({
             input,
             historyMessages: contextMessages,
             onChunk: (chunk: string) => {

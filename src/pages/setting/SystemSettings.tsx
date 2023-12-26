@@ -3,6 +3,8 @@ import './SystemSettings.css'
 import { useAtom } from 'jotai'
 import {
     systemAutoSaveAtom,
+    systemCorsProxyAtom,
+    systemCorsProxyEnabledAtom,
     systemLanguageAtom,
     systemNameAtom,
     systemThemeAtom,
@@ -20,6 +22,11 @@ const SystemSettings: FC<React.RefAttributes<SettingRefAttrs>> = forwardRef(
         const [systemLanguage, setSystemLanguage] = useAtom(systemLanguageAtom)
         const [systemTheme, setSystemTheme] = useAtom(systemThemeAtom)
         const [systemAutoSave, setSystemAutoSave] = useAtom(systemAutoSaveAtom)
+        const [systemCorsProxy, setSystemCorsProxy] =
+            useAtom(systemCorsProxyAtom)
+        const [systemCorsProxyEnabled, setSystemCorsProxyEnabled] = useAtom(
+            systemCorsProxyEnabledAtom,
+        )
 
         const handleSave = (values: SystemSection) => {
             console.log('system, save')
@@ -27,6 +34,8 @@ const SystemSettings: FC<React.RefAttributes<SettingRefAttrs>> = forwardRef(
             setSystemLanguage(values.language)
             setSystemTheme(values.theme)
             setSystemAutoSave(values.autoSave)
+            setSystemCorsProxy(values.corsProxy)
+            setSystemCorsProxyEnabled(values.corsProxyEnabled)
         }
 
         return (
@@ -38,6 +47,8 @@ const SystemSettings: FC<React.RefAttributes<SettingRefAttrs>> = forwardRef(
                         language: systemLanguage,
                         theme: systemTheme,
                         autoSave: systemAutoSave,
+                        corsProxy: systemCorsProxy,
+                        corsProxyEnabled: systemCorsProxyEnabled,
                     }}
                     validationSchema={systemSectionSchema}
                     onSubmit={handleSave}

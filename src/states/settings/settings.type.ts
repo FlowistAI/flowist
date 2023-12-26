@@ -13,6 +13,7 @@ import {
     llmProvidersAtom,
     ttsDefaultProviderAtom,
     ttsProvidersAtom,
+    systemCorsProxyAtom,
 } from './settings.atom'
 
 import { atom } from 'jotai'
@@ -111,6 +112,8 @@ export type SettingsData = {
         language: SupportedLang // zh-CN, en, fr, jp
         theme: Theme // light, dark
         autoSave: boolean
+        corsProxy: string
+        corsProxyEnabled: boolean
     }
     llm: {
         defaultPrompt: string
@@ -135,6 +138,8 @@ export const systemSectionAtom = atom<SystemSection>((get) => ({
     language: get(systemLanguageAtom),
     theme: get(systemThemeAtom),
     autoSave: get(systemAutoSaveAtom),
+    corsProxy: get(systemCorsProxyAtom),
+    corsProxyEnabled: !!get(systemCorsProxyAtom),
 }))
 
 export const systemSectionSchema = Yup.object().shape({
@@ -142,6 +147,8 @@ export const systemSectionSchema = Yup.object().shape({
     language: Yup.string().required().oneOf(['en', 'zh-CN', 'fr', 'jp']),
     theme: Yup.string().required().oneOf(['light', 'dark']),
     autoSave: Yup.boolean().required(),
+    corsProxy: Yup.string(),
+    corsProxyEnabled: Yup.boolean(),
 })
 
 export type LLMSection = SettingsData['llm']

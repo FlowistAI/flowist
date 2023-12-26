@@ -23,6 +23,16 @@ const AboutTab: FC<React.RefAttributes<SettingRefAttrs>> = forwardRef(
             <div className="about-tab">
                 <Typography level="h1">{name}</Typography>
                 <p>
+                    {t('Website')}:{' '}
+                    <a
+                        className="text-blue-500 hover:underline ml-2"
+                        href="https://github.com/NeuFlowAI/neuflow"
+                        target="_blank"
+                    >
+                        neuflow
+                    </a>
+                </p>
+                <p>
                     {t('Version')}: {version}
                 </p>
                 <p>
@@ -31,7 +41,6 @@ const AboutTab: FC<React.RefAttributes<SettingRefAttrs>> = forwardRef(
                         className="text-blue-500 hover:underline ml-2"
                         href="https://github.com/pluveto"
                         target="_blank"
-                        rel="noreferrer"
                     >
                         Zijing Zhang
                     </a>

@@ -17,6 +17,7 @@ import { useModal } from '../hooks/Modal/usePromptModal'
 import { ChatMessage } from '../states/widgets/chat/chat.type'
 import { useChatBot } from '../states/widgets/chat/chat.atom'
 import { t } from 'i18next'
+import { useTranslation } from 'react-i18next'
 
 export interface AvatarProps {
     src: string
@@ -350,7 +351,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
     setInput: setInputOut,
 }) => {
     const [inputInner, setInputInner] = React.useState('')
-
+    const { t } = useTranslation()
     const realInput = inputOut ?? inputInner
     const realSetInput = setInputOut ?? setInputInner
 
@@ -383,7 +384,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
         <div className="message-input nodrag gap-2">
             <Textarea
                 sx={textAreaStyle}
-                placeholder="Write your message (Ctrl+Enter to submit)"
+                placeholder={t('Write your message (Ctrl+Enter to submit)')}
                 maxRows={10}
                 value={realInput}
                 onChange={handleChange}
@@ -394,7 +395,8 @@ export const MessageInput: React.FC<MessageInputProps> = ({
                 onClick={handleSend}
                 disabled={realInput.trim() === '' || !allowSend}
             >
-                <Send fontSize="small" /> <div className="pl-2 mt-1">Send</div>
+                <Send fontSize="small" />{' '}
+                <div className="pl-2 mt-1">{t('Send')}</div>
             </Button>
         </div>
     )

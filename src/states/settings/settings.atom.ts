@@ -10,6 +10,7 @@ import {
     SettingsData,
 } from './settings.type'
 import { atomWithStorage } from 'jotai/utils'
+import { Getter } from 'jotai/vanilla'
 
 /**
  * System section
@@ -31,6 +32,23 @@ export const systemAutoSaveAtom = atomWithStorage<boolean>(
     'systemAutoSave',
     true,
 )
+
+export const systemCorsProxyAtom = atomWithStorage<string>(
+    'systemCorsProxy',
+    'https://api-proxy.neuflow.net',
+)
+
+export const systemCorsProxyEnabledAtom = atomWithStorage<boolean>(
+    'systemCorsProxyEnabled',
+    false,
+)
+
+export const getCorsProxyIfEnabled = (get: Getter) => {
+    const enabled = get(systemCorsProxyEnabledAtom)
+    const proxy = get(systemCorsProxyAtom)
+
+    return enabled ? proxy : undefined
+}
 
 /**
  * LLM section
@@ -99,6 +117,8 @@ export const appSettingAtom = atom<SettingsData>((get) => ({
         language: get(systemLanguageAtom),
         theme: get(systemThemeAtom),
         autoSave: get(systemAutoSaveAtom),
+        corsProxy: get(systemCorsProxyAtom),
+        corsProxyEnabled: get(systemCorsProxyEnabledAtom),
     },
     llm: {
         defaultPrompt: get(llmDefaultPromptAtom),

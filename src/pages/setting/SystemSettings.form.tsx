@@ -88,6 +88,33 @@ export const SystemSettingsForm: FC<SystemSettingsFormProps> = forwardRef(
                         color="primary"
                     />
                 </FormControl>
+                <FormControl component="fieldset" style={{ marginTop: '20px' }}>
+                    <FormLabel component="legend">{t('CORS Proxy')}</FormLabel>
+                    <Input
+                        fullWidth
+                        id="corsProxy"
+                        name="corsProxy"
+                        value={formik.values.corsProxy}
+                        onChange={formik.handleChange}
+                        error={
+                            formik.touched.corsProxy &&
+                            Boolean(formik.errors.corsProxy)
+                        }
+                    />
+                </FormControl>
+                <FormControl component="fieldset" style={{ marginTop: '10px' }}>
+                    <Checkbox
+                        label={t('Enable CORS Proxy')}
+                        checked={formik.values.corsProxyEnabled}
+                        onChange={(e) =>
+                            formik.setFieldValue(
+                                'corsProxyEnabled',
+                                e.target.checked,
+                            )
+                        }
+                        color="primary"
+                    />
+                </FormControl>
             </form>
         )
     },

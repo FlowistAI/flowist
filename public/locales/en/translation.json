@@ -50,5 +50,11 @@
   "Failed to delete preset": "Failed to delete preset",
   "Delete": "Delete",
   "Cancel": "Cancel",
-  "Confirm": "Confirm"
+  "Confirm": "Confirm",
+  "Write your message (Ctrl+Enter to submit)": "Write your message (Ctrl+Enter to submit)",
+  "Send": "Send",
+  "Document": "Document",
+  "CORS Proxy": "CORS Proxy",
+  "Enable CORS Proxy": "Enable CORS Proxy",
+  "Website": "Website"
 }

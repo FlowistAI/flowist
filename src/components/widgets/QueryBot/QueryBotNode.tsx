@@ -11,7 +11,12 @@ import { replacePrompt } from '../../../util/misc.util'
 import { useCommunicate, useDocument } from '../../../states/document.atom'
 import { useQueryBot } from '../../../states/widgets/query/query.atom'
 import { QueryBotNodeData } from '../../../states/widgets/query/query.type'
-import { createLLMService } from '../../../services/llm-service/google-ai.service'
+import { createLLMService } from '../../../services/llm-service/createLLMService'
+import { useAtomValue } from 'jotai'
+import {
+    systemCorsProxyAtom,
+    systemCorsProxyEnabledAtom,
+} from '../../../states/settings/settings.atom'
 
 export type QueryBotNodeProps = {
     data: QueryBotNodeData
@@ -41,10 +46,18 @@ export function QueryBotNode({ data, selected }: QueryBotNodeProps) {
     const [input, setInput] = useState<string>('')
     const [output, setOutput] = useState<string>('')
 
-    const handleQuery = (input: string) => {
-        if (!botSettings) {return}
+    const corsProxy = useAtomValue(systemCorsProxyAtom)
+    const corsProxyEnabled = useAtomValue(systemCorsProxyEnabledAtom)
 
-        const queryAI = createLLMService(botSettings)
+    const handleQuery = (input: string) => {
+        if (!botSettings) {
+            return
+        }
+
+        const queryAI = createLLMService(
+            botSettings,
+            corsProxyEnabled ? corsProxy : undefined,
+        )
         if (!queryAI) {
             return
         }

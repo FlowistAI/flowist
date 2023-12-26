@@ -35,8 +35,8 @@
   "Dark": "暗色",
   "Version": "版本",
   "Author": "作者",
-  "Language Model Provider": "语言模型提供者",
-  "Default Provider": "默认提供者",
+  "Language Model Provider": "语言模型供应商",
+  "Default Provider": "默认供应商",
   "Close": "关闭",
   "Save": "保存",
   "System": "系统",
@@ -50,5 +50,11 @@
   "Failed to delete preset": "无法删除预设",
   "Delete": "删除",
   "Cancel": "罢了",
-  "Confirm": "确认"
+  "Confirm": "确认",
+  "Write your message (Ctrl+Enter to submit)": "写下你的消息（Ctrl+Enter 提交）",
+  "Send": "发送",
+  "Document": "文档",
+  "CORS Proxy": "CORS Proxy (如果你不知道这是什么，请勿修改)",
+  "Enable CORS Proxy": "Enable CORS Proxy (如果你不知道这是什么，请勿修改)",
+  "Website": "网站"
 }
