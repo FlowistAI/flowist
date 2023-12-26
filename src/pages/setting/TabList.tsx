@@ -1,14 +1,17 @@
 import { FC } from 'react'
 import './TabList.css'
 import { SettingsSection } from '../../states/settings/settings.type'
-import { t } from 'i18next'
+import { useTranslation } from 'react-i18next'
+import { TFunction } from 'i18next'
 
 type TabConfig = {
     tabKey: SettingsSection
     tabLabel: string
 }
 
-const tabConfigs: () => TabConfig[] = () => [
+const tabConfigs: (t: TFunction<'translation', undefined>) => TabConfig[] = (
+    t,
+) => [
     { tabKey: 'system', tabLabel: t('System') },
     { tabKey: 'llm', tabLabel: t('LLM') },
     { tabKey: 'about', tabLabel: t('About') },
@@ -24,8 +27,10 @@ export const TabList: FC<TabListProps> = ({ activeTab, setActiveTab }) => {
         return activeTab === tab ? 'active' : ''
     }
 
-    const renderTabs = () => {
-        return tabConfigs().map((config) => (
+    const { t } = useTranslation()
+
+    const renderTabs = (t: TFunction<'translation', undefined>) => {
+        return tabConfigs(t).map((config) => (
             <div
                 key={config.tabKey}
                 className={`tab ${activeClass(config.tabKey)}`}
@@ -36,7 +41,7 @@ export const TabList: FC<TabListProps> = ({ activeTab, setActiveTab }) => {
         ))
     }
 
-    return <div className="tab-list">{renderTabs()}</div>
+    return <div className="tab-list">{renderTabs(t)}</div>
 }
 
 export default TabList
