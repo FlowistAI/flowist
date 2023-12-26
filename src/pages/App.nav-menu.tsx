@@ -178,7 +178,8 @@ export default function MenuIconSideNavExample() {
             <List>
                 <ListItem>
                     <NavMenuButton
-                        label="Document"
+                        label={t('Document')}
+                        title={t('Document')}
                         open={menuIndex === 'Document'}
                         onOpen={() => setMenuIndex('Document')}
                         onLeaveMenu={createHandleLeaveMenu('Document')}
@@ -206,6 +207,7 @@ export default function MenuIconSideNavExample() {
                 <ListItem>
                     <NavMenuButton
                         label={t('Presets')}
+                        title={t('Presets')}
                         open={menuIndex === 'Presets'}
                         onOpen={() => setMenuIndex('Presets')}
                         onClick={togglePresetsSidebar}
@@ -219,6 +221,7 @@ export default function MenuIconSideNavExample() {
                 <ListItem>
                     <NavMenuButton
                         label={t('Settings')}
+                        title={t('Settings')}
                         open={menuIndex === 'Settings'}
                         onOpen={() => setMenuIndex('Settings')}
                         onLeaveMenu={createHandleLeaveMenu('Settings')}
