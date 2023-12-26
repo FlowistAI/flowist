@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react'
 
-export type BoxProgressBarProps = Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'> & {
+export type BoxProgressBarProps = Omit<
+    React.HTMLAttributes<HTMLDivElement>,
+    'onChange'
+> & {
     min?: number
     max?: number
     value?: number
@@ -75,9 +78,7 @@ export const BoxProgressBar = ({
         <div
             // id="progress-bar"
             ref={progressBarRef}
-            className={
-                'w-full bg-gray-200 h-4 rounded cursor-pointer ' + className
-            }
+            className={'bg-gray-200 h-4 rounded cursor-pointer ' + className}
             onMouseDown={handleMouseDown}
             {...rest}
         >

@@ -78,6 +78,7 @@ const AudioPlayer = ({ src }: AudioPlayerOptions) => {
             </IconOnlyButton>
 
             <BoxProgressBar
+                className="w-full"
                 min={0}
                 max={100}
                 value={percentProgress}

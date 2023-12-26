@@ -38,7 +38,7 @@ export function ChatBotNode({ data, selected }: ChatBotNodeProps) {
         [signal],
     )
 
-    const { dispatch, state } = useChatBot()
+    const { dispatch } = useChatBot()
     const session = dispatch({ type: 'getSession', sid: sid })
 
     const messages = dispatch({ type: 'getMessages', sid })
