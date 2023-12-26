@@ -305,8 +305,8 @@ export const AsideMenu = React.memo(() => {
                 className="aside-menu flex flex-col items-center gap-4 z-10"
                 style={{ backgroundColor: '#fbfcfe' }}
             >
-                <div className="select-none pointer-events-none border-r">
-                    <img src="logo.png" alt="Logo" width={40} />
+                <div className="select-none pointer-events-none">
+                    <img src="logo.png" alt="Logo" width={36} />
                 </div>
                 <div className="aside-menu__content">
                     <div className="aside-menu__content__item">

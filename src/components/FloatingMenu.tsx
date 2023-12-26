@@ -38,7 +38,7 @@ export function FloatingMenu({ logo = false }: FloatingMenuProps) {
             }}
         >
             {logo && (
-                <div className="floating-menu__logo select-none pointer-events-none border-r mr-2">
+                <div className="floating-menu__logo select-none pointer-events-none mr-2">
                     <img src="logo.png" alt="Logo" width={32} />
                     <span className="floating-menu__logo-text font-light cursor-default mx-1">
                         {sysName}
