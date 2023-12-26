@@ -3,6 +3,10 @@
   height: 100%;
 }
 
+body {
+  width: 100%;
+}
+
 /* sidebar start */
 .sidebar {
   transform: translateX(-100%);
