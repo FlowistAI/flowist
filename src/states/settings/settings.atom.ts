@@ -15,7 +15,10 @@ import { atomWithStorage } from 'jotai/utils'
  * System section
  */
 
-export const systemNameAtom = atomWithStorage<string>('systemName', 'GIDE')
+export const systemNameAtom = atomWithStorage<string>(
+    'systemName',
+    'NeuFlow AI',
+)
 
 export const systemLanguageAtom = atomWithStorage<SupportedLang>(
     'systemLanguage',

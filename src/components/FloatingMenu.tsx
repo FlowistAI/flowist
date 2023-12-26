@@ -4,6 +4,8 @@ import { Modal } from '@mui/joy'
 import SettingPage from '../pages/setting/SettingPage'
 import { SaveOutlined, SettingsOutlined } from '@mui/icons-material'
 import BrowserUpdatedOutlinedIcon from '@mui/icons-material/BrowserUpdatedOutlined'
+import { useAtomValue } from 'jotai'
+import { systemNameAtom } from '../states/settings/settings.atom'
 interface FloatingMenuProps {
     logo?: boolean
 }
@@ -23,6 +25,8 @@ export function FloatingMenu({ logo = false }: FloatingMenuProps) {
 
     const handleLoad = async () => {}
 
+    const sysName = useAtomValue(systemNameAtom)
+
     return (
         <div
             className="floating-menu px-2"
@@ -37,7 +41,7 @@ export function FloatingMenu({ logo = false }: FloatingMenuProps) {
                 <div className="floating-menu__logo select-none pointer-events-none border-r mr-2">
                     <img src="logo.png" alt="Logo" width={32} />
                     <span className="floating-menu__logo-text font-light cursor-default mx-1">
-                        GIDE
+                        {sysName}
                     </span>
                 </div>
             )}

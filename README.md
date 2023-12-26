@@ -1,4 +1,4 @@
-# GIDE
+# NeuFlow AI
 
 ## Setup
 

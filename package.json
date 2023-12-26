@@ -1,11 +1,11 @@
 {
-  "name": "gide",
+  "name": "neuflow",
   "version": "0.0.1",
   "main": "dist-electron/main.js",
   "author": {
     "email": "less-bug@ry.rs",
     "name": "Zijing Zhang",
-    "url": "https://github.com/pluveto"
+    "url": "https://github.com/NeuFlowAI/neuflow"
   },
   "scripts": {
     "dev:web": "vite --config ./vite.web.config.ts",
@@ -15,9 +15,6 @@
     "scani18n": "i18next-scanner --config ./i18n.config.js"
   },
   "dependencies": {
-    "@chatscope/chat-ui-kit-react": "^1.10.1",
-    "@chatscope/chat-ui-kit-styles": "^1.4.0",
-    "@chatscope/use-chat": "^3.1.2",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@fontsource/roboto": "^5.0.8",

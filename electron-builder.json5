@@ -4,7 +4,7 @@
 {
   "appId": "YourAppID",
   "asar": false,
-  "productName": "GIDE",
+  "productName": "NeuFlow AI",
   "copyright": "Copyright © 2022 ${author}",
   "directories": {
     "output": "release/${version}"
