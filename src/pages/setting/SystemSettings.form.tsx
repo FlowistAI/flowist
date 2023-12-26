@@ -65,22 +65,22 @@ export const SystemSettingsForm: FC<SystemSettingsFormProps> = forwardRef(
                 </FormControl>
 
                 <FormControl component="fieldset" style={{ marginTop: '20px' }}>
-                    <FormLabel component="legend">Theme</FormLabel>
+                    <FormLabel component="legend">{t('Theme')}</FormLabel>
                     <RadioGroup
                         aria-label="theme"
                         name="theme"
                         value={formik.values.theme}
                         onChange={formik.handleChange}
                     >
-                        <Radio value="light" label="Light" />
-                        <Radio value="dark" label="Dark" />
+                        <Radio value="light" label={t('Light')} />
+                        <Radio value="dark" label={t('Dark')} />
                     </RadioGroup>
                 </FormControl>
 
                 <FormControl component="fieldset" style={{ marginTop: '20px' }}>
-                    <FormLabel component="legend">Auto Save</FormLabel>
+                    <FormLabel component="legend">{t('Auto Save')}</FormLabel>
                     <Checkbox
-                        label="Auto Save"
+                        label={t('Auto Save')}
                         checked={formik.values.autoSave}
                         onChange={(e) =>
                             formik.setFieldValue('autoSave', e.target.checked)

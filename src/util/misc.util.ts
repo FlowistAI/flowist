@@ -1,9 +1,9 @@
 export function replacePrompt(prompt: string, input: string) {
-    if (!prompt.includes('{{input}}')) {
+    if (!prompt.includes('<#input#>')) {
         return prompt + input
     }
 
-    return prompt.replace('{{input}}', input)
+    return prompt.replace('<#input#>', input)
 }
 
 export function joinUrl(...parts: string[]) {

@@ -17,6 +17,7 @@ import { useToast } from '../../../hooks/Toast/useToast'
 import { useAtom } from 'jotai'
 import { querySessionsAtom } from '../../../states/widgets/query/query.atom'
 import { BotWrapped } from '../../../states/widgets/chat/chat.type'
+import { t } from 'i18next'
 
 export type QueryBotDropDownMenuProps = {
     sessionId: string
@@ -46,7 +47,7 @@ export const QueryBotDropDownMenu: FC<QueryBotDropDownMenuProps> = ({
                 ...values,
             },
         })
-        toast({ type: 'success', content: 'Bot settings saved' })
+        toast({ type: 'success', content: t('Bot settings saved') })
         setOpen(false)
     }
 

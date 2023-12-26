@@ -16,6 +16,7 @@ import {
     OpenAIModelIds,
 } from '../../states/settings/settings.type'
 import { forwardRef, useImperativeHandle } from 'react'
+import { t } from 'i18next'
 
 export type BaseLLMSettings = {
     label: string // Provider display name
@@ -48,11 +49,13 @@ const LLMSettingsForm = forwardRef(
 
         return (
             <form onSubmit={formik.handleSubmit}>
-                <Typography level="h3">Language Model Provider</Typography>
+                <Typography level="h3">
+                    {t('Language Model Provider')}
+                </Typography>
 
                 <FormControl>
                     <FormLabel id="default-provider-label">
-                        Default Provider
+                        {t('Default Provider')}
                     </FormLabel>
                     <Select
                         id="defaultProvider"
@@ -68,9 +71,9 @@ const LLMSettingsForm = forwardRef(
                     </Select>
                 </FormControl>
 
-                <Typography level="h4">OpenAI Settings</Typography>
+                <Typography level="h4">{t('OpenAI Settings')}</Typography>
                 <FormControl>
-                    <FormLabel id="openai-label">Endpoint</FormLabel>
+                    <FormLabel id="openai-label">{t('Endpoint')}</FormLabel>
                     <Input
                         id="openai-endpoint"
                         name="providers.OpenAI.endpoint"
@@ -85,7 +88,7 @@ const LLMSettingsForm = forwardRef(
                     </FormHelperText>
                 </FormControl>
                 <FormControl>
-                    <FormLabel id="openai-label">API Key</FormLabel>
+                    <FormLabel id="openai-label">{t('API Key')}</FormLabel>
                     <Input
                         id="openai-apiKey"
                         name="providers.OpenAI.apiKey"
@@ -98,7 +101,7 @@ const LLMSettingsForm = forwardRef(
                     </FormHelperText>
                 </FormControl>
                 <FormControl>
-                    <FormLabel id="openai-label">Model</FormLabel>
+                    <FormLabel id="openai-label">{t('Model')}</FormLabel>
                     <Select
                         id="openai-model"
                         name="providers.OpenAI.model"
@@ -116,7 +119,7 @@ const LLMSettingsForm = forwardRef(
                     </FormHelperText>
                 </FormControl>
                 <FormControl>
-                    <FormLabel id="openai-label">Temperature</FormLabel>
+                    <FormLabel id="openai-label">{t('Temperature')}</FormLabel>
                     <Input
                         id="openai-temperature"
                         slotProps={{
@@ -139,10 +142,10 @@ const LLMSettingsForm = forwardRef(
                     </FormHelperText>
                 </FormControl>
                 <FormControl>
-                    <FormLabel id="openai-label">Prompt</FormLabel>
+                    <FormLabel id="openai-label">{t('Prompt')}</FormLabel>
                     <div className="flex justify-between">
                         <Typography level="body-xs">
-                            Use {'{{input}}'} to represent user input
+                            {t('<#input#> represent user input')}
                         </Typography>
                         <Typography level="body-xs">
                             {formik.values.providers.OpenAI.prompt.length} /
@@ -161,8 +164,10 @@ const LLMSettingsForm = forwardRef(
                     </FormHelperText>
                 </FormControl>
                 <FormControl>
-                    <FormLabel id="openai-label">Max Tokens</FormLabel>
-                    <Typography level="body-xs">0 means no limit</Typography>
+                    <FormLabel id="openai-label">{t('Max Tokens')}</FormLabel>
+                    <Typography level="body-xs">
+                        {t('0 means no limit')}
+                    </Typography>
                     <Input
                         id="openai-maxTokens"
                         name="providers.OpenAI.maxTokens"
@@ -177,9 +182,9 @@ const LLMSettingsForm = forwardRef(
                     </FormHelperText>
                 </FormControl>
 
-                <Typography level="h4">GoogleAI Settings</Typography>
+                <Typography level="h4">{t('GoogleAI Settings')}</Typography>
                 <FormControl>
-                    <FormLabel id="googleai-label">API Key</FormLabel>
+                    <FormLabel id="googleai-label">{t('API Key')}</FormLabel>
                     <Input
                         id="googleai-apiKey"
                         name="providers.GoogleAI.apiKey"
@@ -195,7 +200,7 @@ const LLMSettingsForm = forwardRef(
                 </FormControl>
 
                 <FormControl>
-                    <FormLabel id="googleai-label">Model</FormLabel>
+                    <FormLabel id="googleai-label">{t('Model')}</FormLabel>
                     <Select
                         id="googleai-model"
                         name="providers.GoogleAI.model"
@@ -214,7 +219,9 @@ const LLMSettingsForm = forwardRef(
                 </FormControl>
 
                 <FormControl>
-                    <FormLabel id="googleai-label">Temperature</FormLabel>
+                    <FormLabel id="googleai-label">
+                        {t('Temperature')}
+                    </FormLabel>
                     <Input
                         id="googleai-temperature"
                         slotProps={{
@@ -238,10 +245,10 @@ const LLMSettingsForm = forwardRef(
                 </FormControl>
 
                 <FormControl>
-                    <FormLabel id="googleai-label">Prompt</FormLabel>
+                    <FormLabel id="googleai-label">{t('Prompt')}</FormLabel>
                     <div className="flex justify-between">
                         <Typography level="body-xs">
-                            Use {'{{input}}'} to represent user input
+                            {t('<#input#> represent user input')}
                         </Typography>
                         <Typography level="body-xs">
                             {formik.values.providers.GoogleAI.prompt.length} /
@@ -261,8 +268,10 @@ const LLMSettingsForm = forwardRef(
                 </FormControl>
 
                 <FormControl>
-                    <FormLabel id="googleai-label">Max Tokens</FormLabel>
-                    <Typography level="body-xs">0 means no limit</Typography>
+                    <FormLabel id="googleai-label">{t('Max Tokens')}</FormLabel>
+                    <Typography level="body-xs">
+                        {t('0 means no limit')}
+                    </Typography>
                     <Input
                         id="googleai-maxTokens"
                         name="providers.GoogleAI.maxTokens"

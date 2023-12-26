@@ -10,6 +10,7 @@ import { ChatMessage } from '../../../states/widgets/chat/chat.type'
 import { useChatBot } from '../../../states/widgets/chat/chat.atom'
 import { MessageMenuActionType, MessageMenuActions } from './MessageMenu'
 import { MessageMenuData } from './MessageMenuData'
+import { t } from 'i18next'
 
 export interface AvatarProps {
     src: string
@@ -185,7 +186,7 @@ const useMessageMenuActionHandler = (sid: string) => {
 
                     toast({
                         type: 'success',
-                        content: 'Message copied',
+                        content: t('Message copied'),
                     })
 
                     break
@@ -210,7 +211,7 @@ const useMessageMenuActionHandler = (sid: string) => {
                             })
                             toast({
                                 type: 'success',
-                                content: 'Message updated',
+                                content: t('Message updated'),
                             })
                         },
                     })
@@ -222,7 +223,7 @@ const useMessageMenuActionHandler = (sid: string) => {
                     dispatch({ type: 'deleteMessage', sid, mid: messageId })
                     toast({
                         type: 'success',
-                        content: 'Message deleted',
+                        content: t('Message deleted'),
                     })
                     break
                 }

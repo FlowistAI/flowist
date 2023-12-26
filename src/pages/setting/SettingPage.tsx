@@ -5,6 +5,7 @@ import './SettingPage.css'
 import { SettingsSection } from '../../states/settings/settings.type'
 import { Button } from '@mui/joy'
 import { SettingRefAttrs } from './SettingRefAttrs'
+import { t } from 'i18next'
 
 type SettingPageProps = {
     onClose: () => void
@@ -28,9 +29,9 @@ export const SettingPage: FC<SettingPageProps> = ({ onClose }) => {
 
             <div className="flex items-center justify-end gap-2 pt-4">
                 <Button color="danger" onClick={onClose}>
-                    Close
+                    {t('Close')}
                 </Button>
-                <Button onClick={handleSave}>Save</Button>
+                <Button onClick={handleSave}>{t('Save')}</Button>
             </div>
         </div>
     )

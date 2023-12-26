@@ -2,6 +2,7 @@ import { PlusIcon } from '@primer/octicons-react'
 import { MenuItem } from '../components/ContextMenu'
 import { WidgetTypes } from '../states/widgets/widget.atom'
 import { useDocument } from '../states/document.atom'
+import { t } from 'i18next'
 
 export type MenuItemsCreator = (options: {
     cursor?: { x: number; y: number }
@@ -13,12 +14,12 @@ export const useMenuItems: MenuItemsCreator = ({ cursor }) => {
     return [
         {
             key: 'new-node',
-            text: 'Add Widget',
+            text: t('Add Widget'),
             icon: <PlusIcon size={24} />,
             children: [
                 {
                     key: 'new-chat-widget',
-                    text: 'Add ChatBot',
+                    text: t('Add ChatBot'),
                     callback: () =>
                         setDocument({
                             type: 'add-widget',
@@ -30,7 +31,7 @@ export const useMenuItems: MenuItemsCreator = ({ cursor }) => {
                 },
                 {
                     key: 'new-query-node',
-                    text: 'Add QueryBot',
+                    text: t('Add QueryBot'),
                     callback: () =>
                         setDocument({
                             type: 'add-widget',
@@ -42,7 +43,7 @@ export const useMenuItems: MenuItemsCreator = ({ cursor }) => {
                 },
                 {
                     key: 'new-tts-node',
-                    text: 'Add TextToSpeech',
+                    text: t('Add TextToSpeech'),
                     callback: () =>
                         setDocument({
                             type: 'add-widget',

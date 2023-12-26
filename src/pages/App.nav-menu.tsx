@@ -15,6 +15,7 @@ import { useAtomValue, useSetAtom } from 'jotai'
 import { showPresetsSidebarAtom } from '../states/preset.atom'
 import { GearIcon } from '@primer/octicons-react'
 import { useSettingsModal } from '../states/settings/settings.atom'
+import { t } from 'i18next'
 // The Menu is built on top of Popper v2, so it accepts `modifiers` prop that will be passed to the Popper.
 // https://popper.js.org/docs/v2/modifiers/offset/
 interface MenuButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
@@ -190,13 +191,13 @@ export default function MenuIconSideNavExample() {
                                     {...itemProps}
                                     onClick={() => dispatch({ type: 'load' })}
                                 >
-                                    Open Document
+                                    {t('Open Document')}
                                 </MenuItem>
                                 <MenuItem
                                     {...itemProps}
                                     onClick={() => dispatch({ type: 'save' })}
                                 >
-                                    Save Document
+                                    {t('Save Document')}
                                 </MenuItem>
                             </Menu>
                         }
@@ -207,7 +208,7 @@ export default function MenuIconSideNavExample() {
 
                 <ListItem>
                     <NavMenuButton
-                        label="Presets"
+                        label={t('Presets')}
                         open={menuIndex === 'Presets'}
                         onOpen={() => setMenuIndex('Presets')}
                         onClick={togglePresetsSidebar}
@@ -220,7 +221,7 @@ export default function MenuIconSideNavExample() {
                 </ListItem>
                 <ListItem>
                     <NavMenuButton
-                        label="Settings"
+                        label={t('Settings')}
                         open={menuIndex === 'Settings'}
                         onOpen={() => setMenuIndex('Settings')}
                         onLeaveMenu={createHandleLeaveMenu('Settings')}
@@ -235,11 +236,14 @@ export default function MenuIconSideNavExample() {
                                                 }}
                                             />
                                         }
-                                        text="Import"
+                                        text={t('Import')}
                                     />
                                 </MenuItem>
                                 <MenuItem {...itemProps}>
-                                    <IconText icon={<Output />} text="Export" />
+                                    <IconText
+                                        icon={<Output />}
+                                        text={t('Export')}
+                                    />
                                 </MenuItem>
                                 <MenuItem
                                     {...itemProps}
@@ -247,7 +251,7 @@ export default function MenuIconSideNavExample() {
                                 >
                                     <IconText
                                         icon={<GearIcon />}
-                                        text="App Settings"
+                                        text={t('App Settings')}
                                     />
                                 </MenuItem>
                             </Menu>
@@ -258,7 +262,7 @@ export default function MenuIconSideNavExample() {
                 </ListItem>
                 <ListItem>
                     <NavMenuButton
-                        label="Personal"
+                        label={t('Personal')}
                         open={menuIndex === 'Personal'}
                         onOpen={() => setMenuIndex('Personal')}
                         onLeaveMenu={createHandleLeaveMenu('Personal')}
@@ -275,7 +279,7 @@ export default function MenuIconSideNavExample() {
                 </ListItem>
                 <ListItem>
                     <NavMenuButton
-                        label="Debug"
+                        label={t('Debug')}
                         open={menuIndex === 'Debug'}
                         onOpen={() => setMenuIndex('Debug')}
                         onLeaveMenu={createHandleLeaveMenu('Debug')}

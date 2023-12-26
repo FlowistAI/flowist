@@ -171,6 +171,9 @@ importers:
       i18next-scanner:
         specifier: ^4.4.0
         version: 4.4.0
+      i18next-scanner-typescript:
+        specifier: ^1.2.0
+        version: 1.2.0
       jest:
         specifier: ^29.7.0
         version: 29.7.0
@@ -4999,6 +5002,12 @@ packages:
     transitivePeerDependencies:
       - encoding
     dev: false
+
+  /i18next-scanner-typescript@1.2.0:
+    resolution: {integrity: sha512-Q9VFw8LygB8cW9/ixVf6DHkrP8CD0hRvJcxpaFVGbx9HU84yYWO7PmPfEc9kMFMVjR8HtRiP2U0i8Vinb/wsww==}
+    dependencies:
+      typescript: 5.3.3
+    dev: true
 
   /i18next-scanner@4.4.0:
     resolution: {integrity: sha512-bgnVEfoFHLVxfXNQtsFFzexB/5kwgDZZkZ6+AnCmyaFKEQQbtMkgPgLHlMZ0deIIEG6KN/tYAus5ZJzng2Ac9g==}

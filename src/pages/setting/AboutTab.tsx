@@ -3,6 +3,7 @@ import { versionAtom } from '../../states/settings/settings.atom'
 import { FC, forwardRef, useImperativeHandle } from 'react'
 import { SettingRefAttrs } from './SettingRefAttrs'
 import { Typography } from '@mui/joy'
+import { t } from 'i18next'
 
 const AboutTab: FC<React.RefAttributes<SettingRefAttrs>> = forwardRef(
     (_, ref) => {
@@ -17,9 +18,11 @@ const AboutTab: FC<React.RefAttributes<SettingRefAttrs>> = forwardRef(
         return (
             <div className="about-tab">
                 <Typography level="h1">GIDE</Typography>
-                <p>Version: {version}</p>
                 <p>
-                    Author:
+                    {t('Version')}: {version}
+                </p>
+                <p>
+                    {t('Author')}:
                     <a
                         className="text-blue-500 hover:underline ml-2"
                         href="https://github.com/pluveto"

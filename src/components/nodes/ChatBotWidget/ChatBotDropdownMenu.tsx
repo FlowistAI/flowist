@@ -21,6 +21,7 @@ import { usePresets } from '../../../states/preset.atom'
 import { generateUUID } from '../../../util/id-generator'
 import { PresetData } from '../../../states/widgets/widget.atom'
 import { PresetSaveForm, PresetSaveFormData } from '../_common/PresetSaveForm'
+import { t } from 'i18next'
 
 export type ChatBotDropDownMenuProps = {
     sessionId: string
@@ -48,7 +49,7 @@ export const ChatBotDropDownMenu: FC<ChatBotDropDownMenuProps> = ({
                 ...values,
             },
         })
-        toast({ type: 'success', content: 'Bot settings saved' })
+        toast({ type: 'success', content: t('Bot settings saved') })
         setSettingsOpen(false)
     }
 
@@ -65,7 +66,7 @@ export const ChatBotDropDownMenu: FC<ChatBotDropDownMenuProps> = ({
             preset: presetData,
         })
 
-        toast({ type: 'success', content: 'Preset saved' })
+        toast({ type: 'success', content: t('Preset saved') })
         setSavePresetOpen(false)
     }
 

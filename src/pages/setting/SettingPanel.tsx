@@ -6,6 +6,7 @@ import './SettingPanel.css'
 import { SettingsSection } from '../../states/settings/settings.type'
 import { SettingRefAttrs } from './SettingRefAttrs'
 import { useToast } from '../../hooks/Toast/useToast'
+import { t } from 'i18next'
 
 export type SettingPanelProps = {
     activeTab: SettingsSection
@@ -35,7 +36,7 @@ const SettingPanel: FC<SettingPanelProps> = forwardRef(({ activeTab }, ref) => {
             refAbout.current?.save()
             toast({
                 type: 'success',
-                content: 'Saved',
+                content: t('Saved'),
             })
         },
     }))
