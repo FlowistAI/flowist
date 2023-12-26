@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useCallback, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useDrop } from 'react-dnd'
 
 import ReactFlow, {
@@ -26,6 +26,9 @@ import { useDocument } from '../states/document.atom'
 import { WidgetComponents } from '../states/widgets/widget.atom'
 import { PresetDropItem, Presets } from './App.presets-sidebar'
 import { SettingsModal } from './setting/useSettingsModal'
+import { useAtomValue } from 'jotai'
+import { systemLanguageAtom } from '../states/settings/settings.atom'
+import { useTranslation } from 'react-i18next'
 
 function App() {
     const [ctxMenuPos, setCtxMenuPos] =
@@ -34,6 +37,13 @@ function App() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [flowInst, setFlowInst] =
         useState<Optional<ReactFlowInstance>>(undefined)
+
+    const languageAtom = useAtomValue(systemLanguageAtom)
+    const { i18n } = useTranslation()
+
+    useEffect(() => {
+        i18n.changeLanguage(languageAtom)
+    }, [i18n, languageAtom])
 
     const onContextMenu = useCallback(
         (event: React.MouseEvent<HTMLDivElement>) => {
@@ -44,8 +54,6 @@ function App() {
                 typeof className != 'string' ||
                 className !== 'react-flow__pane'
             ) {
-                console.log('ignore')
-
                 return
             }
 

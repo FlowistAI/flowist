@@ -6,6 +6,7 @@ import { useDrag } from 'react-dnd'
 import { PresetData } from '../states/widgets/widget.atom'
 import { showPresetsSidebarAtom, usePresets } from '../states/preset.atom'
 import { useEffect, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 export const Presets = () => {
     const [show, setShow] = useAtom(showPresetsSidebarAtom)
@@ -14,6 +15,7 @@ export const Presets = () => {
     const presetData = useMemo(() => select.list(query), [select, query])
 
     const [sidebarClass, setSidebarClass] = useState('')
+    const { t } = useTranslation()
 
     useEffect(() => {
         if (show) {
@@ -36,7 +38,7 @@ export const Presets = () => {
         >
             <div className="flex w-full headline">
                 <div className="flex-1">
-                    <Typography level="h4">All Presets</Typography>
+                    <Typography level="h4">{t('All Presets')}</Typography>
                 </div>
                 <div
                     className="icon-circle-button"
@@ -50,7 +52,7 @@ export const Presets = () => {
                     <Input
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
-                        placeholder="Search"
+                        placeholder={t('Search')}
                         fullWidth
                     />
                 </div>

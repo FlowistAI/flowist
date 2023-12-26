@@ -9,64 +9,86 @@ import {
     TTSSettings,
     SettingsData,
 } from './settings.type'
+import { atomWithStorage } from 'jotai/utils'
 
 /**
  * System section
  */
 
-export const systemNameAtom = atom<string>('GIDE')
+export const systemNameAtom = atomWithStorage<string>('systemName', 'GIDE')
 
-export const systemLanguageAtom = atom<SupportedLang>('en')
+export const systemLanguageAtom = atomWithStorage<SupportedLang>(
+    'systemLanguage',
+    'en',
+)
 
-export const systemThemeAtom = atom<Theme>('light')
+export const systemThemeAtom = atomWithStorage<Theme>('systemTheme', 'light')
 
-export const systemAutoSaveAtom = atom<boolean>(true)
+export const systemAutoSaveAtom = atomWithStorage<boolean>(
+    'systemAutoSave',
+    true,
+)
 
 /**
  * LLM section
  */
 
-export const llmDefaultPromptAtom = atom<string>('')
+export const llmDefaultPromptAtom = atomWithStorage<string>(
+    'llmDefaultPrompt',
+    '',
+)
 
-export const llmDefaultProviderAtom = atom<LLMProvider>('OpenAI')
+export const llmDefaultProviderAtom = atomWithStorage<LLMProvider>(
+    'llmDefaultProvider',
+    'OpenAI',
+)
 
-export const llmProvidersAtom = atom<LLMProviderSettings>({
-    OpenAI: {
-        label: 'OpenAI',
-        endpoint: 'https://api.openai-proxy.org',
-        apiKey: import.meta.env.VITE_OPENAI_API_KEY || '',
-        model: 'gpt-3.5-turbo',
-        temperature: 0.9,
-        prompt: '',
-        maxTokens: 0,
+export const llmProvidersAtom = atomWithStorage<LLMProviderSettings>(
+    'llmProviders',
+    {
+        OpenAI: {
+            label: 'OpenAI',
+            endpoint: 'https://api.openai-proxy.org',
+            apiKey: import.meta.env.VITE_OPENAI_API_KEY || '',
+            model: 'gpt-3.5-turbo',
+            temperature: 0.9,
+            prompt: '',
+            maxTokens: 0,
+        },
+        GoogleAI: {
+            label: 'Google AI',
+            apiKey: import.meta.env.VITE_GOOGLE_AI_API_KEY || '',
+            model: 'gemini-pro',
+            temperature: 0.9,
+            prompt: '',
+            maxTokens: 0,
+        },
     },
-    GoogleAI: {
-        label: 'Google AI',
-        apiKey: import.meta.env.VITE_GOOGLE_AI_API_KEY || '',
-        model: 'gemini-pro',
-        temperature: 0.9,
-        prompt: '',
-        maxTokens: 0,
-    },
-})
+)
 
 /**
  * TTS section
  */
 
-export const ttsDefaultProviderAtom = atom<TTSProvider>('TencentTTS')
+export const ttsDefaultProviderAtom = atomWithStorage<TTSProvider>(
+    'ttsDefaultProvider',
+    'TencentTTS',
+)
 
-export const ttsProvidersAtom = atom<TTSProviderSettings>({
-    TencentTTS: {
-        appId: '',
-        secretId: '',
-        secretKey: '',
+export const ttsProvidersAtom = atomWithStorage<TTSProviderSettings>(
+    'ttsProviders',
+    {
+        TencentTTS: {
+            appId: '',
+            secretId: '',
+            secretKey: '',
+        },
+    } as {
+        [K in TTSProvider]: TTSSettings<K>
     },
-} as {
-    [K in TTSProvider]: TTSSettings<K>
-})
+)
 
-export const versionAtom = atom<string>('0.0.1')
+export const versionAtom = atomWithStorage<string>('version', '0.0.1')
 
 export const appSettingAtom = atom<SettingsData>((get) => ({
     system: {
@@ -89,7 +111,10 @@ export const appSettingAtom = atom<SettingsData>((get) => ({
     },
 }))
 
-export const settingsModalOpenAtom = atom<boolean>(false)
+export const settingsModalOpenAtom = atomWithStorage<boolean>(
+    'settingsModalOpen',
+    false,
+)
 
 export const useSettingsModal = () => {
     const setOpen = useSetAtom(settingsModalOpenAtom)

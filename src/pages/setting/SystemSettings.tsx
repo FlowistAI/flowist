@@ -13,7 +13,6 @@ import {
 } from '../../states/settings/settings.type'
 import { SettingRefAttrs } from './SettingRefAttrs'
 import { SystemSettingsForm } from './SystemSettings.form'
-import { useTranslation } from 'react-i18next'
 
 const SystemSettings: FC<React.RefAttributes<SettingRefAttrs>> = forwardRef(
     (_, ref) => {
@@ -22,12 +21,10 @@ const SystemSettings: FC<React.RefAttributes<SettingRefAttrs>> = forwardRef(
         const [systemTheme, setSystemTheme] = useAtom(systemThemeAtom)
         const [systemAutoSave, setSystemAutoSave] = useAtom(systemAutoSaveAtom)
 
-        const { i18n } = useTranslation()
         const handleSave = (values: SystemSection) => {
             console.log('system, save')
             setSystemName(values.name)
             setSystemLanguage(values.language)
-            i18n.changeLanguage(values.language)
             setSystemTheme(values.theme)
             setSystemAutoSave(values.autoSave)
         }
