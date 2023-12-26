@@ -27,7 +27,7 @@ const initialPresets: PresetData[] = [
     },
 ]
 
-const _presetsAtom = atom<PresetData[]>(initialPresets)
+const _presetsAtom = atomWithStorage<PresetData[]>('presets', initialPresets)
 
 export type WritePresetsAction =
     | {

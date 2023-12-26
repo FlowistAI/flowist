@@ -43,5 +43,12 @@
   "LLM": "语言模型",
   "About": "关于",
   "All Presets": "所有预设",
-  "Search": "搜索"
+  "Search": "搜索",
+  "Delete Preset": "删除预设",
+  "Are you sure you want to delete this preset?": "您确定要删除此预设吗？",
+  "Preset deleted": "预设已删除",
+  "Failed to delete preset": "无法删除预设",
+  "Delete": "删除",
+  "Cancel": "罢了",
+  "Confirm": "确认"
 }

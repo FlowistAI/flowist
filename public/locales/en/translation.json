@@ -43,5 +43,12 @@
   "LLM": "LLM",
   "About": "About",
   "All Presets": "All Presets",
-  "Search": "Search"
+  "Search": "Search",
+  "Delete Preset": "Delete Preset",
+  "Are you sure you want to delete this preset?": "Are you sure you want to delete this preset?",
+  "Preset deleted": "Preset deleted",
+  "Failed to delete preset": "Failed to delete preset",
+  "Delete": "Delete",
+  "Cancel": "Cancel",
+  "Confirm": "Confirm"
 }

@@ -12,10 +12,13 @@ import {
 import { useAtom } from 'jotai'
 import { promptModalAtom } from './atoms'
 import { produce } from 'immer'
+import { useTranslation } from 'react-i18next'
 
 const PromptModal: React.FC = () => {
     const [state, setState] = useAtom(promptModalAtom)
     const [input, setInput] = React.useState('')
+
+    const { t } = useTranslation()
 
     useEffect(() => {
         if (!input && state.data?.defaultValue) {
@@ -78,6 +81,7 @@ const PromptModal: React.FC = () => {
                             {data.prompt}
                         </Typography>
                     )}
+                    {data?.type === 'confirm' && null}
                     {data?.type === 'text' && (
                         <Input
                             fullWidth
@@ -104,17 +108,26 @@ const PromptModal: React.FC = () => {
                             sx={{ mt: 2 }}
                         />
                     )}
-                    <Button
-                        color="primary"
-                        onClick={() => {
-                            if (data?.onOk?.(input) !== false) {
-                                handleClose(true)
-                            }
-                        }}
-                        sx={{ mt: 2 }}
-                    >
-                        {data?.okText ?? 'Confirm'}
-                    </Button>
+                    <div className="w-full flex items-center justify-end">
+                        <Button
+                            variant="soft"
+                            onClick={() => handleClose(false)}
+                            sx={{ mt: 2 }}
+                        >
+                            {data?.cancelText ?? t('Cancel')}
+                        </Button>
+                        <Button
+                            color="primary"
+                            onClick={() => {
+                                if (data?.onOk?.(input) !== false) {
+                                    handleClose(true)
+                                }
+                            }}
+                            sx={{ mt: 2, ml: 1 }}
+                        >
+                            {data?.okText ?? t('Confirm')}
+                        </Button>
+                    </div>
                 </Sheet>
             </Box>
         </Modal>

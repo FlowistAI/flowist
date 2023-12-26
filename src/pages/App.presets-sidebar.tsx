@@ -7,15 +7,42 @@ import { PresetData } from '../states/widgets/widget.atom'
 import { showPresetsSidebarAtom, usePresets } from '../states/preset.atom'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { Close } from '@mui/icons-material'
+import { useModal } from '../hooks/Modal/usePromptModal'
+import { useToast } from '../hooks/Toast/useToast'
 
 export const Presets = () => {
     const [show, setShow] = useAtom(showPresetsSidebarAtom)
-    const { select } = usePresets()
+    const { select, dispatch } = usePresets()
     const [query, setQuery] = useState('')
-    const presetData = useMemo(() => select.list(query), [select, query])
+    const presetDataList = useMemo(() => select.list(query), [select, query])
 
     const [sidebarClass, setSidebarClass] = useState('')
     const { t } = useTranslation()
+
+    const { promptModal } = useModal()
+    const toast = useToast()
+    const handleDelete = (id: string) => {
+        promptModal({
+            title: t('Delete Preset'),
+            type: 'confirm',
+            prompt: t('Are you sure you want to delete this preset?'),
+            onOk: () => {
+                try {
+                    dispatch({ type: 'remove', id })
+                    toast({
+                        type: 'success',
+                        content: t('Preset deleted'),
+                    })
+                } catch (error) {
+                    toast({
+                        type: 'error',
+                        content: t('Failed to delete preset'),
+                    })
+                }
+            },
+        })
+    }
 
     useEffect(() => {
         if (show) {
@@ -58,14 +85,25 @@ export const Presets = () => {
                 </div>
             </div>
             <div className="flex mt-4 w-full flex-col overflow-y-auto gap-2">
-                {presetData.map((preset) => (
+                {presetDataList.map((preset) => (
                     <DraggableItem presetData={preset} key={preset.id}>
                         <img
                             className="w-12 h-12 cursor-default select-none pointer-events-none"
                             src={preset.icon || 'robot.png'}
                         />
-                        <div className="ml-2">
-                            <div className="text-md">{preset.name}</div>
+                        <div className="ml-2 w-full">
+                            <div className="flex items-center w-full">
+                                <div className="flex-1">
+                                    <div className="text-md">{preset.name}</div>
+                                </div>
+                                <div
+                                    className="icon-circle-button"
+                                    onClick={() => handleDelete(preset.id)}
+                                    title={t('Delete')}
+                                >
+                                    <Close fontSize="small" />
+                                </div>
+                            </div>
                             <div className="text-gray-500">
                                 {preset.description}
                             </div>
