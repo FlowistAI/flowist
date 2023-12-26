@@ -1,5 +1,12 @@
 # NeuFlow AI
 
+<p align="center">
+  <img src="./public/banner.png" alt="NeuFlow AI Logo" width="100%"/>
+</p>
+
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/neuflowai/neuflow?style=flat-square)](https://github.com/neuflowai/neuflow/releases)
+[![GitHub](https://img.shields.io/github/license/neuflowai/neuflow?style=flat-square)](https://github.com/neuflowai/neuflow/blob/main/LICENSE)
+
 - [English](README.md)
 - [简体中文](README.zh-CN.md)
 
