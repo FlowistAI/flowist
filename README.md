@@ -14,6 +14,12 @@ NeuFlow is an open source AI-based desktop and web **workflow platform** that al
 
 Currently, NeuFlow AI integrates with Open AI and Google AI supporting custom endpoints, allowing you to utilize models such as GPT3.4, GPT4, and Gemini Pro. Simply download the platform and fill in your API key to start using it.
 
+## Screenshot
+
+<p align="center">
+  <img src="./screenshot.png" alt="NeuFlow AI Screenshot" width="100%"/>
+</p>
+
 ## Features
 
 NeuFlow AI aims to provide an intuitive and user-friendly interface that enables users to easily create, edit, and customize workflows. You can start with predefined templates or fully customize workflows according to your needs. By dragging and connecting different tasks and operations, you can build complex workflows and automate their execution.
