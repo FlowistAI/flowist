@@ -6,10 +6,9 @@ import List from '@mui/joy/List'
 import ListItem from '@mui/joy/ListItem'
 import Sheet from '@mui/joy/Sheet'
 import Settings from '@mui/icons-material/Settings'
-import Person from '@mui/icons-material/Person'
 import Dropdown from '@mui/joy/Dropdown'
 import MenuButton from '@mui/joy/MenuButton'
-import { Article, Inbox, Output, PestControl } from '@mui/icons-material'
+import { Article, Inbox } from '@mui/icons-material'
 import { useDocument } from '../states/document.atom'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { showPresetsSidebarAtom } from '../states/preset.atom'
@@ -164,8 +163,6 @@ export default function MenuIconSideNavExample() {
             }, 0)
         }
 
-    const handleIsDesktop = () => {}
-
     const setShowPresetsSidebar = useSetAtom(showPresetsSidebarAtom)
     const togglePresetsSidebar = () => {
         console.log('toggle sidebar presets')
@@ -227,7 +224,7 @@ export default function MenuIconSideNavExample() {
                         onLeaveMenu={createHandleLeaveMenu('Settings')}
                         menu={
                             <Menu onClose={() => setMenuIndex(null)}>
-                                <MenuItem {...itemProps}>
+                                {/* <MenuItem {...itemProps}>
                                     <IconText
                                         icon={
                                             <Output
@@ -244,7 +241,7 @@ export default function MenuIconSideNavExample() {
                                         icon={<Output />}
                                         text={t('Export')}
                                     />
-                                </MenuItem>
+                                </MenuItem> */}
                                 <MenuItem
                                     {...itemProps}
                                     onClick={() => openAppSettings()}
@@ -260,7 +257,7 @@ export default function MenuIconSideNavExample() {
                         <Settings />
                     </NavMenuButton>
                 </ListItem>
-                <ListItem>
+                {/* <ListItem>
                     <NavMenuButton
                         label={t('Personal')}
                         open={menuIndex === 'Personal'}
@@ -295,7 +292,7 @@ export default function MenuIconSideNavExample() {
                     >
                         <PestControl />
                     </NavMenuButton>
-                </ListItem>
+                </ListItem> */}
             </List>
         </Sheet>
     )
