@@ -1,9 +1,10 @@
-import { Handle, NodeResizer, Position } from 'reactflow'
-import { XIcon } from '@primer/octicons-react'
-import './TextToSpeechNode.css'
-import { useState } from 'react'
 import { Button } from '@mui/joy'
+import { XIcon } from '@primer/octicons-react'
+import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { Handle, NodeResizer, Position } from 'reactflow'
 import AudioPlayer from './AudioPlayer'
+import './TextToSpeechNode.css'
 
 export type TextToSpeechNodeProps = {
     data: {
@@ -16,6 +17,7 @@ export type TextToSpeechNodeProps = {
 
 export function TextToSpeechNode({ data, selected }: TextToSpeechNodeProps) {
     const [text, setText] = useState('')
+    const { t } = useTranslation()
 
     const handleGenerate = () => {
         // 在这里编写将文本转换为语音并播放的逻辑
@@ -38,7 +40,7 @@ export function TextToSpeechNode({ data, selected }: TextToSpeechNodeProps) {
 
             <div className="text-to-speech-node__header">
                 <span className="text-to-speech-node__title">
-                    {data.title ?? 'Text to Speech'}
+                    {data.title ?? t('Text to Speech')}
                 </span>
                 <button
                     className="text-to-speech-node__close"
@@ -53,11 +55,11 @@ export function TextToSpeechNode({ data, selected }: TextToSpeechNodeProps) {
                 <textarea
                     value={text}
                     onChange={(e) => setText(e.target.value)}
-                    placeholder="Enter text..."
+                    placeholder={t('Enter text...')}
                     className="text-to-speech-node__input"
                 />
                 <Button onClick={handleGenerate} color="primary">
-                    Generate
+                    {t('Generate')}
                 </Button>
                 {/* player */}
                 <AudioPlayer src="" />
