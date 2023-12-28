@@ -127,6 +127,9 @@ export type SettingsData = {
     about: {
         version: string
     }
+    plugin: {
+        enabled: boolean
+    }
 }
 
 export type SettingsSection = keyof SettingsData
