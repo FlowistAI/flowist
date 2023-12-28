@@ -20,7 +20,8 @@ const PluginTab: FC<React.RefAttributes<SettingRefAttrs>> = forwardRef(
         console.log('plugins', plugins)
 
         const loadPluginTest = () => {
-            const url = '/demo.js'
+            const url = '/plugins/my-plugin/my-plugin.umd.cjs'
+            window.aaa = React
             window.pluginBridge = {
                 register: (plugin: any) => {
                     setPlugins((plugins) => [...plugins, plugin])
@@ -29,6 +30,7 @@ const PluginTab: FC<React.RefAttributes<SettingRefAttrs>> = forwardRef(
                 },
             }
             const script = document.createElement('script')
+            // script.type = 'module'
             script.src = url
             script.onload = () => {
                 console.log('script loaded')
@@ -56,7 +58,7 @@ const PluginTab: FC<React.RefAttributes<SettingRefAttrs>> = forwardRef(
                                 <div key={plugin.name}>
                                     <p>{plugin.name}</p>
                                     <p>{plugin.description}</p>
-                                    <plugin.render></plugin.render>
+                                    <plugin.component></plugin.component>
                                 </div>
                             ))}
                         </div>

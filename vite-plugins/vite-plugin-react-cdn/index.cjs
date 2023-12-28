@@ -9,6 +9,13 @@ function vitePluginReactCdn() {
                 build.rollupOptions = {
                     ...build.rollupOptions,
                     external: ['react', 'react-dom'],
+                    output: {
+                        ...build.rollupOptions.output,
+                        globals: {
+                            react: 'React',
+                            'react-dom': 'ReactDOM',
+                        },
+                    },
                 }
             }
         },
