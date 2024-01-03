@@ -9,7 +9,7 @@ Flowist是一款开源的基于人工智能的桌面和Web**工作流平台**，
 
 **欢迎加入种子用户群，构想 AI 工具流的未来**
 
-![image](https://github.com/FlowistAI/flowist/assets/50045289/e9390fc3-a8b4-4bac-9b19-984d8ec621c7)
+<img src="https://github.com/FlowistAI/flowist/assets/50045289/e9390fc3-a8b4-4bac-9b19-984d8ec621c7" width="300" />
 
 ## 特点
 
