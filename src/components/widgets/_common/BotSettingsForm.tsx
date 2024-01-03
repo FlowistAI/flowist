@@ -13,6 +13,7 @@ import { LLMProvider } from '../../../states/settings/settings.type'
 import { FC } from 'react'
 import { produce } from 'immer'
 import { BotWrapped } from '../../../states/widgets/chat/chat.type'
+import { useTranslation } from 'react-i18next'
 
 type Errors<T> = {
     [P in keyof T]?: T[P] extends object ? Errors<T[P]> : string
@@ -55,10 +56,12 @@ const BotSettingsForm: FC<BotSettingsFormProps> = ({
         onSubmit,
     })
 
+    const { t } = useTranslation()
+
     return (
         <form onSubmit={formik.handleSubmit} className="flex flex-col">
             <FormControl>
-                <InputLabel htmlFor="bot-name">Name</InputLabel>
+                <InputLabel htmlFor="bot-name">{t('Name')}</InputLabel>
                 <Input
                     id="bot-name"
                     name="bot.name"
@@ -71,14 +74,14 @@ const BotSettingsForm: FC<BotSettingsFormProps> = ({
             </FormControl>
 
             <FormControl>
-                <InputLabel htmlFor="bot-avatar">Avatar</InputLabel>
+                <InputLabel htmlFor="bot-avatar">{t('Avatar')}</InputLabel>
                 <Select
                     id="bot-avatar"
                     name="bot.avatar"
                     value={formik.values.bot.avatar}
                     onChange={(_, newValue) =>
                         formik.setFieldValue('bot.avatar', newValue)
-                    } // formik.handleChange}
+                    }
                 >
                     {botAvatarOptions.map((option) => (
                         <Option key={option.value} value={option.value}>
@@ -89,7 +92,7 @@ const BotSettingsForm: FC<BotSettingsFormProps> = ({
             </FormControl>
 
             <FormControl>
-                <InputLabel htmlFor="bot-provider">Provider</InputLabel>
+                <InputLabel htmlFor="bot-provider">{t('Provider')}</InputLabel>
                 <Select
                     id="bot-provider"
                     name="bot.settings.provider"
@@ -122,12 +125,14 @@ const BotSettingsForm: FC<BotSettingsFormProps> = ({
             </FormControl>
 
             <FormControl>
-                <InputLabel htmlFor="bot-model">Bot Model</InputLabel>
+                <InputLabel htmlFor="bot-model">{t('Bot Model')}</InputLabel>
                 <Select
                     id="bot-model"
                     name="bot.settings.model"
                     value={formik.values.bot.settings.model}
-                    onChange={formik.handleChange}
+                    onChange={(_, newValue) =>
+                        formik.setFieldValue('bot.settings.model', newValue)
+                    }
                 >
                     {botModelOptions[
                         formik.values.bot.settings.serviceSource.type
@@ -140,7 +145,7 @@ const BotSettingsForm: FC<BotSettingsFormProps> = ({
             </FormControl>
 
             <FormControl>
-                <InputLabel htmlFor="endpoint">Endpoint</InputLabel>
+                <InputLabel htmlFor="endpoint">{t('Endpoint')}</InputLabel>
                 <Input
                     id="endpoint"
                     name="bot.settings.serviceSource.endpoint"
@@ -150,7 +155,7 @@ const BotSettingsForm: FC<BotSettingsFormProps> = ({
             </FormControl>
 
             <FormControl>
-                <InputLabel htmlFor="bot-key">Key</InputLabel>
+                <InputLabel htmlFor="bot-key">{t('Key')}</InputLabel>
                 <Input
                     id="bot-key"
                     name="bot.settings.serviceSource.apiKey"
@@ -160,7 +165,9 @@ const BotSettingsForm: FC<BotSettingsFormProps> = ({
             </FormControl>
 
             <FormControl>
-                <InputLabel htmlFor="bot-temperature">Temperature</InputLabel>
+                <InputLabel htmlFor="bot-temperature">
+                    {t('Temperature')}
+                </InputLabel>
                 <Input
                     id="bot-temperature"
                     name="bot.settings.temperature"
@@ -178,7 +185,7 @@ const BotSettingsForm: FC<BotSettingsFormProps> = ({
             </FormControl>
 
             <FormControl>
-                <InputLabel htmlFor="bot-prompt">Prompt</InputLabel>
+                <InputLabel htmlFor="bot-prompt">{t('Prompt')}</InputLabel>
                 <Textarea
                     id="bot-prompt"
                     minRows={2}
@@ -194,7 +201,9 @@ const BotSettingsForm: FC<BotSettingsFormProps> = ({
             </FormControl>
 
             <FormControl>
-                <InputLabel htmlFor="bot-maxTokens">Max Tokens</InputLabel>
+                <InputLabel htmlFor="bot-maxTokens">
+                    {t('Max Tokens')}
+                </InputLabel>
                 <Input
                     id="bot-maxTokens"
                     name="bot.settings.maxTokens"

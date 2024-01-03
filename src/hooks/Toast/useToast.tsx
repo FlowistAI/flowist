@@ -5,7 +5,7 @@ export const useToast = (): ((message: ToastMessage) => void) => {
     const setToast = useSetAtom(toastState)
 
     const pushMessage = (message: ToastMessage) => {
-        message.content += ' - ' + new Date().toLocaleTimeString()
+        message.content
         setToast((prev) => [...prev, message])
     }
 

@@ -21,3 +21,5 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         </Composed>
     </React.StrictMode>,
 )
+
+window.React = React

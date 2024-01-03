@@ -7,6 +7,7 @@ import { SettingsSection } from '../../states/settings/settings.type'
 import { SettingRefAttrs } from './SettingRefAttrs'
 import { useToast } from '../../hooks/Toast/useToast'
 import { t } from 'i18next'
+import PluginTab from './PluginTab'
 
 export type SettingPanelProps = {
     activeTab: SettingsSection
@@ -24,6 +25,7 @@ export const Hide: FC<HideProps> = ({ cond, children }) => (
 const SettingPanel: FC<SettingPanelProps> = forwardRef(({ activeTab }, ref) => {
     const refSystem = useRef<SettingRefAttrs>(null)
     const refLLM = useRef<SettingRefAttrs>(null)
+    const refPlugin = useRef<SettingRefAttrs>(null)
     const refAbout = useRef<SettingRefAttrs>(null)
 
     const toast = useToast()
@@ -48,6 +50,9 @@ const SettingPanel: FC<SettingPanelProps> = forwardRef(({ activeTab }, ref) => {
             </Hide>
             <Hide cond={activeTab == 'llm'}>
                 <ModelSettings ref={refLLM} />
+            </Hide>
+            <Hide cond={activeTab == 'plugin'}>
+                <PluginTab ref={refPlugin} />
             </Hide>
             <Hide cond={activeTab == 'about'}>
                 <AboutTab ref={refAbout} />

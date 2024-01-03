@@ -6,6 +6,7 @@ import { generateUUID } from '../../../util/id-generator'
 import { createLLMService } from '../../../services/llm-service/createLLMService'
 import { createSessionfulHandler } from '../_common/sessionful-handler'
 import { getCorsProxyIfEnabled } from '../../settings/settings.atom'
+import { toastControl } from '../../../hooks/Toast/toast.atom'
 
 const _chatSessionsAtom = atom<ChatSession[]>([])
 
@@ -554,6 +555,12 @@ async function handleSendMessageAsync(
 
                 handleAppendMessageText(ctx, sid, botMessageId, chunk)
             },
+            onError: (error: Error) => {
+                toastControl(ctx).add({
+                    type: 'error',
+                    content: error.message,
+                })
+            },
             onDone: (all: string) => {
                 onReplyDone?.(all)
             },
@@ -618,6 +625,12 @@ async function handleRegenerate(
             historyMessages: contextMessages,
             onChunk: (chunk: string) => {
                 handleAppendMessageText(ctx, sid, botMessage.id, chunk)
+            },
+            onError: (error: Error) => {
+                toastControl(ctx).add({
+                    type: 'error',
+                    content: error.message,
+                })
             },
             onDone: (all: string) => {
                 onReplyDone?.(all)

@@ -1,4 +1,5 @@
 import { SessionId } from '../../bot.type'
+import { TTSSettingsTypes } from '../../settings/settings.type'
 
 export type TtsSession = {
     id: SessionId
@@ -9,3 +10,14 @@ export type TtsSession = {
 export type TtsData = {
     id: SessionId
 }
+
+export const ttsProviderOptions = [
+    {
+        label: 'CustomAPI',
+        value: TTSSettingsTypes.CustomAPI,
+    },
+    {
+        label: 'Tencent Cloud TTS',
+        value: TTSSettingsTypes.TencentTTS,
+    },
+] as const

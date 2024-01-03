@@ -17,6 +17,7 @@ import {
     systemCorsProxyAtom,
     systemCorsProxyEnabledAtom,
 } from '../../../states/settings/settings.atom'
+import { useToast } from '../../../hooks/Toast/useToast'
 
 export type QueryBotNodeProps = {
     data: QueryBotNodeData
@@ -48,6 +49,7 @@ export function QueryBotNode({ data, selected }: QueryBotNodeProps) {
 
     const corsProxy = useAtomValue(systemCorsProxyAtom)
     const corsProxyEnabled = useAtomValue(systemCorsProxyEnabledAtom)
+    const toast = useToast()
 
     const handleQuery = (input: string) => {
         if (!botSettings) {
@@ -71,6 +73,9 @@ export function QueryBotNode({ data, selected }: QueryBotNodeProps) {
                 console.log('[QueryBotNode] query done', output)
 
                 signal?.(NodePorts.Output, output)
+            },
+            onError: (error) => {
+                toast({ type: 'error', content: (error as Error).message })
             },
         })
     }
