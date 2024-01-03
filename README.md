@@ -10,7 +10,7 @@
 - [English](README.md)
 - [简体中文](README.zh-CN.md)
 
-Flowist is an open source AI-based desktop and web **workflow platform** that also serves as an **model interactive tool** for everyone. Whether you are a beginner or a professional.
+Flowist (former name: neuflow) is an open source AI-based desktop and web **workflow platform** that also serves as an **model interactive tool** for everyone. Whether you are a beginner or a professional.
 
 Currently, Flowist AI integrates with Open AI and Google AI supporting custom endpoints, allowing you to utilize models such as GPT3.4, GPT4, and Gemini Pro. Simply download the platform and fill in your API key to start using it.
 
