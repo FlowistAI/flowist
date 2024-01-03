@@ -26,10 +26,10 @@ const AboutTab: FC<React.RefAttributes<SettingRefAttrs>> = forwardRef(
                     {t('Website')}:{' '}
                     <a
                         className="text-blue-500 hover:underline ml-2"
-                        href="https://github.com/NeuFlowAI/neuflow"
+                        href="https://github.com/FlowistAI/flowist"
                         target="_blank"
                     >
-                        neuflow
+                        flowist
                     </a>
                 </p>
                 <p>

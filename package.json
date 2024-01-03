@@ -1,11 +1,11 @@
 {
-  "name": "neuflow",
+  "name": "flowist",
   "version": "0.0.1",
   "main": "dist-electron/main.js",
   "author": {
     "email": "less-bug@ry.rs",
     "name": "Zijing Zhang",
-    "url": "https://github.com/NeuFlowAI/neuflow"
+    "url": "https://github.com/FlowistAI/flowist"
   },
   "scripts": {
     "dev:web": "vite --config ./vite.web.config.ts",

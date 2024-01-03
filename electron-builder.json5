@@ -4,7 +4,7 @@
 {
   "appId": "YourAppID",
   "asar": false,
-  "productName": "NeuFlow AI",
+  "productName": "Flowist AI",
   "copyright": "Copyright © 2022 ${author}",
   "directories": {
     "output": "release/${version}"

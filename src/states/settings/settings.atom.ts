@@ -18,7 +18,7 @@ import { Getter } from 'jotai/vanilla'
 
 export const systemNameAtom = atomWithStorage<string>(
     'systemName',
-    'NeuFlow AI',
+    'Flowist AI',
 )
 
 export const systemLanguageAtom = atomWithStorage<SupportedLang>(
