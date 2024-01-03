@@ -7,6 +7,10 @@ Flowist是一款开源的基于人工智能的桌面和Web**工作流平台**，
 
 目前，Flowist AI与Open AI和Google AI集成，支持自定义端点，使您能够利用GPT3.4、GPT4和Gemini Pro等模型。只需下载平台并填写您的API密钥即可开始使用。
 
+**欢迎加入种子用户群，构想 AI 工具流的未来**
+
+![image](https://github.com/FlowistAI/flowist/assets/50045289/e9390fc3-a8b4-4bac-9b19-984d8ec621c7)
+
 ## 特点
 
 Flowist AI旨在提供直观友好的界面，使用户能够轻松创建、编辑和自定义工作流程。您可以从预定义模板开始，或根据需要完全自定义工作流程。通过拖放和连接不同的任务和操作，您可以构建复杂的工作流程并自动执行它们。
