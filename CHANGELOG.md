@@ -1,0 +1,67 @@
+# Changelog
+
+All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+### 0.0.2 (2024-01-03)
+
+
+### Features
+
+* abstract of global settings ([d789dcf](https://github.com/pluveto/gide/commit/d789dcf245ae5626685f4328a722b8ac986b7cf3))
+* add screenshot ([4f2f125](https://github.com/pluveto/gide/commit/4f2f125f4c6740af921855926c22adffbbfe6a1f))
+* allow show save dialog once ([73678ab](https://github.com/pluveto/gide/commit/73678ab1ed5ad164fd40f56f3230f1c8d1cafdc7))
+* audio player ([4d9ecb3](https://github.com/pluveto/gide/commit/4d9ecb383d21ff52872a115d36d3ca4586c54808))
+* avoid unintended touch in useSettingsModal ([1f29094](https://github.com/pluveto/gide/commit/1f290944c63475310fb8921816de79f575d4364d))
+* better context menu ([aaf78ed](https://github.com/pluveto/gide/commit/aaf78edeb886af83512230a23f8943b6bb37e637))
+* bot from preset ([5033764](https://github.com/pluveto/gide/commit/5033764c1ae1bae8da5c1c40dbeecfb936f72565))
+* chat message handle ([771288e](https://github.com/pluveto/gide/commit/771288e0f24c608456ec99a18a3b76a04c41373c))
+* chat message handle ([2c7fb21](https://github.com/pluveto/gide/commit/2c7fb2136ae2a27922da41a40e6335f08d9f08bc))
+* chat setting button ([e643c18](https://github.com/pluveto/gide/commit/e643c184f251039640c36eee81a226290b8e2f73))
+* ChatBoxNode resizable ([0b658b7](https://github.com/pluveto/gide/commit/0b658b7764674716911bf46abfcf2e407148c8a2))
+* clear all ([bde3fc8](https://github.com/pluveto/gide/commit/bde3fc870bd2fa657b262236c74789dd89bd2445))
+* delete edge ([50b77be](https://github.com/pluveto/gide/commit/50b77bec84ce4c8e70affd53ff05339b1a66d775))
+* delete preset ([99a4176](https://github.com/pluveto/gide/commit/99a4176d7bf0b0eb879e4fe0847ba7de2a1e68b7))
+* electron interation ([1e1865f](https://github.com/pluveto/gide/commit/1e1865fb4e62b2d61a187f84e4896249c75aad3c))
+* google ai chat ([74dad45](https://github.com/pluveto/gide/commit/74dad4503f5145b22300fbe11fca45d1f4d770d6))
+* google gemini, side nav ([cfb791e](https://github.com/pluveto/gide/commit/cfb791e3a8061c00dd137cebcbbb6e0d782b2e23))
+* hook useGraphTelecom ([efa4e19](https://github.com/pluveto/gide/commit/efa4e19382801902b974b460143372d2b34734cc))
+* i18n chinese ([b0480b0](https://github.com/pluveto/gide/commit/b0480b06e3d620421bd0344a1cadffc3da80ffdc))
+* i18n example ([6c3efe3](https://github.com/pluveto/gide/commit/6c3efe3f62f4ded44be8ec20d7d931dfee9854dc))
+* init ([459ff74](https://github.com/pluveto/gide/commit/459ff7439191045aa2d2a0bda6e5543e07edff06))
+* integrate GraphTelecom to react ([73035f2](https://github.com/pluveto/gide/commit/73035f290d3b3aae0ee8834fe3ba4f4d51eaaaad))
+* intro recoil ([4bc675a](https://github.com/pluveto/gide/commit/4bc675ad9ecc1859e820649cd3b110df45150426))
+* load default bot from global settings ([e4285b7](https://github.com/pluveto/gide/commit/e4285b7e236971d4b5cc4d5287714ac1e09aa938))
+* logo / app settings ([2e4fbcf](https://github.com/pluveto/gide/commit/2e4fbcf313040114fe64a89e162949d50ece2104))
+* message menu ([b534867](https://github.com/pluveto/gide/commit/b5348670636b2ae662b3ee7552263a451da69020))
+* mui ([7810d00](https://github.com/pluveto/gide/commit/7810d008cd9243665f0794e2b5b9e772964eb1d0))
+* node manager archtecture ([c441537](https://github.com/pluveto/gide/commit/c441537877b54ac8e8a33026f1ea275cc3dc321a))
+* open ai compatible ([8491ae8](https://github.com/pluveto/gide/commit/8491ae84ae2fb629dafd9eb43fb0351128eda346))
+* persist settings ([ad3e593](https://github.com/pluveto/gide/commit/ad3e593a52e1fa6b66139e3abfdecdb846ec465f))
+* proxy ([f7da74a](https://github.com/pluveto/gide/commit/f7da74abdf96891268a4e0b3041bf194e5064f06))
+* query bot node ([68c12a8](https://github.com/pluveto/gide/commit/68c12a8fb6881d7e843b3d55a42250c36c4f930f))
+* regen ([5a00dc6](https://github.com/pluveto/gide/commit/5a00dc6c57253189dd010bfce57a548582ae6811))
+* save and use presets ([05551a7](https://github.com/pluveto/gide/commit/05551a7d86ccc74e51a59d9377679b5f9f3605cb))
+* save load ([6feed07](https://github.com/pluveto/gide/commit/6feed07e2032772f7552aa5deb6e2d4f9f13451e))
+* save settings ([ee781c2](https://github.com/pluveto/gide/commit/ee781c271554264eef834c53de08cbba59eeab3c))
+* send and handle signal in a node ([dd69d6a](https://github.com/pluveto/gide/commit/dd69d6af0d2699217c9cab1705c90981757262c1))
+* setting modal ([158b230](https://github.com/pluveto/gide/commit/158b2302f230c45777cbbac164dedc5a018d8606))
+* shortcut hook ([33f33b0](https://github.com/pluveto/gide/commit/33f33b0bd72ec0dd991b454fa56d0749508286cc))
+* support electron and web build ([95b785d](https://github.com/pluveto/gide/commit/95b785d3d471642f07037a2f517ceed24d6c1bf1))
+* support open file ([98abe16](https://github.com/pluveto/gide/commit/98abe1651455c3fa8c9c22dafd8236eb7fd0d393))
+* system setting integration ([a072260](https://github.com/pluveto/gide/commit/a0722602c398c00bc9e8ec57a4189cbf9c4cfcb7))
+* telecommunicate ([5151ce3](https://github.com/pluveto/gide/commit/5151ce3972b6c19c5ead33925380fe95683e6e19))
+* telecommunicate ([f05bbd1](https://github.com/pluveto/gide/commit/f05bbd11c8ccd25a81ee1166dc8a24f630c6a360))
+* **toast:** multiple toast one by one ([a30371b](https://github.com/pluveto/gide/commit/a30371b00846af57512975557962907e645d8dce))
+* TTS Node ([c2ac027](https://github.com/pluveto/gide/commit/c2ac02794525ee137ff9230666ee0d26c6ebec00))
+* tts node integrate ([0a6aae7](https://github.com/pluveto/gide/commit/0a6aae707499e9ef28f35c4d0baefb0d33b697af))
+* web+electron save file ([43cf557](https://github.com/pluveto/gide/commit/43cf5575713fd5c1513df8c7fc8b99857709f370))
+
+
+### Bug Fixes
+
+* context menu missing bug ([b09ec00](https://github.com/pluveto/gide/commit/b09ec0041d335e2441cab7d47912adc571b07ba7))
+* form not editing ([6645a2e](https://github.com/pluveto/gide/commit/6645a2e78c5d634847e135872a5401bf6614dc88))
+* issue 28703728 ([4e660db](https://github.com/pluveto/gide/commit/4e660db0ef674086c874d4df57a48cf3b5c0ee27))
+* load wrong position ([57836e0](https://github.com/pluveto/gide/commit/57836e074307d820b500c8a26c4ba01b5df7cf14))
+* query bot invisible ([35bbc5f](https://github.com/pluveto/gide/commit/35bbc5f123a1deca7a516b11a7a94b1dcd381e78))
+* sidebar mouse bug ([4b563c0](https://github.com/pluveto/gide/commit/4b563c0524d581032c1a56143356da21ec198567))
