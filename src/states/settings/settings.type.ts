@@ -91,7 +91,7 @@ export type TTSProviderSettings = {
     [K in TTSProvider]: TTSSettings<K>
 }
 
-export type TTSProvider = 'TencentTTS'
+export type TTSProvider = 'TencentTTS' | 'CustomAPI'
 
 export type TencentTTSSettings = {
     appId: string
@@ -99,8 +99,27 @@ export type TencentTTSSettings = {
     secretKey: string
 }
 
-export type TTSSettings<TProvider extends TTSProvider> =
-    TProvider extends 'TencentTTS' ? TencentTTSSettings : never
+export type CustomAPITTSSettings = {
+    url: string
+    method: 'GET' | 'POST'
+    fieldName: string
+}
+
+export type TTSSettings<Provider extends TTSProvider> =
+    Provider extends 'TencentTTS'
+        ? TencentTTSSettings
+        : Provider extends 'CustomAPI'
+        ? CustomAPITTSSettings
+        : never
+
+export const TTSSettingsTypes = {
+    TencentTTS: 'TencentTTS',
+    CustomAPI: 'CustomAPI',
+} as const
+
+export type TTSSettingsWithProvider<T extends TTSProvider> = TTSSettings<T> & {
+    provider: T
+}
 
 /**
  * Over all settings

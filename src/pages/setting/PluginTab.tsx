@@ -21,8 +21,8 @@ const PluginTab: FC<React.RefAttributes<SettingRefAttrs>> = forwardRef(
 
         const loadPluginTest = () => {
             const url = '/plugins/my-plugin/my-plugin.umd.cjs'
-            window.aaa = React
-            window.pluginBridge = {
+            const win = window as any
+            win.pluginBridge = {
                 register: (plugin: any) => {
                     setPlugins((plugins) => [...plugins, plugin])
 
@@ -46,6 +46,10 @@ const PluginTab: FC<React.RefAttributes<SettingRefAttrs>> = forwardRef(
         return (
             <div className="about-tab">
                 <Typography level="h2">Plugin</Typography>
+                <p>
+                    This is a testing feature for plugin. It is not ready for
+                    use yet.
+                </p>
                 {isDebug && (
                     <div>
                         <p>Debug</p>
