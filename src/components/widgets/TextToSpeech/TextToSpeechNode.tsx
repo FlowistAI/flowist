@@ -1,13 +1,17 @@
-import { Button } from '@mui/joy'
+import { Button, Checkbox } from '@mui/joy'
 import { XIcon } from '@primer/octicons-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Handle, NodeResizer, Position } from 'reactflow'
-import AudioPlayer from './AudioPlayer'
 import './TextToSpeechNode.css'
+import { targetStyle } from '../../../constants/handle-styles'
+import { PlayArrow } from '@mui/icons-material'
+import { useCommunicate } from '../../../states/document.atom'
+import { TTSDropDownMenu } from './TTSDropdownMenu'
 
 export type TextToSpeechNodeProps = {
     data: {
+        id: string
         title: string
         content: string
         onClose: () => void
@@ -15,14 +19,34 @@ export type TextToSpeechNodeProps = {
     selected: boolean
 }
 
+enum NodePorts {
+    Input = 'input',
+}
+
+type InputSignal = string
+
+type Signal<T extends NodePorts> = T extends NodePorts.Input
+    ? InputSignal
+    : never
+
 export function TextToSpeechNode({ data, selected }: TextToSpeechNodeProps) {
-    const [text, setText] = useState('')
+    const [input, setInput] = useState('')
+    const [generated, setGenerated] = useState<string | null>(null)
     const { t } = useTranslation()
 
-    const handleGenerate = () => {
-        // 在这里编写将文本转换为语音并播放的逻辑
-        // 可以使用浏览器的 Web Speech API 或其他文本转语音的库
-        // 在播放完成后可以添加一些回调逻辑
+    const { id } = data
+    const { handleSignal } = useCommunicate(id)
+    useEffect(() => {
+        return handleSignal?.(
+            NodePorts.Input,
+            (input: Signal<NodePorts.Input>) => {
+                setInput(input)
+            },
+        )
+    }, [id, handleSignal])
+
+    const handleGenerateOrPlay = () => {
+        setGenerated(input)
     }
 
     return (
@@ -35,10 +59,18 @@ export function TextToSpeechNode({ data, selected }: TextToSpeechNodeProps) {
                 return true
             }}
         >
-            <Handle type="target" position={Position.Top} />
+            <Handle
+                type="target"
+                position={Position.Right}
+                style={targetStyle}
+                id="input"
+            >
+                <div className="ml-2 pointer-events-none">Input</div>
+            </Handle>
             <NodeResizer minWidth={200} isVisible={selected} minHeight={70} />
 
             <div className="text-to-speech-node__header">
+                <TTSDropDownMenu sessionId={id} />
                 <span className="text-to-speech-node__title">
                     {data.title ?? t('Text to Speech')}
                 </span>
@@ -53,24 +85,24 @@ export function TextToSpeechNode({ data, selected }: TextToSpeechNodeProps) {
             </div>
             <div className="text-to-speech-node__content nodrag nowheel cursor-default">
                 <textarea
-                    value={text}
-                    onChange={(e) => setText(e.target.value)}
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
                     placeholder={t('Enter text...')}
                     className="text-to-speech-node__input"
                 />
-                <Button onClick={handleGenerate} color="primary">
-                    {t('Generate')}
-                </Button>
-                {/* player */}
-                <AudioPlayer src="" />
+                <div className="flex items-center gap-2">
+                    <Checkbox color="primary" label={t('Auto trigger')} />
+                    <Button
+                        sx={{ flex: 1 }}
+                        disabled={!input}
+                        onClick={handleGenerateOrPlay}
+                        color="primary"
+                    >
+                        <PlayArrow />
+                        {generated ? t('Play') : t('Generate')}
+                    </Button>
+                </div>
             </div>
-            <Handle type="source" position={Position.Bottom} id="a" />
-            <Handle
-                type="source"
-                position={Position.Bottom}
-                id="b"
-                style={{ left: 10 }}
-            />
         </div>
     )
 }

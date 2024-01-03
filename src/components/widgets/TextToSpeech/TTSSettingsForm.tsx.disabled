@@ -1,0 +1,170 @@
+import { useFormik } from 'formik'
+import { Input, Select, Button, FormControl, Option, Textarea } from '@mui/joy'
+
+import { InputLabel } from '@mui/material'
+import { botModelOptions } from '../../../states/bot.type'
+import {
+    TTSProvider,
+    TTSSettingsWithProvider,
+} from '../../../states/settings/settings.type'
+import { FC } from 'react'
+import { ttsProviderOptions } from '../../../states/widgets/tts/tts.type'
+
+type Errors<T> = {
+    [P in keyof T]?: T[P] extends object ? Errors<T[P]> : string
+}
+
+const validate = (values: TTSSettingsWithProvider<TTSProvider>) => {
+    switch (values.provider) {
+        case 'CustomAPI': {
+            const errors: Errors<TTSSettingsWithProvider<'CustomAPI'>> = {}
+
+            const { url, method, fieldName } =
+                values as TTSSettingsWithProvider<'CustomAPI'>
+            if (!url) {
+                errors.url = 'URL is required'
+            }
+
+            if (!method) {
+                errors.method = 'Method is required'
+            }
+
+            if (!fieldName) {
+                errors.fieldName = 'Field Name is required'
+            }
+
+            return errors
+        }
+
+        case 'TencentTTS': {
+            const errors: Errors<TTSSettingsWithProvider<'TencentTTS'>> = {}
+
+            const { appId, secretId, secretKey } =
+                values as TTSSettingsWithProvider<'TencentTTS'>
+            if (!appId) {
+                errors.appId = 'App ID is required'
+            }
+
+            if (!secretId) {
+                errors.secretId = 'Secret ID is required'
+            }
+
+            if (!secretKey) {
+                errors.secretKey = 'Secret Key is required'
+            }
+
+            return errors
+        }
+    }
+}
+
+export type TTSSettingsFormProps = {
+    initialValues: TTSSettingsWithProvider<TTSProvider>
+    onSubmit: (values: TTSSettingsWithProvider<TTSProvider>) => void
+}
+
+export const TTSSettingsForm: FC<TTSSettingsFormProps> = ({
+    initialValues,
+    onSubmit,
+}) => {
+    const formik = useFormik({
+        initialValues,
+        validate,
+        onSubmit,
+    })
+
+    return (
+        <form onSubmit={formik.handleSubmit} className="flex flex-col">
+            <FormControl>
+                <InputLabel htmlFor="bot-provider">Provider</InputLabel>
+                <Select
+                    id="bot-provider"
+                    name="bot.settings.provider"
+                    value={formik.values.provider}
+                >
+                    {ttsProviderOptions.map((option) => (
+                        <Option key={option.value} value={option.value}>
+                            {option.label}
+                        </Option>
+                    ))}
+                </Select>
+            </FormControl>
+
+            <FormControl>
+                <InputLabel htmlFor="endpoint">Endpoint</InputLabel>
+                <Input
+                    id="endpoint"
+                    name="bot.settings.serviceSource.endpoint"
+                    value={formik.values.endpoint}
+                    onChange={formik.handleChange}
+                />
+            </FormControl>
+
+            <FormControl>
+                <InputLabel htmlFor="bot-key">Key</InputLabel>
+                <Input
+                    id="bot-key"
+                    name="bot.settings.serviceSource.apiKey"
+                    value={formik.values.bot.settings.serviceSource.apiKey}
+                    onChange={formik.handleChange}
+                />
+            </FormControl>
+
+            <FormControl>
+                <InputLabel htmlFor="bot-temperature">Temperature</InputLabel>
+                <Input
+                    id="bot-temperature"
+                    name="bot.settings.temperature"
+                    slotProps={{
+                        input: {
+                            min: 0,
+                            max: 1,
+                            step: 0.01,
+                        },
+                    }}
+                    type="number"
+                    value={formik.values.bot.settings.temperature}
+                    onChange={formik.handleChange}
+                />
+            </FormControl>
+
+            <FormControl>
+                <InputLabel htmlFor="bot-prompt">Prompt</InputLabel>
+                <Textarea
+                    id="bot-prompt"
+                    minRows={2}
+                    name="bot.settings.prompt"
+                    value={formik.values.bot.settings.prompt}
+                    onChange={formik.handleChange}
+                />
+                {formik.errors.bot?.settings?.prompt && (
+                    <div className="text-red-500">
+                        {formik.errors.bot.settings.prompt}
+                    </div>
+                )}
+            </FormControl>
+
+            <FormControl>
+                <InputLabel htmlFor="bot-maxTokens">Max Tokens</InputLabel>
+                <Input
+                    id="bot-maxTokens"
+                    name="bot.settings.maxTokens"
+                    type="number"
+                    value={formik.values.bot.settings.maxTokens}
+                    onChange={formik.handleChange}
+                />
+                {formik.errors.bot?.settings?.maxTokens && (
+                    <div className="text-red-500">
+                        {formik.errors.bot.settings.maxTokens}
+                    </div>
+                )}
+            </FormControl>
+            <br />
+            <Button type="submit" color="primary">
+                Save
+            </Button>
+        </form>
+    )
+}
+
+export default BotSettingsForm

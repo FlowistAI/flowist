@@ -132,6 +132,9 @@ export const appSettingAtom = atom<SettingsData>((get) => ({
     about: {
         version: get(versionAtom),
     },
+    plugin: {
+        enabled: false,
+    },
 }))
 
 export const settingsModalOpenAtom = atomWithStorage<boolean>(
