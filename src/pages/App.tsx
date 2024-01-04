@@ -29,6 +29,7 @@ import { SettingsModal } from './setting/useSettingsModal'
 import { useAtomValue } from 'jotai'
 import { systemLanguageAtom } from '../states/settings/settings.atom'
 import { useTranslation } from 'react-i18next'
+import { SideChat } from './sidechat/SideChat'
 
 function App() {
     const [ctxMenuPos, setCtxMenuPos] =
@@ -137,7 +138,7 @@ function App() {
 
     return (
         <div className="app flex" ref={appWrapperRef}>
-            <div className="fixed left-0 top-0 z-50 h-screen w-0 flex items-center ">
+            <div className="fixed left-0 top-0 z-50 h-screen w-0 flex">
                 <Toast />
                 <PromptModal />
                 {/* <FloatingMenu /> */}
@@ -151,7 +152,8 @@ function App() {
                 <div className="bg-white border-r py-6 h-full">
                     <AsideMenu />
                 </div>
-                <Presets />
+                <Presets /> 
+                <SideChat />
             </div>
             <main className="flex-1 h-full" ref={drop}>
                 <ReactFlow

@@ -7,18 +7,18 @@ export interface MessageInputProps {
     onSendMessage?: (message: string) => void
     onClear?: () => void
     allowClear?: boolean
-    input?: string
+    value?: string
     allowSend?: boolean
-    setInput?: (input: string) => void
+    onChange?: (input: string) => void
 }
 
 export const MessageInput: React.FC<MessageInputProps> = ({
     onSendMessage,
     onClear,
     allowClear,
-    input: inputOut,
+    value: inputOut,
     allowSend = true,
-    setInput: setInputOut,
+    onChange: setInputOut,
 }) => {
     const [inputInner, setInputInner] = React.useState('')
 

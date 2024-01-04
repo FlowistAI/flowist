@@ -109,8 +109,8 @@ export function ChatBotNode({ data, selected }: ChatBotNodeProps) {
                         allowSend={!sending}
                         onClear={handleClearAllMessages}
                         allowClear={allowClearAllMessages}
-                        input={input}
-                        setInput={setInput}
+                        value={input}
+                        onChange={setInput}
                     />
                 </div>
             </div>
