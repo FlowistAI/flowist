@@ -47,6 +47,7 @@
     "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "^18.2.0",
     "react-i18next": "^14.0.0",
+    "react-markdown": "^9.0.1",
     "react-transition-group": "^4.4.5",
     "react-use-audio-player": "^2.2.0",
     "reactflow": "^11.9.4",

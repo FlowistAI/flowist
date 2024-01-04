@@ -21,3 +21,7 @@ export function joinUrl(...parts: string[]) {
         }, '')
         .join('/')
 }
+
+export function reversedArray<T>(arr: T[]) {
+    return [...arr].reverse()
+}

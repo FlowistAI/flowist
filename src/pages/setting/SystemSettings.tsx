@@ -11,7 +11,6 @@ import {
 } from '../../states/settings/settings.atom'
 import {
     SystemSection,
-    systemSectionSchema,
 } from '../../states/settings/settings.type'
 import { SettingRefAttrs } from './SettingRefAttrs'
 import { SystemSettingsForm } from './SystemSettings.form'
@@ -50,7 +49,6 @@ const SystemSettings: FC<React.RefAttributes<SettingRefAttrs>> = forwardRef(
                         corsProxy: systemCorsProxy,
                         corsProxyEnabled: systemCorsProxyEnabled,
                     }}
-                    validationSchema={systemSectionSchema}
                     onSubmit={handleSave}
                 />
             </div>

@@ -1,7 +1,10 @@
 import { SessionId, Bot, Participant } from '../../bot.type'
 
+export type ChatSessionType = 'widget' | 'sidechat'
+
 export type ChatSession = {
     id: SessionId
+    type: ChatSessionType
     bot: Bot
     user: Participant
     sending: boolean

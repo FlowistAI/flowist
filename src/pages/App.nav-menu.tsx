@@ -8,7 +8,11 @@ import Sheet from '@mui/joy/Sheet'
 import Settings from '@mui/icons-material/Settings'
 import Dropdown from '@mui/joy/Dropdown'
 import MenuButton from '@mui/joy/MenuButton'
-import { Article, ChatBubble, Inbox } from '@mui/icons-material'
+import {
+    Article,
+    ChatBubbleOutline,
+    Inbox,
+} from '@mui/icons-material'
 import { useDocument } from '../states/document.atom'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { showPresetsSidebarAtom } from '../states/preset.atom'
@@ -165,11 +169,6 @@ export default function MenuIconSideNavExample() {
 
     const isPresetsOpen = useAtomValue(showPresetsSidebarAtom)
     const setShowPresetsSidebar = useSetAtom(showPresetsSidebarAtom)
-    const togglePresetsSidebar = () => {
-        console.log('toggle sidebar presets')
-
-        setShowPresetsSidebar((prev) => !prev)
-    }
 
     const sidechat = useSideChatControl()
 
@@ -212,12 +211,16 @@ export default function MenuIconSideNavExample() {
                         title={t('Chat')}
                         open={menuIndex === 'Chat'}
                         onOpen={() => setMenuIndex('Chat')}
-                        onClick={() => sidechat.toggle()}
+                        onClick={() => {
+                            // close other sidebar
+                            setShowPresetsSidebar(false)
+                            sidechat.toggle()
+                        }}
                         onLeaveMenu={createHandleLeaveMenu('Chat')}
                         active={sidechat.visible}
                         menu={<></>}
                     >
-                        <ChatBubble />
+                        <ChatBubbleOutline />
                     </NavMenuButton>
                 </ListItem>
                 <ListItem>
@@ -226,7 +229,11 @@ export default function MenuIconSideNavExample() {
                         title={t('Presets')}
                         open={menuIndex === 'Presets'}
                         onOpen={() => setMenuIndex('Presets')}
-                        onClick={togglePresetsSidebar}
+                        onClick={() => {
+                            // close other sidebar
+                            sidechat.toggle(false)
+                            setShowPresetsSidebar((prev) => !prev)
+                        }}
                         onLeaveMenu={createHandleLeaveMenu('Presets')}
                         active={isPresetsOpen}
                         menu={<></>}
