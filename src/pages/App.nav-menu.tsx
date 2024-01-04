@@ -8,13 +8,18 @@ import Sheet from '@mui/joy/Sheet'
 import Settings from '@mui/icons-material/Settings'
 import Dropdown from '@mui/joy/Dropdown'
 import MenuButton from '@mui/joy/MenuButton'
-import { Article, Inbox } from '@mui/icons-material'
+import {
+    Article,
+    ChatBubbleOutline,
+    Inbox,
+} from '@mui/icons-material'
 import { useDocument } from '../states/document.atom'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { showPresetsSidebarAtom } from '../states/preset.atom'
 import { GearIcon } from '@primer/octicons-react'
 import { useSettingsModal } from '../states/settings/settings.atom'
 import { t } from 'i18next'
+import { useSideChatControl } from './sidechat/sidechat.atom'
 // The Menu is built on top of Popper v2, so it accepts `modifiers` prop that will be passed to the Popper.
 // https://popper.js.org/docs/v2/modifiers/offset/
 interface MenuButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
@@ -145,7 +150,6 @@ export default function MenuIconSideNavExample() {
     }
     const { dispatch } = useDocument()
     const { open: openAppSettings } = useSettingsModal()
-    const isPresetsOpen = useAtomValue(showPresetsSidebarAtom)
     const createHandleLeaveMenu =
         (index: string) => (getIsOnButton: () => boolean) => {
             setTimeout(() => {
@@ -163,12 +167,10 @@ export default function MenuIconSideNavExample() {
             }, 0)
         }
 
+    const isPresetsOpen = useAtomValue(showPresetsSidebarAtom)
     const setShowPresetsSidebar = useSetAtom(showPresetsSidebarAtom)
-    const togglePresetsSidebar = () => {
-        console.log('toggle sidebar presets')
 
-        setShowPresetsSidebar((prev) => !prev)
-    }
+    const sidechat = useSideChatControl()
 
     return (
         <Sheet
@@ -203,14 +205,35 @@ export default function MenuIconSideNavExample() {
                         <Article />
                     </NavMenuButton>
                 </ListItem>
-
+                <ListItem>
+                    <NavMenuButton
+                        label={t('Chat')}
+                        title={t('Chat')}
+                        open={menuIndex === 'Chat'}
+                        onOpen={() => setMenuIndex('Chat')}
+                        onClick={() => {
+                            // close other sidebar
+                            setShowPresetsSidebar(false)
+                            sidechat.toggle()
+                        }}
+                        onLeaveMenu={createHandleLeaveMenu('Chat')}
+                        active={sidechat.visible}
+                        menu={<></>}
+                    >
+                        <ChatBubbleOutline />
+                    </NavMenuButton>
+                </ListItem>
                 <ListItem>
                     <NavMenuButton
                         label={t('Presets')}
                         title={t('Presets')}
                         open={menuIndex === 'Presets'}
                         onOpen={() => setMenuIndex('Presets')}
-                        onClick={togglePresetsSidebar}
+                        onClick={() => {
+                            // close other sidebar
+                            sidechat.toggle(false)
+                            setShowPresetsSidebar((prev) => !prev)
+                        }}
                         onLeaveMenu={createHandleLeaveMenu('Presets')}
                         active={isPresetsOpen}
                         menu={<></>}

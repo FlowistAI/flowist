@@ -164,15 +164,6 @@ export const systemSectionAtom = atom<SystemSection>((get) => ({
     corsProxyEnabled: !!get(systemCorsProxyAtom),
 }))
 
-export const systemSectionSchema = Yup.object().shape({
-    name: Yup.string().required(),
-    language: Yup.string().required().oneOf(['en', 'zh-CN', 'fr', 'jp']),
-    theme: Yup.string().required().oneOf(['light', 'dark']),
-    autoSave: Yup.boolean().required(),
-    corsProxy: Yup.string(),
-    corsProxyEnabled: Yup.boolean(),
-})
-
 export type LLMSection = SettingsData['llm']
 
 export const llmSectionAtom = atom<LLMSection>((get) => ({
@@ -181,29 +172,6 @@ export const llmSectionAtom = atom<LLMSection>((get) => ({
     providers: get(llmProvidersAtom),
 }))
 
-export const llmSectionSchema = Yup.object().shape({
-    defaultPrompt: Yup.string().required(),
-    defaultProvider: Yup.string().required().oneOf(['OpenAI', 'GoogleAI']),
-    providers: Yup.object().shape({
-        OpenAI: Yup.object().shape({
-            label: Yup.string().required(),
-            endpoint: Yup.string().required(),
-            apiKey: Yup.string(),
-            model: Yup.string().required(),
-            temperature: Yup.number().required().min(0).max(1),
-            prompt: Yup.string(),
-            maxTokens: Yup.number().required(),
-        }),
-        GoogleAI: Yup.object().shape({
-            label: Yup.string().required(),
-            apiKey: Yup.string(),
-            model: Yup.string().required(),
-            temperature: Yup.number().required().min(0).max(1),
-            prompt: Yup.string(),
-            maxTokens: Yup.number().required(),
-        }),
-    }),
-})
 
 export type TTSSection = SettingsData['tts']
 

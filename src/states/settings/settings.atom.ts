@@ -40,7 +40,7 @@ export const systemCorsProxyAtom = atomWithStorage<string>(
 
 export const systemCorsProxyEnabledAtom = atomWithStorage<boolean>(
     'systemCorsProxyEnabled',
-    false,
+    true,
 )
 
 export const getCorsProxyIfEnabled = (get: Getter) => {
@@ -69,7 +69,7 @@ export const llmProvidersAtom = atomWithStorage<LLMProviderSettings>(
     {
         OpenAI: {
             label: 'OpenAI',
-            endpoint: 'https://api.openai-proxy.org',
+            endpoint: 'https://play-proxy.flowist.net',
             apiKey: import.meta.env.VITE_OPENAI_API_KEY || '',
             model: 'gpt-3.5-turbo',
             temperature: 0.9,
@@ -109,7 +109,10 @@ export const ttsProvidersAtom = atomWithStorage<TTSProviderSettings>(
     },
 )
 
-export const versionAtom = atomWithStorage<string>('version', '0.0.1')
+export const versionAtom = atom<string>(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    () => (globalThis as any).__APP_VERSION__,
+)
 
 export const appSettingAtom = atom<SettingsData>((get) => ({
     system: {

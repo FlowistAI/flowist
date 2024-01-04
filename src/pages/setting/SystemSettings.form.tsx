@@ -14,16 +14,13 @@ import { t } from 'i18next'
 
 export type SystemSettingsFormProps = {
     initialValues: SystemSection
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    validationSchema: any
     onSubmit: (values: SystemSection) => void
 } & React.RefAttributes<SettingRefAttrs>
 
 export const SystemSettingsForm: FC<SystemSettingsFormProps> = forwardRef(
-    ({ initialValues, validationSchema, onSubmit }, refs) => {
+    ({ initialValues, onSubmit }, refs) => {
         const formik = useFormik({
             initialValues,
-            validationSchema,
             onSubmit,
         })
 

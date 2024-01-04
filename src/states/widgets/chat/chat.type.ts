@@ -1,11 +1,16 @@
 import { SessionId, Bot, Participant } from '../../bot.type'
 
+export type ChatSessionType = 'widget' | 'sidechat'
+
 export type ChatSession = {
-    id: SessionId // also as node id
+    id: SessionId
+    type: ChatSessionType
     bot: Bot
     user: Participant
     sending: boolean
     messages: ChatMessage[]
+    title?: string
+    input?: string
 }
 
 // if content is '---' then it is a delimiter

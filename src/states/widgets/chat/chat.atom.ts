@@ -1,6 +1,6 @@
-import { Getter, Setter, atom, useAtom } from 'jotai'
+import { Getter, Setter, atom, useAtom, useAtomValue } from 'jotai'
 import { ChatMessage, ChatSession } from './chat.type'
-import { JotaiContext } from '../../index.type'
+import { JotaiContext, useJotaiContext } from '../../index.type'
 import { produce } from 'immer'
 import { generateUUID } from '../../../util/id-generator'
 import { createLLMService } from '../../../services/llm-service/createLLMService'
@@ -493,7 +493,7 @@ function setSending({ get, set }: JotaiContext, sid: string, sending: boolean) {
     }
 }
 
-async function handleSendMessageAsync(
+export async function handleSendMessageAsync(
     ctx: JotaiContext,
     sid: string,
     content: string,
@@ -663,4 +663,246 @@ function getContextMessagesBefore(ctx: JotaiContext, sid: string, mid: string) {
     }
 
     return messages.slice(start, end)
+}
+
+export function useChat() {
+    const sessions = useAtomValue(_chatSessionsAtom)
+    const ctx = useJotaiContext()
+
+    return {
+        sessions,
+        addSession: (session: ChatSession) => {
+            ctx.set(_chatSessionsAtom, [...sessions, session])
+        },
+        removeSession: (sessionId: string) => {
+            ctx.set(
+                _chatSessionsAtom,
+                sessions.filter((s) => s.id !== sessionId),
+            )
+        },
+        clearSessions: (type?: string) => {
+            if (type) {
+                ctx.set(
+                    _chatSessionsAtom,
+                    sessions.filter((s) => s.type !== type),
+                )
+
+                return
+            }
+
+            ctx.set(_chatSessionsAtom, [])
+        },
+        getSession: (sessionId: string) => {
+            return sessions.find((s) => s.id === sessionId)
+        },
+    }
+}
+
+export function useChatSession(sessionId?: string) {
+    const ctx = useJotaiContext()
+    const session = useAtomValue(_chatSessionsAtom).find(
+        (s) => s.id === sessionId,
+    )
+
+    if (!sessionId || !session) {
+        return undefined
+    }
+
+    return {
+        session,
+        input: session.input ?? '',
+        updateTitle: (title: string) => {
+            ctx.set(_chatSessionsAtom, (prev) => {
+                return produce(prev, (draft) => {
+                    const sess = draft.find((s) => s.id === sessionId)
+                    if (sess) {
+                        sess.title = title
+                    }
+                })
+            })
+        },
+        updateInput: (input: string) => {
+            ctx.set(_chatSessionsAtom, (prev) => {
+                return produce(prev, (draft) => {
+                    const sess = draft.find((s) => s.id === sessionId)
+                    if (sess) {
+                        sess.input = input
+                    }
+                })
+            })
+        },
+        addMessage: (message: ChatMessage) => {
+            ctx.set(_chatSessionsAtom, (prev) => {
+                return produce(prev, (draft) => {
+                    const sess = draft.find((s) => s.id === sessionId)
+                    if (sess) {
+                        sess.messages.push(message)
+                    }
+                })
+            })
+        },
+        updateMessage: (
+            mid: string,
+            updater: (m: ChatMessage) => ChatMessage,
+        ) => {
+            ctx.set(_chatSessionsAtom, (prev) => {
+                return produce(prev, (draft) => {
+                    const sess = draft.find((s) => s.id === sessionId)
+                    if (sess) {
+                        sess.messages = sess.messages.map((m) => {
+                            if (m.id === mid) {
+                                return updater(m)
+                            }
+
+                            return m
+                        })
+                    }
+                })
+            })
+        },
+        appendMessageText: (mid: string, text: string) => {
+            ctx.set(_chatSessionsAtom, (prev) => {
+                return produce(prev, (draft) => {
+                    const sess = draft.find((s) => s.id === sessionId)
+                    if (sess) {
+                        const msg = sess.messages.find((m) => m.id === mid)
+                        if (msg) {
+                            msg.content += text
+                        }
+                    }
+                })
+            })
+        },
+        deleteMessage: (mid: string) => {
+            ctx.set(_chatSessionsAtom, (prev) => {
+                return produce(prev, (draft) => {
+                    const sess = draft.find((s) => s.id === sessionId)
+                    if (sess) {
+                        sess.messages = sess.messages.filter(
+                            (m) => m.id !== mid,
+                        )
+                    }
+                })
+            })
+        },
+        getMessage: (mid: string) => {
+            return session.messages.find((m) => m.id === mid)
+        },
+        getMessages: () => {
+            return session.messages
+        },
+        getContextMessages: () => {
+            const msgs = []
+
+            if (session) {
+                for (let i = session.messages.length - 1; i >= 0; i--) {
+                    const msg = session.messages[i]
+                    if (msg.content === '---') {
+                        break
+                    }
+
+                    msgs.push(msg)
+                }
+            }
+
+            msgs.reverse()
+
+            return msgs
+        },
+        insertMessageBefore: (message: ChatMessage, beforeMid: string) => {
+            ctx.set(_chatSessionsAtom, (prev) => {
+                return produce(prev, (draft) => {
+                    const sess = draft.find((s) => s.id === sessionId)
+                    if (sess) {
+                        sess.messages = sess.messages.reduce((acc, m) => {
+                            if (m.id === beforeMid) {
+                                acc.push(message)
+                            }
+
+                            acc.push(m)
+
+                            return acc
+                        }, [] as ChatMessage[])
+                    }
+                })
+            })
+        },
+        insertMessageAfter: (message: ChatMessage, afterMid: string) => {
+            ctx.set(_chatSessionsAtom, (prev) => {
+                return produce(prev, (draft) => {
+                    const sess = draft.find((s) => s.id === sessionId)
+                    if (sess) {
+                        sess.messages = sess.messages.reduce((acc, m) => {
+                            acc.push(m)
+
+                            if (m.id === afterMid) {
+                                acc.push(message)
+                            }
+
+                            return acc
+                        }, [] as ChatMessage[])
+                    }
+                })
+            })
+        },
+        clearMessages: () => {
+            ctx.set(_chatSessionsAtom, (prev) => {
+                return produce(prev, (draft) => {
+                    const sess = draft.find((s) => s.id === sessionId)
+                    if (sess) {
+                        sess.messages = []
+                    }
+                })
+            })
+        },
+        clearMessageBefore: (beforeMid: string) => {
+            ctx.set(_chatSessionsAtom, (prev) => {
+                return produce(prev, (draft) => {
+                    const sess = draft.find((s) => s.id === sessionId)
+                    if (sess) {
+                        const messages = []
+
+                        const oldMessages = sess.messages
+
+                        for (let i = 0; i < oldMessages.length; i++) {
+                            const m = oldMessages[i]
+                            if (m.id === beforeMid) {
+                                messages.push(m)
+                                break
+                            }
+                        }
+
+                        sess.messages = messages
+                    }
+                })
+            })
+        },
+        clearMessageAfter: (afterMid: string) => {
+            ctx.set(_chatSessionsAtom, (prev) => {
+                return produce(prev, (draft) => {
+                    const sess = draft.find((s) => s.id === sessionId)
+                    if (sess) {
+                        const messages = []
+                        const oldMessages = sess.messages
+
+                        for (let i = oldMessages.length - 1; i >= 0; i--) {
+                            const m = oldMessages[i]
+                            if (m.id === afterMid) {
+                                messages.push(m)
+                                break
+                            }
+                        }
+
+                        sess.messages = messages
+                    }
+                })
+            })
+        },
+        sendMessage: (content: string, onReplyDone?: (all: string) => void) => {
+            handleSendMessageAsync(ctx, sessionId, content, onReplyDone)
+        },
+        regenerate: (mid: string, onReplyDone?: (all: string) => void) => {
+            handleRegenerate(ctx, sessionId, mid, onReplyDone)
+        },
+    }
 }

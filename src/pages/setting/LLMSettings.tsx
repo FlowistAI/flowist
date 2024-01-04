@@ -5,10 +5,7 @@ import {
     llmDefaultProviderAtom,
     llmProvidersAtom,
 } from '../../states/settings/settings.atom'
-import {
-    LLMSection,
-    llmSectionSchema,
-} from '../../states/settings/settings.type'
+import { LLMSection } from '../../states/settings/settings.type'
 import './LLMSettings.css'
 import LLMSettingsForm from './LLMSettings.form'
 import { SettingRefAttrs } from './SettingRefAttrs'
@@ -37,7 +34,6 @@ const ModelSettings: FC<React.RefAttributes<SettingRefAttrs>> = forwardRef(
                     defaultProvider: llmDefaultProvider,
                     providers: llmProviders,
                 }}
-                validationSchema={llmSectionSchema}
                 onSubmit={handleSubmit}
             />
         )

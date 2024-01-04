@@ -24,26 +24,29 @@ export type BaseLLMSettings = {
 
 export type LLMSettingsFormProps = {
     initialValues: LLMSection
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    validationSchema: any
     onSubmit: (values: LLMSection) => void
 }
 
 const LLMSettingsForm = forwardRef(
     (
-        { initialValues, validationSchema, onSubmit }: LLMSettingsFormProps,
+        { initialValues, onSubmit }: LLMSettingsFormProps,
         ref,
     ) => {
         // 使用Formik Hook
         const formik = useFormik({
             initialValues,
-            validationSchema,
             onSubmit,
         })
 
         useImperativeHandle(ref, () => ({
             save: () => {
-                formik.handleSubmit()
+                console.log(
+                    'you clicked save, i\'m LLMSettingsForm',
+                    'data',
+                    formik.values,
+                )
+
+                formik.submitForm()
             },
         }))
 

@@ -3,6 +3,9 @@ import electron from 'vite-plugin-electron/simple'
 import react from '@vitejs/plugin-react'
 
 export default defineConfig({
+    define: {
+        __APP_VERSION__: JSON.stringify(process.env.npm_package_version),
+    },
     build: {
         rollupOptions: {
             external: ['react', 'react-dom'],

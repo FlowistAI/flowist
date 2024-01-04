@@ -69,7 +69,7 @@ export interface LLMServiceSource<T extends LLMProvider> {
 export const OpenAIOfficialServiceSource: LLMServiceSource<'OpenAI'> = {
     type: LLMProviders.OpenAI,
     label: 'OpenAI (official)',
-    endpoint: 'https://api.openai-proxy.org',
+    endpoint: 'https://api.openai.com',
     apiKey: import.meta.env.VITE_OPENAI_API_KEY || '',
 } as const
 
@@ -149,6 +149,8 @@ export const getDefaultBot = (ctx: JotaiContext) => {
     const settings = ctx.get(appSettingAtom)
     const provider = settings.llm.defaultProvider
     const llmSettings = settings.llm.providers[provider]
+
+    console.log(llmSettings)
 
     const bot: Bot = {
         type: 'bot',
