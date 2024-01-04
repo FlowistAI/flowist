@@ -4,14 +4,22 @@ import { PlusIcon, XIcon } from '@primer/octicons-react'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useSideChatControl } from './sidechat.atom'
-import { ChatOutlined } from '@mui/icons-material'
-import { MessageInput } from '../../components/widgets/_common/MessageInput'
+import { ChatOutlined, Send } from '@mui/icons-material'
 import { ChatMessage, ChatSession } from '../../states/widgets/chat/chat.type'
 import { getDefaultBot, DefaultUser } from '../../states/bot.type'
 import { generateUUID } from '../../util/id-generator'
 import { useJotaiContext } from '../../states/index.type'
 import React from 'react'
 import { Resizable } from 're-resizable'
+import i18next from 'i18next'
+
+const NoCurrentSession = () => (
+    <div className="flex-1 flex items-center justify-center">
+        <div className="text-gray-400">
+            {i18next.t('No conversation selected')}
+        </div>
+    </div>
+)
 
 export const SideChat = () => {
     const sidechat = useSideChatControl()
@@ -21,6 +29,7 @@ export const SideChat = () => {
     console.log('sidechat', visible)
 
     const [query, setQuery] = useState('')
+    const [focus, setFocus] = useState(false)
     const [sidebarClass, setSidebarClass] = useState('')
     const { t } = useTranslation()
 
@@ -84,13 +93,16 @@ export const SideChat = () => {
     }
 
     return (
-        <div className="absolute h-screen">
+        <div className="absolute h-screen flex flex-col">
             <Resizable
-                minHeight="100vh"
-                className={`bg-white border-r py-6 h-screen ml-14 flex px-4 flex-col sidebar ${sidebarClass}`}
+                minHeight="100%"
+                maxHeight="100%"
+                className={`flex-1 bg-white border-r pt-6 h-screen ml-14 flex pl-4 flex-col sidebar ${sidebarClass}`}
+                // ignore the warning
+                // @ts-expect-error ignore and don't delete this line
                 onTransitionEnd={onTransitionEnd}
             >
-                <div className="flex w-full headline">
+                <div className="flex w-full headline pr-4">
                     <div className="flex-1">
                         <Typography level="h4">{t('Conversations')}</Typography>
                     </div>
@@ -101,8 +113,9 @@ export const SideChat = () => {
                         <XIcon />
                     </div>
                 </div>
-                <div className="flex-1 flex flex-row mt-4 border-t overflow-y-auto">
-                    <div className="max-w-80 pt-4 pr-4 border-r flex flex-col overflow-y-auto">
+                <div className="flex-1 flex flex-row mt-4 border-t overflow-y-auto ">
+                    {/* left list */}
+                    <div className="max-w-80 pt-4 pr-4 border-r flex flex-col">
                         <div className="flex items-center">
                             <div className="flex-1 mr-2">
                                 <Input
@@ -121,7 +134,7 @@ export const SideChat = () => {
                                 <span className="ml-1">{t('New')}</span>
                             </Button>
                         </div>
-                        <ul className="mt-4 flex-1 max-h-full overflow-y-auto">
+                        <ul className="mt-4 flex-1 overflow-y-auto">
                             {sidechat.sessions.map((session) => (
                                 <li
                                     key={session.id}
@@ -153,74 +166,106 @@ export const SideChat = () => {
                             ))}
                         </ul>
                     </div>
-                    <div className="conversation flex-1">
+                    {/* right chat */}
+                    <div className="conversation flex-1 flex flex-col">
                         {!currentSession ? (
-                            <div className="flex items-center justify-center h-full">
-                                <div className="text-gray-400">
-                                    {t('No conversation selected')}
-                                </div>
-                            </div>
+                            <NoCurrentSession />
                         ) : (
-                            <div className="flex flex-col h-full">
-                                <div
-                                    ref={msgsRef}
-                                    className="flex-1 overflow-y-auto"
-                                >
-                                    {currentSession.messages.map((msg) => (
-                                        <div
-                                            key={msg.id}
-                                            className={`p-4
-                                        border-b
-                                    ${
-                                        msg.isUser ? 'bg-gray-50' : 'bg-white'
-                                    }                                    `}
-                                        >
+                            <div className="flex-1 flex flex-col overflow-y-auto">
+                                {/* msg list */}
+                                <div className="flex-1 overflow-y-auto">
+                                    <div className="" ref={msgsRef}>
+                                        {currentSession.messages.map((msg) => (
                                             <div
-                                                className={'flex items-center '}
+                                                key={msg.id}
+                                                className={`p-4
+                                        border-b
+                                    ${msg.isUser ? 'bg-gray-50' : 'bg-white'}`}
                                             >
-                                                <div className="flex items-center">
-                                                    <img
-                                                        src={msg.avatar}
-                                                        alt=""
-                                                        className="w-10 h-10 rounded-full"
-                                                    />
-                                                </div>
                                                 <div
                                                     className={
-                                                        'flex-1 ml-2 p-2 rounded-lg'
+                                                        'flex items-center '
                                                     }
                                                 >
-                                                    {msg.content}
+                                                    <div className="flex items-center">
+                                                        {/* <img
+                                                            src={msg.avatar}
+                                                            alt=""
+                                                            className="w-10 h-10 rounded-full"
+                                                        /> */}
+                                                    </div>
+                                                    <div
+                                                        className={
+                                                            'flex-1 ml-2 p-2 rounded-lg'
+                                                        }
+                                                    >
+                                                        {msg.content}
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    ))}
+                                        ))}
+                                    </div>
                                 </div>
-                                <div className="mt-4">
-                                    <MessageInput
+                                {/* user input */}
+                                <div
+                                    className={`
+                                    mt-4
+                                    p-4
+                                    border-t
+                                    ${focus ? 'h-24' : 'h-12'}
+                                    ${focus ? 'bg-gray-100' : 'bg-white'}
+                                `}
+                                >
+                                    <textarea
+                                        className="bg-inherit
+                                        inset-0
+                                        scroll-pa-4
+                                        input-base
+                                        resize-none
+                                        outline-none
+                                        w-full
+                                        "
                                         value={currentSession?.input}
-                                        onChange={(value) => {
+                                        onChange={(e) => {
                                             if (!currentSession) {
                                                 return
                                             }
 
                                             sidechat
                                                 .withSession(currentSession.id)
-                                                .updateInput(value)
+                                                .updateInput(e.target.value)
                                         }}
-                                        onClear={
-                                            currentSession
-                                                ? () => {
-                                                      sidechat
-                                                          .withSession(
-                                                              currentSession.id,
-                                                          )
-                                                          .updateInput('')
-                                                  }
-                                                : undefined
-                                        }
-                                        onSendMessage={handleSendMessage}
-                                    />
+                                        onKeyUp={(e) => {
+                                            if (e.key === 'Enter') {
+                                                handleSendMessage(
+                                                    currentSession?.input ?? '',
+                                                )
+                                            }
+                                        }}
+                                        onBlur={() => {
+                                            setFocus(false)
+                                        }}
+                                        onFocus={() => {
+                                            setFocus(true)
+                                        }}
+                                        autoComplete="off"
+                                    ></textarea>
+                                    <div
+                                        className={`
+                                        ${focus ? 'block' : 'hidden'}
+                                        ${focus ? 'bg-gray-100' : 'bg-white'}
+                                    `}
+                                    >
+                                        <Button
+                                            onClick={() => {
+                                                handleSendMessage(
+                                                    currentSession?.input ?? '',
+                                                )
+                                            }}
+                                        >
+                                            <Send />
+                                        </Button>
+                                    </div>
                                 </div>
                             </div>
                         )}
