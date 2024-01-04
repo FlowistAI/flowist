@@ -11,6 +11,7 @@ import { getDefaultBot, DefaultUser } from '../../states/bot.type'
 import { generateUUID } from '../../util/id-generator'
 import { useJotaiContext } from '../../states/index.type'
 import React from 'react'
+import { Resizable } from 're-resizable'
 
 export const SideChat = () => {
     const sidechat = useSideChatControl()
@@ -83,145 +84,149 @@ export const SideChat = () => {
     }
 
     return (
-        <div
-            className={`bg-white border-r py-6 h-screen absolute ml-14 flex px-4 flex-col sidebar ${sidebarClass}`}
-            style={{ width: '80vw' }}
-            onTransitionEnd={onTransitionEnd}
-        >
-            <div className="flex w-full headline">
-                <div className="flex-1">
-                    <Typography level="h4">{t('Conversations')}</Typography>
-                </div>
-                <div
-                    className="icon-circle-button"
-                    onClick={() => sidechat.toggle()}
-                >
-                    <XIcon />
-                </div>
-            </div>
-            <div className="flex-1 flex flex-row mt-4 border-t overflow-y-auto">
-                <div className="w-80 pt-4 pr-4 border-r flex flex-col overflow-y-auto">
-                    <div className="flex items-center">
-                        <div className="flex-1 mr-2">
-                            <Input
-                                value={query}
-                                onChange={(e) => setQuery(e.target.value)}
-                                placeholder={t('Search')}
-                                fullWidth
-                            />
-                        </div>
-                        <Button
-                            variant="outlined"
-                            color="neutral"
-                            onClick={handleClickNewConversation}
-                        >
-                            <PlusIcon size={12} />
-                            <span className="ml-1">{t('New')}</span>
-                        </Button>
+        <div className="absolute h-screen">
+            <Resizable
+                minHeight="100vh"
+                className={`bg-white border-r py-6 h-screen ml-14 flex px-4 flex-col sidebar ${sidebarClass}`}
+                onTransitionEnd={onTransitionEnd}
+            >
+                <div className="flex w-full headline">
+                    <div className="flex-1">
+                        <Typography level="h4">{t('Conversations')}</Typography>
                     </div>
-                    <ul className="mt-4 flex-1 max-h-full overflow-y-auto">
-                        {sidechat.sessions.map((session) => (
-                            <li
-                                key={session.id}
-                                className={`group flex items-center p-4 hover:bg-gray-200 mt-2 ${
-                                    session.id === currentSession?.id
-                                        ? 'bg-gray-100'
-                                        : ''
-                                }`}
-                                onClick={() =>
-                                    sidechat.setActiveSessionId(session.id)
-                                }
+                    <div
+                        className="icon-circle-button"
+                        onClick={() => sidechat.toggle()}
+                    >
+                        <XIcon />
+                    </div>
+                </div>
+                <div className="flex-1 flex flex-row mt-4 border-t overflow-y-auto">
+                    <div className="max-w-80 pt-4 pr-4 border-r flex flex-col overflow-y-auto">
+                        <div className="flex items-center">
+                            <div className="flex-1 mr-2">
+                                <Input
+                                    value={query}
+                                    onChange={(e) => setQuery(e.target.value)}
+                                    placeholder={t('Search')}
+                                    fullWidth
+                                />
+                            </div>
+                            <Button
+                                variant="outlined"
+                                color="neutral"
+                                onClick={handleClickNewConversation}
                             >
-                                <ChatOutlined sx={{ color: 'gray' }} />
-                                <div className="ml-2 flex-1">
-                                    {session.bot.name}
-                                </div>
-                                <div
-                                    className="opacity-0 group-hover:opacity-100 transition-opacity duration-150"
+                                <PlusIcon size={12} />
+                                <span className="ml-1">{t('New')}</span>
+                            </Button>
+                        </div>
+                        <ul className="mt-4 flex-1 max-h-full overflow-y-auto">
+                            {sidechat.sessions.map((session) => (
+                                <li
+                                    key={session.id}
+                                    className={`group flex items-center p-4 hover:bg-gray-200 mt-2 ${
+                                        session.id === currentSession?.id
+                                            ? 'bg-gray-100'
+                                            : ''
+                                    }`}
                                     onClick={() =>
-                                        sidechat.removeSession(session.id)
+                                        sidechat.setActiveSessionId(session.id)
                                     }
                                 >
-                                    <XIcon
-                                        className="cursor-pointer"
-                                        size={'small'}
-                                    />
-                                </div>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-                <div className="conversation flex-1">
-                    {!currentSession ? (
-                        <div className="flex items-center justify-center h-full">
-                            <div className="text-gray-400">
-                                {t('No conversation selected')}
-                            </div>
-                        </div>
-                    ) : (
-                        <div className="flex flex-col h-full">
-                            <div
-                                ref={msgsRef}
-                                className="flex-1 overflow-y-auto"
-                            >
-                                {currentSession.messages.map((msg) => (
+                                    <ChatOutlined sx={{ color: 'gray' }} />
+                                    <div className="ml-2 flex-1">
+                                        {session.bot.name}
+                                    </div>
                                     <div
-                                        key={msg.id}
-                                        className={`p-4
+                                        className="opacity-0 group-hover:opacity-100 transition-opacity duration-150"
+                                        onClick={() =>
+                                            sidechat.removeSession(session.id)
+                                        }
+                                    >
+                                        <XIcon
+                                            className="cursor-pointer"
+                                            size={'small'}
+                                        />
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                    <div className="conversation flex-1">
+                        {!currentSession ? (
+                            <div className="flex items-center justify-center h-full">
+                                <div className="text-gray-400">
+                                    {t('No conversation selected')}
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="flex flex-col h-full">
+                                <div
+                                    ref={msgsRef}
+                                    className="flex-1 overflow-y-auto"
+                                >
+                                    {currentSession.messages.map((msg) => (
+                                        <div
+                                            key={msg.id}
+                                            className={`p-4
                                         border-b
                                     ${
                                         msg.isUser ? 'bg-gray-50' : 'bg-white'
                                     }                                    `}
-                                    >
-                                        <div className={'flex items-center '}>
-                                            <div className="flex items-center">
-                                                <img
-                                                    src={msg.avatar}
-                                                    alt=""
-                                                    className="w-10 h-10 rounded-full"
-                                                />
-                                            </div>
+                                        >
                                             <div
-                                                className={
-                                                    'flex-1 ml-2 p-2 rounded-lg'
-                                                }
+                                                className={'flex items-center '}
                                             >
-                                                {msg.content}
+                                                <div className="flex items-center">
+                                                    <img
+                                                        src={msg.avatar}
+                                                        alt=""
+                                                        className="w-10 h-10 rounded-full"
+                                                    />
+                                                </div>
+                                                <div
+                                                    className={
+                                                        'flex-1 ml-2 p-2 rounded-lg'
+                                                    }
+                                                >
+                                                    {msg.content}
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                ))}
-                            </div>
-                            <div className="mt-4">
-                                <MessageInput
-                                    value={currentSession?.input}
-                                    onChange={(value) => {
-                                        if (!currentSession) {
-                                            return
-                                        }
+                                    ))}
+                                </div>
+                                <div className="mt-4">
+                                    <MessageInput
+                                        value={currentSession?.input}
+                                        onChange={(value) => {
+                                            if (!currentSession) {
+                                                return
+                                            }
 
-                                        sidechat
-                                            .withSession(currentSession.id)
-                                            .updateInput(value)
-                                    }}
-                                    onClear={
-                                        currentSession
-                                            ? () => {
-                                                  sidechat
-                                                      .withSession(
-                                                          currentSession.id,
-                                                      )
-                                                      .updateInput('')
-                                              }
-                                            : undefined
-                                    }
-                                    onSendMessage={handleSendMessage}
-                                />
+                                            sidechat
+                                                .withSession(currentSession.id)
+                                                .updateInput(value)
+                                        }}
+                                        onClear={
+                                            currentSession
+                                                ? () => {
+                                                      sidechat
+                                                          .withSession(
+                                                              currentSession.id,
+                                                          )
+                                                          .updateInput('')
+                                                  }
+                                                : undefined
+                                        }
+                                        onSendMessage={handleSendMessage}
+                                    />
+                                </div>
                             </div>
-                        </div>
-                    )}
+                        )}
+                    </div>
                 </div>
-            </div>
+            </Resizable>
         </div>
     )
 }
