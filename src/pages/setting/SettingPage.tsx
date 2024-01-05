@@ -1,4 +1,4 @@
-import { FC, useRef, useState } from 'react'
+import { FC, useRef } from 'react'
 import TabList from './TabList'
 import SettingPanel from './SettingPanel'
 import './SettingPage.css'
@@ -6,13 +6,16 @@ import { SettingsSection } from '../../states/settings/settings.type'
 import { Button } from '@mui/joy'
 import { SettingRefAttrs } from './SettingRefAttrs'
 import { t } from 'i18next'
+import { atom, useAtom } from 'jotai'
 
 type SettingPageProps = {
     onClose: () => void
 }
 
+const activeTabAtom = atom<SettingsSection>('system')
+
 export const SettingPage: FC<SettingPageProps> = ({ onClose }) => {
-    const [activeTab, setActiveTab] = useState<SettingsSection>('system')
+    const [activeTab, setActiveTab] = useAtom<SettingsSection>(activeTabAtom)
     const panelRef = useRef<SettingRefAttrs>(null)
 
     const handleSave = () => {

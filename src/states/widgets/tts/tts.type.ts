@@ -13,6 +13,10 @@ export type TtsData = {
 
 export const ttsProviderOptions = [
     {
+        label: 'OpenAI',
+        value: TTSSettingsTypes.OpenAI,
+    },
+    {
         label: 'CustomAPI',
         value: TTSSettingsTypes.CustomAPI,
     },
@@ -21,3 +25,11 @@ export const ttsProviderOptions = [
         value: TTSSettingsTypes.TencentTTS,
     },
 ] as const
+
+export type TtsProviderOption = (typeof ttsProviderOptions)[number]['value']
+
+export const ttsProvider = {
+    OpenAI: 'OpenAI',
+    CustomAPI: 'CustomAPI',
+    TencentTTS: 'TencentTTS',
+} as const

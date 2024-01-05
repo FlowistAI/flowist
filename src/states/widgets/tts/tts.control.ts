@@ -23,7 +23,7 @@ export const TTSWidgetControl = {
         return {
             id: id,
             type: WidgetTypes.TextToSpeech,
-            position: { x: 0, y: 0 },
+            position: options.data?.position ?? { x: 0, y: 0 },
             data: { label: 'Node 1', ...options.data },
         }
     },

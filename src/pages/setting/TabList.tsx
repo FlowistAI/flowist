@@ -14,6 +14,7 @@ const tabConfigs: (t: TFunction<'translation', undefined>) => TabConfig[] = (
 ) => [
     { tabKey: 'system', tabLabel: t('System') },
     { tabKey: 'llm', tabLabel: t('LLM') },
+    { tabKey: 'tts', tabLabel: t('TTS') },
     { tabKey: 'plugin', tabLabel: t('plugin') },
     { tabKey: 'about', tabLabel: t('About') },
 ]

@@ -1,6 +1,6 @@
 import { FC, forwardRef, useImperativeHandle, useRef } from 'react'
 import SystemSettings from './SystemSettings'
-import ModelSettings from './LLMSettings'
+import LLMSettings from './LLMSettings'
 import AboutTab from './AboutTab'
 import './SettingPanel.css'
 import { SettingsSection } from '../../states/settings/settings.type'
@@ -8,6 +8,7 @@ import { SettingRefAttrs } from './SettingRefAttrs'
 import { useToast } from '../../hooks/Toast/useToast'
 import { t } from 'i18next'
 import PluginTab from './PluginTab'
+import TTSSettings from './TTSSettings'
 
 export type SettingPanelProps = {
     activeTab: SettingsSection
@@ -25,6 +26,7 @@ export const Hide: FC<HideProps> = ({ cond, children }) => (
 const SettingPanel: FC<SettingPanelProps> = forwardRef(({ activeTab }, ref) => {
     const refSystem = useRef<SettingRefAttrs>(null)
     const refLLM = useRef<SettingRefAttrs>(null)
+    const refTTS = useRef<SettingRefAttrs>(null)
     const refPlugin = useRef<SettingRefAttrs>(null)
     const refAbout = useRef<SettingRefAttrs>(null)
 
@@ -35,6 +37,7 @@ const SettingPanel: FC<SettingPanelProps> = forwardRef(({ activeTab }, ref) => {
             console.log('setting panel, save')
             refSystem.current?.save()
             refLLM.current?.save()
+            refTTS.current?.save()
             refAbout.current?.save()
             toast({
                 type: 'success',
@@ -49,7 +52,10 @@ const SettingPanel: FC<SettingPanelProps> = forwardRef(({ activeTab }, ref) => {
                 <SystemSettings ref={refSystem} />
             </Hide>
             <Hide cond={activeTab == 'llm'}>
-                <ModelSettings ref={refLLM} />
+                <LLMSettings ref={refLLM} />
+            </Hide>
+            <Hide cond={activeTab == 'tts'}>
+                <TTSSettings ref={refTTS} />
             </Hide>
             <Hide cond={activeTab == 'plugin'}>
                 <PluginTab ref={refPlugin} />

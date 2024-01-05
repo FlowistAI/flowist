@@ -2,7 +2,6 @@
  * System section
  */
 
-import * as Yup from 'yup'
 import {
     systemNameAtom,
     systemLanguageAtom,
@@ -91,7 +90,15 @@ export type TTSProviderSettings = {
     [K in TTSProvider]: TTSSettings<K>
 }
 
-export type TTSProvider = 'TencentTTS' | 'CustomAPI'
+export type TTSProvider = 'OpenAI' | 'TencentTTS' | 'CustomAPI'
+
+export type OpenAITTSSettings = {
+    endpoint: string
+    apiKey: string
+    model: string
+    voice: 'alloy' | 'echo' | 'fable' | 'onyx' | 'nova' | 'shimmer'
+    speed: number
+}
 
 export type TencentTTSSettings = {
     appId: string
@@ -110,9 +117,12 @@ export type TTSSettings<Provider extends TTSProvider> =
         ? TencentTTSSettings
         : Provider extends 'CustomAPI'
         ? CustomAPITTSSettings
+        : Provider extends 'OpenAI'
+        ? OpenAITTSSettings
         : never
 
 export const TTSSettingsTypes = {
+    OpenAI: 'OpenAI',
     TencentTTS: 'TencentTTS',
     CustomAPI: 'CustomAPI',
 } as const
@@ -140,7 +150,7 @@ export type SettingsData = {
         providers: LLMProviderSettings
     }
     tts: {
-        defaultProvider: string | undefined
+        defaultProvider: TTSProvider
         providers: TTSProviderSettings
     }
     about: {
@@ -172,21 +182,9 @@ export const llmSectionAtom = atom<LLMSection>((get) => ({
     providers: get(llmProvidersAtom),
 }))
 
-
 export type TTSSection = SettingsData['tts']
 
 export const ttsSectionAtom = atom<TTSSection>((get) => ({
     defaultProvider: get(ttsDefaultProviderAtom),
     providers: get(ttsProvidersAtom),
 }))
-
-export const ttsSectionSchema = Yup.object().shape({
-    defaultProvider: Yup.string().required().oneOf(['TencentTTS']),
-    providers: Yup.object().shape({
-        TencentTTS: Yup.object().shape({
-            appId: Yup.string().required(),
-            secretId: Yup.string().required(),
-            secretKey: Yup.string().required(),
-        }),
-    }),
-})

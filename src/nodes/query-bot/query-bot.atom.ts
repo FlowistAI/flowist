@@ -1,7 +1,7 @@
 import { atom, useSetAtom } from 'jotai'
-import { QuerySession } from './query.type'
-import { createSessionfulHandler } from '../_common/sessionful-handler'
-import { JotaiContext } from '../../index.type'
+import { QuerySession } from './query-bot.type'
+import { createSessionfulHandler } from '../../states/widgets/_common/sessionful-handler'
+import { JotaiContext } from '../../states/index.type'
 
 const _querySessionsAtom = atom<QuerySession[]>([])
 

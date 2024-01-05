@@ -28,10 +28,7 @@ export type LLMSettingsFormProps = {
 }
 
 const LLMSettingsForm = forwardRef(
-    (
-        { initialValues, onSubmit }: LLMSettingsFormProps,
-        ref,
-    ) => {
+    ({ initialValues, onSubmit }: LLMSettingsFormProps, ref) => {
         // 使用Formik Hook
         const formik = useFormik({
             initialValues,
@@ -81,7 +78,12 @@ const LLMSettingsForm = forwardRef(
                         id="openai-endpoint"
                         name="providers.OpenAI.endpoint"
                         value={formik.values.providers.OpenAI.endpoint}
-                        onChange={formik.handleChange}
+                        onChange={(e) =>
+                            formik.setFieldValue(
+                                'providers.OpenAI.endpoint',
+                                e.target.value,
+                            )
+                        }
                         error={Boolean(
                             formik.errors.providers?.OpenAI?.endpoint,
                         )}
@@ -109,7 +111,12 @@ const LLMSettingsForm = forwardRef(
                         id="openai-model"
                         name="providers.OpenAI.model"
                         value={formik.values.providers.OpenAI.model}
-                        onChange={formik.handleChange}
+                        onChange={(_, newValue) => {
+                            formik.setFieldValue(
+                                'providers.OpenAI.model',
+                                newValue,
+                            )
+                        }}
                     >
                         {Object.values(OpenAIModelIds).map((model) => (
                             <Option key={model} value={model}>
@@ -173,6 +180,14 @@ const LLMSettingsForm = forwardRef(
                     </Typography>
                     <Input
                         id="openai-maxTokens"
+                        type="number"
+                        slotProps={{
+                            input: {
+                                min: 0,
+                                max: 5000,
+                                step: 1,
+                            },
+                        }}
                         name="providers.OpenAI.maxTokens"
                         value={formik.values.providers.OpenAI.maxTokens}
                         onChange={formik.handleChange}
