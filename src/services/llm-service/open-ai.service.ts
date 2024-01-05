@@ -7,7 +7,7 @@ import {
 } from './llm-service.types'
 import { joinUrl } from '../../util/misc.util'
 
-function createBaseURL(endpoint: string, corsProxy?: string) {
+export function createOpenAIBaseURL(endpoint: string, corsProxy?: string) {
     let url = joinUrl(endpoint, 'v1')
     if (corsProxy) {
         url = joinUrl(corsProxy, url)
@@ -26,7 +26,7 @@ export class OpenAIService implements LLMService {
         const { input, onChunk, onDone } = opts
         const model = this.botSettings.model
         const apiKey = this.botSettings.serviceSource.apiKey
-        const baseURL = createBaseURL(
+        const baseURL = createOpenAIBaseURL(
             this.botSettings.serviceSource.endpoint,
             this.corsProxy,
         )
@@ -63,7 +63,7 @@ export class OpenAIService implements LLMService {
 
         const model = this.botSettings.model
         const apiKey = this.botSettings.serviceSource.apiKey
-        const baseURL = createBaseURL(
+        const baseURL = createOpenAIBaseURL(
             this.botSettings.serviceSource.endpoint,
             this.corsProxy,
         )

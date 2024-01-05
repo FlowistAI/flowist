@@ -6,7 +6,6 @@ import {
     LLMProviderSettings,
     TTSProvider,
     TTSProviderSettings,
-    TTSSettings,
     SettingsData,
 } from './settings.type'
 import { atomWithStorage } from 'jotai/utils'
@@ -93,7 +92,7 @@ export const llmProvidersAtom = atomWithStorage<LLMProviderSettings>(
 
 export const ttsDefaultProviderAtom = atomWithStorage<TTSProvider>(
     'ttsDefaultProvider',
-    'TencentTTS',
+    'CustomAPI',
 )
 
 export const ttsProvidersAtom = atomWithStorage<TTSProviderSettings>(
@@ -104,8 +103,11 @@ export const ttsProvidersAtom = atomWithStorage<TTSProviderSettings>(
             secretId: '',
             secretKey: '',
         },
-    } as {
-        [K in TTSProvider]: TTSSettings<K>
+        CustomAPI: {
+            url: '',
+            method: 'POST',
+            fieldName: 'text',
+        },
     },
 )
 

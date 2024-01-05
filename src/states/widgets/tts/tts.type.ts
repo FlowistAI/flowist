@@ -21,3 +21,10 @@ export const ttsProviderOptions = [
         value: TTSSettingsTypes.TencentTTS,
     },
 ] as const
+
+export type TtsProviderOption = (typeof ttsProviderOptions)[number]['value']
+
+export const ttsProvider = {
+    CustomAPI: 'CustomAPI',
+    TencentTTS: 'TencentTTS',
+} as const

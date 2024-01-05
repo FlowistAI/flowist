@@ -9,6 +9,16 @@ import { PlayArrow } from '@mui/icons-material'
 import { useCommunicate } from '../../../states/document.atom'
 import { TTSDropDownMenu } from './TTSDropdownMenu'
 
+import OpenAI from 'openai'
+import { useAtomValue } from 'jotai'
+import {
+    llmProvidersAtom,
+    systemCorsProxyAtom,
+    systemCorsProxyEnabledAtom,
+} from '../../../states/settings/settings.atom'
+import { useToast } from '../../../hooks/Toast/useToast'
+import { createOpenAIBaseURL } from '../../../services/llm-service/open-ai.service'
+
 export type TextToSpeechNodeProps = {
     data: {
         id: string
@@ -31,7 +41,8 @@ type Signal<T extends NodePorts> = T extends NodePorts.Input
 
 export function TextToSpeechNode({ data, selected }: TextToSpeechNodeProps) {
     const [input, setInput] = useState('')
-    const [generated, setGenerated] = useState<string | null>(null)
+    const [generating, setGenerating] = useState(false)
+    const [generated, setGenerated] = useState<Blob | null>(null)
     const { t } = useTranslation()
 
     const { id } = data
@@ -45,8 +56,45 @@ export function TextToSpeechNode({ data, selected }: TextToSpeechNodeProps) {
         )
     }, [id, handleSignal])
 
-    const handleGenerateOrPlay = () => {
-        setGenerated(input)
+    const settings = useAtomValue(llmProvidersAtom).OpenAI
+    const corsProxy = useAtomValue(systemCorsProxyAtom)
+    const corsProxyEnabled = useAtomValue(systemCorsProxyEnabledAtom)
+
+    const toast = useToast()
+
+    const handleGenerateOrPlay = async () => {
+        if (generated) {
+            const audio = new Audio(URL.createObjectURL(generated))
+            audio.play()
+
+            return
+        }
+
+        try {
+            setGenerating(true)
+            const client = new OpenAI({
+                apiKey: settings.apiKey,
+                baseURL: createOpenAIBaseURL(
+                    settings.endpoint,
+                    corsProxyEnabled ? corsProxy : undefined,
+                ),
+                dangerouslyAllowBrowser: true,
+            })
+
+            const mp3 = await client.audio.speech.create({
+                model: 'tts-1',
+                voice: 'alloy',
+                input: input,
+                response_format: 'mp3',
+            })
+
+            setGenerated(await mp3.blob())
+        } catch (error) {
+            console.error(error)
+            toast({ type: 'error', content: (error as Error).message })
+        } finally {
+            setGenerating(false)
+        }
     }
 
     return (
@@ -99,7 +147,11 @@ export function TextToSpeechNode({ data, selected }: TextToSpeechNodeProps) {
                         color="primary"
                     >
                         <PlayArrow />
-                        {generated ? t('Play') : t('Generate')}
+                        {generating
+                            ? t('Generating')
+                            : generated
+                            ? t('Play')
+                            : t('Generate')}
                     </Button>
                 </div>
             </div>

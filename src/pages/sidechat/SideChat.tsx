@@ -249,10 +249,10 @@ export const SideChat = () => {
                                                 >
                                                     <div
                                                         className={
-                                                            'flex items-center '
+                                                            'flex items-start '
                                                         }
                                                     >
-                                                        <div className="flex items-center">
+                                                        <div className="flex items-start">
                                                             <img
                                                                 src={msg.avatar}
                                                                 alt=""

@@ -10,7 +10,7 @@ import './LLMSettings.css'
 import LLMSettingsForm from './LLMSettings.form'
 import { SettingRefAttrs } from './SettingRefAttrs'
 
-const ModelSettings: FC<React.RefAttributes<SettingRefAttrs>> = forwardRef(
+const LLMSettings: FC<React.RefAttributes<SettingRefAttrs>> = forwardRef(
     (_, ref) => {
         const [llmDefaultPrompt, setLlmDefaultPrompt] =
             useAtom(llmDefaultPromptAtom)
@@ -40,4 +40,4 @@ const ModelSettings: FC<React.RefAttributes<SettingRefAttrs>> = forwardRef(
     },
 )
 
-export default ModelSettings
+export default LLMSettings
