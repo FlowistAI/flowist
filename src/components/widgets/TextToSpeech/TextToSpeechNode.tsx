@@ -1,23 +1,31 @@
-import { Button, Checkbox } from '@mui/joy'
-import { XIcon } from '@primer/octicons-react'
+import { PlayArrow } from '@mui/icons-material'
+import {
+    Button,
+    Checkbox,
+    Menu,
+    MenuButton,
+    MenuItem,
+    Dropdown,
+} from '@mui/joy'
+import { ArrowDownIcon, XIcon } from '@primer/octicons-react'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Handle, NodeResizer, Position } from 'reactflow'
-import './TextToSpeechNode.css'
 import { targetStyle } from '../../../constants/handle-styles'
-import { PlayArrow } from '@mui/icons-material'
 import { useCommunicate } from '../../../states/document.atom'
 import { TTSDropDownMenu } from './TTSDropdownMenu'
+import './TextToSpeechNode.css'
 
-import OpenAI from 'openai'
 import { useAtomValue } from 'jotai'
+import OpenAI from 'openai'
+import { useToast } from '../../../hooks/Toast/useToast'
+import { createOpenAIBaseURL } from '../../../services/llm-service/open-ai.service'
 import {
     llmProvidersAtom,
     systemCorsProxyAtom,
     systemCorsProxyEnabledAtom,
+    ttsProvidersAtom,
 } from '../../../states/settings/settings.atom'
-import { useToast } from '../../../hooks/Toast/useToast'
-import { createOpenAIBaseURL } from '../../../services/llm-service/open-ai.service'
 
 export type TextToSpeechNodeProps = {
     data: {
@@ -42,6 +50,7 @@ type Signal<T extends NodePorts> = T extends NodePorts.Input
 export function TextToSpeechNode({ data, selected }: TextToSpeechNodeProps) {
     const [input, setInput] = useState('')
     const [generating, setGenerating] = useState(false)
+    const [playing, setPlaying] = useState(false)
     const [generated, setGenerated] = useState<Blob | null>(null)
     const { t } = useTranslation()
 
@@ -56,7 +65,17 @@ export function TextToSpeechNode({ data, selected }: TextToSpeechNodeProps) {
         )
     }, [id, handleSignal])
 
-    const settings = useAtomValue(llmProvidersAtom).OpenAI
+    // when input change, reset
+    useEffect(() => {
+        setGenerated(null)
+    }, [input])
+
+    const llmOpenAISettings = useAtomValue(llmProvidersAtom).OpenAI
+    const ttsOpenAISettings = useAtomValue(ttsProvidersAtom).OpenAI
+
+    const apiKey = ttsOpenAISettings.apiKey || llmOpenAISettings.apiKey
+    const endpoint = ttsOpenAISettings.endpoint || llmOpenAISettings.endpoint
+
     const corsProxy = useAtomValue(systemCorsProxyAtom)
     const corsProxyEnabled = useAtomValue(systemCorsProxyEnabledAtom)
 
@@ -64,8 +83,19 @@ export function TextToSpeechNode({ data, selected }: TextToSpeechNodeProps) {
 
     const handleGenerateOrPlay = async () => {
         if (generated) {
-            const audio = new Audio(URL.createObjectURL(generated))
-            audio.play()
+            const url = URL.createObjectURL(generated)
+            const audio = new Audio(url)
+            setPlaying(true)
+
+            try {
+                await audio.play()
+            } catch (error) {
+                console.error(error)
+                toast({ type: 'error', content: (error as Error).message })
+            } finally {
+                setPlaying(false)
+                URL.revokeObjectURL(url)
+            }
 
             return
         }
@@ -73,17 +103,19 @@ export function TextToSpeechNode({ data, selected }: TextToSpeechNodeProps) {
         try {
             setGenerating(true)
             const client = new OpenAI({
-                apiKey: settings.apiKey,
+                apiKey,
                 baseURL: createOpenAIBaseURL(
-                    settings.endpoint,
+                    endpoint,
                     corsProxyEnabled ? corsProxy : undefined,
                 ),
                 dangerouslyAllowBrowser: true,
             })
+            const defaultModel = 'tts-1'
+            const defaultVoice = 'alloy'
 
             const mp3 = await client.audio.speech.create({
-                model: 'tts-1',
-                voice: 'alloy',
+                model: ttsOpenAISettings.model || defaultModel,
+                voice: ttsOpenAISettings.voice || defaultVoice,
                 input: input,
                 response_format: 'mp3',
             })
@@ -95,6 +127,19 @@ export function TextToSpeechNode({ data, selected }: TextToSpeechNodeProps) {
         } finally {
             setGenerating(false)
         }
+    }
+
+    const handleDownload = () => {
+        if (!generated) {
+            return
+        }
+
+        const url = URL.createObjectURL(generated)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = 'audio.mp3'
+        a.click()
+        URL.revokeObjectURL(url)
     }
 
     return (
@@ -141,18 +186,34 @@ export function TextToSpeechNode({ data, selected }: TextToSpeechNodeProps) {
                 <div className="flex items-center gap-2">
                     <Checkbox color="primary" label={t('Auto trigger')} />
                     <Button
-                        sx={{ flex: 1 }}
-                        disabled={!input}
-                        onClick={handleGenerateOrPlay}
                         color="primary"
+                        sx={{ flex: 1 }}
+                        disabled={!input || generating || playing}
+                        onClick={handleGenerateOrPlay}
                     >
                         <PlayArrow />
                         {generating
                             ? t('Generating')
-                            : generated
-                            ? t('Play')
-                            : t('Generate')}
+                            : !generated
+                            ? t('Generate')
+                            : playing
+                            ? t('Playing')
+                            : t('Play')}
                     </Button>
+                    {/* Dropdown menu */}
+                    <Dropdown>
+                        <MenuButton>
+                            <ArrowDownIcon />
+                        </MenuButton>
+                        <Menu>
+                            <MenuItem
+                                disabled={!generated}
+                                onClick={handleDownload}
+                            >
+                                Download
+                            </MenuItem>
+                        </Menu>
+                    </Dropdown>
                 </div>
             </div>
         </div>

@@ -98,6 +98,13 @@ export const ttsDefaultProviderAtom = atomWithStorage<TTSProvider>(
 export const ttsProvidersAtom = atomWithStorage<TTSProviderSettings>(
     'ttsProviders',
     {
+        OpenAI: {
+            endpoint: 'https://api.openai.com',
+            apiKey: '',
+            model: 'tts-1',
+            voice: 'alloy',
+            speed: 1,
+        },
         TencentTTS: {
             appId: '',
             secretId: '',

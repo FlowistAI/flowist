@@ -2,15 +2,18 @@
 import { Atom, atom } from 'jotai'
 import { chatBotAtom } from './chat/chat.atom'
 import { ChatBotNodeControl } from './chat/chat.control'
-import { queryBotAtom } from './query/query.atom'
-import { QueryBotWidgetControl } from './query/query.control'
+import { queryBotAtom } from '../../nodes/query-bot/query-bot.atom'
+import { QueryBotWidgetControl } from '../../nodes/query-bot/query-bot.control'
 import { ttsDataAtom } from './tts/tts'
 import { TTSWidgetControl } from './tts/tts.control'
 import { ChatBotNode } from '../../components/widgets/ChatBot/ChatBotNode'
 import { TextToSpeechNode } from '../../components/widgets/TextToSpeech/TextToSpeechNode'
-import { QueryBotNode } from '../../components/widgets/QueryBot/QueryBotNode'
+import { QueryBotNode } from '../../nodes/query-bot/ui/QueryBotNode'
 import { BotSettings } from '../bot.type'
 import { LLMProvider } from '../settings/settings.type'
+import { JotaiContext } from '../index.type'
+import { AddWidgetOptions } from '../document.atom'
+import { Node } from 'reactflow'
 
 export const STANDARD_IO_PORTS: PortDefinition = {
     input: {
@@ -100,3 +103,74 @@ export const widgetHandlersAtom = atom({
 export type WidgetHanlders = typeof widgetHandlersAtom extends Atom<infer Value>
     ? Value
     : never
+
+export const widgetRegistry = createWidgetRegistry()
+
+export type WidgetRegistryItem<WidgetData> = {
+    type: WidgetType
+    name: string
+    icon?: string
+    description?: string
+    component: (args: any) => JSX.Element
+    control: WidgetHanlder<WidgetData>
+}
+
+export type WidgetHanlder<WidgetData> = {
+    create: (
+        ctx: JotaiContext,
+        id: string,
+        options: AddWidgetOptions<WidgetType>,
+    ) => Node
+    destroy: (ctx: JotaiContext, id: string) => void
+    snapshot: (ctx: JotaiContext) => WidgetData
+    restore: (ctx: JotaiContext, data: WidgetData) => void
+}
+
+export function createWidgetRegistry() {
+    const registry = new Map<WidgetType, WidgetRegistryItem<any>>()
+
+    const methods = {
+        register<WidgetData>(
+            type: WidgetType,
+            item: WidgetRegistryItem<WidgetData>,
+        ) {
+            registry.set(type, item)
+        },
+        get(type: WidgetType) {
+            return registry.get(type)
+        },
+        has(type: WidgetType) {
+            return registry.has(type)
+        },
+        get all() {
+            return registry
+        },
+    }
+
+    // register default widgets
+    methods.register(WidgetTypes.ChatBot, {
+        type: WidgetTypes.ChatBot,
+        name: 'Chat Bot',
+        icon: 'chat',
+        component: ChatBotNode,
+        control: ChatBotNodeControl,
+    })
+
+    methods.register(WidgetTypes.QueryBot, {
+        type: WidgetTypes.QueryBot,
+        name: 'Query Bot',
+        icon: 'question_answer',
+        component: QueryBotNode,
+        control: QueryBotWidgetControl,
+    })
+
+    methods.register(WidgetTypes.TextToSpeech, {
+        type: WidgetTypes.TextToSpeech,
+        name: 'Text To Speech',
+        icon: 'record_voice_over',
+        component: TextToSpeechNode,
+        control: TTSWidgetControl,
+    })
+
+    return methods
+}

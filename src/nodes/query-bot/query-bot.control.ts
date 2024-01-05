@@ -1,13 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { Node } from 'reactflow'
-import { DefaultUser, getDefaultBot } from '../../bot.type'
-import { AddWidgetOptions } from '../../document.atom'
-import { JotaiContext } from '../../index.type'
-import { PresetData, WidgetType, WidgetTypes } from '../widget.atom'
-import { QueryBotData, queryBotAtom, querySessionsAtom } from './query.atom'
-import { QuerySession } from './query.type'
-import { botFromPreset } from '../_common/bot-from-preset'
+import { DefaultUser, getDefaultBot } from '../../states/bot.type'
+import { AddWidgetOptions } from '../../states/document.atom'
+import { JotaiContext } from '../../states/index.type'
+import {
+    PresetData,
+    WidgetType,
+    WidgetTypes,
+} from '../../states/widgets/widget.atom'
+import { QueryBotData, queryBotAtom, querySessionsAtom } from './query-bot.atom'
+import { QuerySession } from './query-bot.type'
+import { botFromPreset } from '../../states/widgets/_common/bot-from-preset'
 
 export const QueryBotWidgetControl = {
     create(

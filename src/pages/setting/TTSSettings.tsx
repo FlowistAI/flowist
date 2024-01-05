@@ -1,5 +1,5 @@
 import { FC, forwardRef } from 'react'
-import './TtsSettings.css'
+import './TTSSettings.css'
 import { useAtom } from 'jotai'
 import { TTSSection } from '../../states/settings/settings.type'
 import { SettingRefAttrs } from './SettingRefAttrs'

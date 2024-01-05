@@ -1,4 +1,4 @@
-import { SessionId, Bot, User } from '../../bot.type'
+import { SessionId, Bot, User } from '../../states/bot.type'
 
 export type QuerySession = {
     id: SessionId // also as node id

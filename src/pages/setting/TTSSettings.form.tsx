@@ -33,6 +33,8 @@ export const TTSSettingsForm: FC<TTSSettingsFormProps> = forwardRef(
 
         return (
             <form onSubmit={formik.handleSubmit}>
+                <Typography level="h3">TTS</Typography>
+
                 <FormControl>
                     <FormLabel id="default-provider-label">
                         {t('Default Provider')}
@@ -53,7 +55,117 @@ export const TTSSettingsForm: FC<TTSSettingsFormProps> = forwardRef(
                     </Select>
                 </FormControl>
 
-                <Typography level="h4">{t('Custom TTS')}</Typography>
+                <Typography level="h4" sx={{ marginTop: '2em' }}>
+                    {t('OpenAI TTS')}
+                </Typography>
+
+                <FormControl component="fieldset" style={{ marginTop: '20px' }}>
+                    <FormLabel component="legend">{t('API Key')}</FormLabel>
+                    <Input
+                        fullWidth
+                        id="apiKey"
+                        name="providers.OpenAI.apiKey"
+                        value={formik.values.providers?.OpenAI?.apiKey}
+                        onChange={formik.handleChange}
+                        error={Boolean(formik.errors.providers?.OpenAI?.apiKey)}
+                    />
+                    {formik.errors.providers?.OpenAI?.apiKey && (
+                        <div className="text-red-500">
+                            {formik.errors.providers.OpenAI.apiKey}
+                        </div>
+                    )}
+                </FormControl>
+
+                <FormControl component="fieldset" style={{ marginTop: '20px' }}>
+                    <FormLabel component="legend">
+                        {t('Endpoint URL')}
+                    </FormLabel>
+                    <Input
+                        fullWidth
+                        id="endpoint"
+                        name="providers.OpenAI.endpoint"
+                        value={formik.values.providers?.OpenAI?.endpoint}
+                        onChange={formik.handleChange}
+                        error={Boolean(
+                            formik.errors.providers?.OpenAI?.endpoint,
+                        )}
+                    />
+                    {formik.errors.providers?.OpenAI?.endpoint && (
+                        <div className="text-red-500">
+                            {formik.errors.providers.OpenAI.endpoint}
+                        </div>
+                    )}
+                </FormControl>
+
+                <FormControl component="fieldset" style={{ marginTop: '20px' }}>
+                    <FormLabel component="legend">{t('Model Name')}</FormLabel>
+                    <Select
+                        id="model"
+                        name="providers.OpenAI.model"
+                        value={formik.values.providers?.OpenAI?.model}
+                        onChange={(_, newValue) =>
+                            formik.setFieldValue(
+                                'providers.OpenAI.model',
+                                newValue,
+                            )
+                        }
+                    >
+                        <Option value="tts-1">tts-1</Option>
+                    </Select>
+                </FormControl>
+
+                <FormControl component="fieldset" style={{ marginTop: '20px' }}>
+                    <FormLabel component="legend">{t('Voice Name')}</FormLabel>
+                    <Select
+                        id="voice"
+                        name="providers.OpenAI.voice"
+                        value={formik.values.providers?.OpenAI?.voice}
+                        onChange={(_, newValue) =>
+                            formik.setFieldValue(
+                                'providers.OpenAI.voice',
+                                newValue,
+                            )
+                        }
+                    >
+                        {[
+                            'alloy',
+                            'echo',
+                            'fable',
+                            'onyx',
+                            'nova',
+                            'shimmer',
+                        ].map((voice) => (
+                            <Option key={voice} value={voice}>
+                                {voice}
+                            </Option>
+                        ))}
+                    </Select>
+                </FormControl>
+
+                <FormControl component="fieldset" style={{ marginTop: '20px' }}>
+                    <FormLabel>{t('Speed')}</FormLabel>
+                    <Input
+                        name="providers.OpenAI.speed"
+                        type="number"
+                        slotProps={{
+                            input: {
+                                min: 0.5,
+                                max: 2.0,
+                            },
+                        }}
+                        value={formik.values.providers.OpenAI.speed}
+                        onChange={formik.handleChange}
+                    />
+                    {formik.errors.providers?.OpenAI?.speed && (
+                        <div className="text-red-500">
+                            {formik.errors.providers.OpenAI.speed}
+                        </div>
+                    )}
+                </FormControl>
+
+                <Typography level="h4" sx={{ marginTop: '2em' }}>
+                    {t('Custom TTS')}
+                </Typography>
 
                 <FormControl component="fieldset" style={{ marginTop: '20px' }}>
                     <FormLabel component="legend">{t('URL')}</FormLabel>

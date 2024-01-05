@@ -90,7 +90,15 @@ export type TTSProviderSettings = {
     [K in TTSProvider]: TTSSettings<K>
 }
 
-export type TTSProvider = 'TencentTTS' | 'CustomAPI'
+export type TTSProvider = 'OpenAI' | 'TencentTTS' | 'CustomAPI'
+
+export type OpenAITTSSettings = {
+    endpoint: string
+    apiKey: string
+    model: string
+    voice: 'alloy' | 'echo' | 'fable' | 'onyx' | 'nova' | 'shimmer'
+    speed: number
+}
 
 export type TencentTTSSettings = {
     appId: string
@@ -109,9 +117,12 @@ export type TTSSettings<Provider extends TTSProvider> =
         ? TencentTTSSettings
         : Provider extends 'CustomAPI'
         ? CustomAPITTSSettings
+        : Provider extends 'OpenAI'
+        ? OpenAITTSSettings
         : never
 
 export const TTSSettingsTypes = {
+    OpenAI: 'OpenAI',
     TencentTTS: 'TencentTTS',
     CustomAPI: 'CustomAPI',
 } as const

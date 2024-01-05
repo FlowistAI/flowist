@@ -4,13 +4,13 @@ import './QueryBotNode.css'
 import { QueryBotDropDownMenu } from './QueryBotDropdownMenu'
 import { useEffect, useState } from 'react'
 import { sourceStyle, targetStyle } from '../../../constants/handle-styles'
-import { BotInfo } from '../_common/Chat'
-import { TextArea } from '../../ui/TextArea'
+import { BotInfo } from '../../../components/widgets/_common/Chat'
+import { TextArea } from '../../../components/ui/TextArea'
 import { Button } from '@mui/joy'
 import { replacePrompt } from '../../../util/misc.util'
 import { useCommunicate, useDocument } from '../../../states/document.atom'
-import { useQueryBot } from '../../../states/widgets/query/query.atom'
-import { QueryBotNodeData } from '../../../states/widgets/query/query.type'
+import { useQueryBot } from '../query-bot.atom'
+import { QueryBotNodeData } from '../query-bot.type'
 import { createLLMService } from '../../../services/llm-service/createLLMService'
 import { useAtomValue } from 'jotai'
 import {
@@ -18,6 +18,7 @@ import {
     systemCorsProxyEnabledAtom,
 } from '../../../states/settings/settings.atom'
 import { useToast } from '../../../hooks/Toast/useToast'
+import { Invalid } from '../../../components/ui/Invalid'
 
 export type QueryBotNodeProps = {
     data: QueryBotNodeData
@@ -91,7 +92,7 @@ export function QueryBotNode({ data, selected }: QueryBotNodeProps) {
     }, [id, handleSignal])
 
     if (!session) {
-        return null
+        return <Invalid />
     }
 
     const handleClose = () => {
