@@ -671,6 +671,14 @@ export function useChat() {
 
     return {
         sessions,
+        ...chatControl(ctx),
+    }
+}
+
+export function chatControl(ctx: JotaiContext) {
+    const sessions = ctx.get(_chatSessionsAtom)
+
+    return {
         addSession: (session: ChatSession) => {
             ctx.set(_chatSessionsAtom, [...sessions, session])
         },
@@ -711,10 +719,20 @@ export function useChatSession(sessionId?: string) {
     return {
         session,
         input: session.input ?? '',
+        ...sessionControl(ctx, sessionId),
+    }
+}
+
+export function sessionControl(ctx: JotaiContext, validSessionId: string) {
+    const session = ctx
+        .get(_chatSessionsAtom)
+        .find((s) => s.id === validSessionId)!
+
+    return {
         updateTitle: (title: string) => {
             ctx.set(_chatSessionsAtom, (prev) => {
                 return produce(prev, (draft) => {
-                    const sess = draft.find((s) => s.id === sessionId)
+                    const sess = draft.find((s) => s.id === validSessionId)
                     if (sess) {
                         sess.title = title
                     }
@@ -724,7 +742,7 @@ export function useChatSession(sessionId?: string) {
         updateInput: (input: string) => {
             ctx.set(_chatSessionsAtom, (prev) => {
                 return produce(prev, (draft) => {
-                    const sess = draft.find((s) => s.id === sessionId)
+                    const sess = draft.find((s) => s.id === validSessionId)
                     if (sess) {
                         sess.input = input
                     }
@@ -734,7 +752,7 @@ export function useChatSession(sessionId?: string) {
         addMessage: (message: ChatMessage) => {
             ctx.set(_chatSessionsAtom, (prev) => {
                 return produce(prev, (draft) => {
-                    const sess = draft.find((s) => s.id === sessionId)
+                    const sess = draft.find((s) => s.id === validSessionId)
                     if (sess) {
                         sess.messages.push(message)
                     }
@@ -747,7 +765,7 @@ export function useChatSession(sessionId?: string) {
         ) => {
             ctx.set(_chatSessionsAtom, (prev) => {
                 return produce(prev, (draft) => {
-                    const sess = draft.find((s) => s.id === sessionId)
+                    const sess = draft.find((s) => s.id === validSessionId)
                     if (sess) {
                         sess.messages = sess.messages.map((m) => {
                             if (m.id === mid) {
@@ -763,7 +781,7 @@ export function useChatSession(sessionId?: string) {
         appendMessageText: (mid: string, text: string) => {
             ctx.set(_chatSessionsAtom, (prev) => {
                 return produce(prev, (draft) => {
-                    const sess = draft.find((s) => s.id === sessionId)
+                    const sess = draft.find((s) => s.id === validSessionId)
                     if (sess) {
                         const msg = sess.messages.find((m) => m.id === mid)
                         if (msg) {
@@ -776,7 +794,7 @@ export function useChatSession(sessionId?: string) {
         deleteMessage: (mid: string) => {
             ctx.set(_chatSessionsAtom, (prev) => {
                 return produce(prev, (draft) => {
-                    const sess = draft.find((s) => s.id === sessionId)
+                    const sess = draft.find((s) => s.id === validSessionId)
                     if (sess) {
                         sess.messages = sess.messages.filter(
                             (m) => m.id !== mid,
@@ -812,7 +830,7 @@ export function useChatSession(sessionId?: string) {
         insertMessageBefore: (message: ChatMessage, beforeMid: string) => {
             ctx.set(_chatSessionsAtom, (prev) => {
                 return produce(prev, (draft) => {
-                    const sess = draft.find((s) => s.id === sessionId)
+                    const sess = draft.find((s) => s.id === validSessionId)
                     if (sess) {
                         sess.messages = sess.messages.reduce((acc, m) => {
                             if (m.id === beforeMid) {
@@ -830,7 +848,7 @@ export function useChatSession(sessionId?: string) {
         insertMessageAfter: (message: ChatMessage, afterMid: string) => {
             ctx.set(_chatSessionsAtom, (prev) => {
                 return produce(prev, (draft) => {
-                    const sess = draft.find((s) => s.id === sessionId)
+                    const sess = draft.find((s) => s.id === validSessionId)
                     if (sess) {
                         sess.messages = sess.messages.reduce((acc, m) => {
                             acc.push(m)
@@ -848,7 +866,7 @@ export function useChatSession(sessionId?: string) {
         clearMessages: () => {
             ctx.set(_chatSessionsAtom, (prev) => {
                 return produce(prev, (draft) => {
-                    const sess = draft.find((s) => s.id === sessionId)
+                    const sess = draft.find((s) => s.id === validSessionId)
                     if (sess) {
                         sess.messages = []
                     }
@@ -858,7 +876,7 @@ export function useChatSession(sessionId?: string) {
         clearMessageBefore: (beforeMid: string) => {
             ctx.set(_chatSessionsAtom, (prev) => {
                 return produce(prev, (draft) => {
-                    const sess = draft.find((s) => s.id === sessionId)
+                    const sess = draft.find((s) => s.id === validSessionId)
                     if (sess) {
                         const messages = []
 
@@ -880,7 +898,7 @@ export function useChatSession(sessionId?: string) {
         clearMessageAfter: (afterMid: string) => {
             ctx.set(_chatSessionsAtom, (prev) => {
                 return produce(prev, (draft) => {
-                    const sess = draft.find((s) => s.id === sessionId)
+                    const sess = draft.find((s) => s.id === validSessionId)
                     if (sess) {
                         const messages = []
                         const oldMessages = sess.messages
@@ -899,10 +917,10 @@ export function useChatSession(sessionId?: string) {
             })
         },
         sendMessage: (content: string, onReplyDone?: (all: string) => void) => {
-            handleSendMessageAsync(ctx, sessionId, content, onReplyDone)
+            handleSendMessageAsync(ctx, validSessionId, content, onReplyDone)
         },
         regenerate: (mid: string, onReplyDone?: (all: string) => void) => {
-            handleRegenerate(ctx, sessionId, mid, onReplyDone)
+            handleRegenerate(ctx, validSessionId, mid, onReplyDone)
         },
     }
 }
