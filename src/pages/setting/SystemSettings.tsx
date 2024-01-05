@@ -9,9 +9,7 @@ import {
     systemNameAtom,
     systemThemeAtom,
 } from '../../states/settings/settings.atom'
-import {
-    SystemSection,
-} from '../../states/settings/settings.type'
+import { SystemSection } from '../../states/settings/settings.type'
 import { SettingRefAttrs } from './SettingRefAttrs'
 import { SystemSettingsForm } from './SystemSettings.form'
 
@@ -37,18 +35,20 @@ const SystemSettings: FC<React.RefAttributes<SettingRefAttrs>> = forwardRef(
             setSystemCorsProxyEnabled(values.corsProxyEnabled)
         }
 
+        const initialValues = {
+            name: systemName,
+            language: systemLanguage,
+            theme: systemTheme,
+            autoSave: systemAutoSave,
+            corsProxy: systemCorsProxy,
+            corsProxyEnabled: systemCorsProxyEnabled,
+        }
+
         return (
             <div className="system-settings">
                 <SystemSettingsForm
                     ref={ref}
-                    initialValues={{
-                        name: systemName,
-                        language: systemLanguage,
-                        theme: systemTheme,
-                        autoSave: systemAutoSave,
-                        corsProxy: systemCorsProxy,
-                        corsProxyEnabled: systemCorsProxyEnabled,
-                    }}
+                    initialValues={initialValues}
                     onSubmit={handleSave}
                 />
             </div>

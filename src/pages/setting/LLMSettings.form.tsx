@@ -31,6 +31,7 @@ const LLMSettingsForm = forwardRef(
     ({ initialValues, onSubmit }: LLMSettingsFormProps, ref) => {
         // 使用Formik Hook
         const formik = useFormik({
+            enableReinitialize: true,
             initialValues,
             onSubmit,
         })

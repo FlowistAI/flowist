@@ -19,6 +19,8 @@ export const ChatBotNodeControl = {
             | (PresetData & { type: 'chat-bot' })
             | undefined
         const defaultBot = getDefaultBot(ctx)
+        console.log('defaultBot', defaultBot)
+
         const session: ChatSession = {
             id,
             type: 'widget',

@@ -12,6 +12,7 @@ export const TTSWidgetControl = {
         id: string,
         options: AddWidgetOptions<WidgetType>,
     ) {
+        console.assert(id)
         const session: TtsSession = {
             id,
             input: '',
@@ -24,7 +25,7 @@ export const TTSWidgetControl = {
             id: id,
             type: WidgetTypes.TextToSpeech,
             position: options.data?.position ?? { x: 0, y: 0 },
-            data: { label: 'Node 1', ...options.data },
+            data: { id, ...options.data },
         }
     },
     destroy({ set }: JotaiContext, id: string) {

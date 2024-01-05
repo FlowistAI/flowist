@@ -26,7 +26,7 @@ export const SystemSettingsForm: FC<SystemSettingsFormProps> = forwardRef(
 
         useImperativeHandle(refs, () => ({
             save() {
-                formik.handleSubmit()
+                formik.submitForm()
             },
         }))
 

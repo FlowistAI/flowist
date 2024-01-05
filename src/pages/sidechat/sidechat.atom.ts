@@ -14,8 +14,6 @@ export const useSideChatControl = () => {
     const visible = useAtomValue(_showSideChatAtom)
     const activeSessionId = useAtomValue(_activeSessionIdAtom)
 
-    console.log('activeSessionId', activeSessionId)
-
     return {
         visible,
         activeSessionId,

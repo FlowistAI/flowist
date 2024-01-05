@@ -173,6 +173,8 @@ function handleAddWidget(
     const { type } = options
 
     const id = options.data?.id ?? get(nodeIdGeneratorAtom).next()
+    console.assert(id)
+
     if (get(nodeTypeMapAtom)[id]) {
         throw new Error('node id already exists')
     }

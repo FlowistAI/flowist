@@ -7,8 +7,12 @@ import {
 } from './llm-service.types'
 import { joinUrl } from '../../util/misc.util'
 
-export function createOpenAIBaseURL(endpoint: string, corsProxy?: string) {
-    let url = joinUrl(endpoint, 'v1')
+export function createOpenAIBaseURL(
+    endpoint: string,
+    corsProxy?: string,
+    version = 'v1',
+) {
+    let url = joinUrl(endpoint, version)
     if (corsProxy) {
         url = joinUrl(corsProxy, url)
     }

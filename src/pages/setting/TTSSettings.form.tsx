@@ -12,24 +12,67 @@ import { TTSSection } from '../../states/settings/settings.type'
 import { SettingRefAttrs } from './SettingRefAttrs'
 import { t } from 'i18next'
 import { ttsProviderOptions } from '../../states/widgets/tts/tts.type'
+// import { atom, useAtom, useAtomValue } from 'jotai'
+// import { createOpenAIBaseURL } from '../../services/llm-service/open-ai.service'
+// import {
+//     systemCorsProxyAtom,
+//     systemCorsProxyEnabledAtom,
+// } from '../../states/settings/settings.atom'
 
 export type TTSSettingsFormProps = {
     initialValues: TTSSection
     onSubmit: (values: TTSSection) => void
 } & React.RefAttributes<SettingRefAttrs>
 
+// const balanceAtom = atom<string>('? / ?')
+
 export const TTSSettingsForm: FC<TTSSettingsFormProps> = forwardRef(
     ({ initialValues, onSubmit }, refs) => {
         const formik = useFormik({
+            enableReinitialize: true,
             initialValues,
             onSubmit,
         })
+
+        console.log(initialValues, formik.values)
 
         useImperativeHandle(refs, () => ({
             save() {
                 formik.submitForm()
             },
         }))
+
+        // const [balance, setBalance] = useAtom(balanceAtom)
+
+        // const corsProxy = useAtomValue(systemCorsProxyAtom)
+        // const corsProxyEnabled = useAtomValue(systemCorsProxyEnabledAtom)
+
+        // const handleQueryBalance = async () => {
+        //     const endpoint = formik.values.providers.OpenAI.endpoint
+        //     const baseURL = createOpenAIBaseURL(
+        //         endpoint,
+        //         corsProxyEnabled ? corsProxy : undefined,
+        //         '',
+        //     )
+        //     const res = await fetch(
+        //         `${baseURL}/dashboard/billing/credit_grants`,
+        //         {
+        //             headers: {
+        //                 Authorization: `Bearer ${formik.values.providers.OpenAI.apiKey}`,
+        //                 ContentType: 'application/json',
+        //             },
+        //         },
+        //     )
+        //     const data = (await res.json()) as {
+        //         total_granted: string
+        //         total_available: string
+        //     }
+        //     setBalance(
+        //         `${data?.total_granted ?? 'error'} / ${
+        //             data?.total_available ?? 'error'
+        //         }`,
+        //     )
+        // }
 
         return (
             <form onSubmit={formik.handleSubmit}>
@@ -58,6 +101,19 @@ export const TTSSettingsForm: FC<TTSSettingsFormProps> = forwardRef(
                 <Typography level="h4" sx={{ marginTop: '2em' }}>
                     {t('OpenAI TTS')}
                 </Typography>
+
+                {/* query openai key balance */}
+                {/* <div className="flex items-center justify-between">
+                    <div>Balance: {balance}</div>
+                    <Button
+                        variant="soft"
+                        color="primary"
+                        onClick={handleQueryBalance}
+                        sx={{ marginLeft: '20px' }}
+                    >
+                        {t('Query Balance')}
+                    </Button>
+                </div> */}
 
                 <FormControl component="fieldset" style={{ marginTop: '20px' }}>
                     <FormLabel component="legend">{t('API Key')}</FormLabel>

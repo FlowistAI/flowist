@@ -8,11 +8,11 @@ import {
     Dropdown,
 } from '@mui/joy'
 import { ArrowDownIcon, XIcon } from '@primer/octicons-react'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Handle, NodeResizer, Position } from 'reactflow'
 import { targetStyle } from '../../../constants/handle-styles'
-import { useCommunicate } from '../../../states/document.atom'
+import { useCommunicate, useDocument } from '../../../states/document.atom'
 import { TTSDropDownMenu } from './TTSDropdownMenu'
 import './TextToSpeechNode.css'
 
@@ -32,7 +32,6 @@ export type TextToSpeechNodeProps = {
         id: string
         title: string
         content: string
-        onClose: () => void
     }
     selected: boolean
 }
@@ -52,18 +51,15 @@ export function TextToSpeechNode({ data, selected }: TextToSpeechNodeProps) {
     const [generating, setGenerating] = useState(false)
     const [playing, setPlaying] = useState(false)
     const [generated, setGenerated] = useState<Blob | null>(null)
+    const [autoTrigger, setAutoTrigger] = useState(false)
+    const handleAutoTrigger = () => setAutoTrigger((v) => !v)
     const { t } = useTranslation()
-
     const { id } = data
-    const { handleSignal } = useCommunicate(id)
-    useEffect(() => {
-        return handleSignal?.(
-            NodePorts.Input,
-            (input: Signal<NodePorts.Input>) => {
-                setInput(input)
-            },
-        )
-    }, [id, handleSignal])
+    console.log('tts id', id)
+    const { dispatch: setDocument } = useDocument()
+    const handleClose = () => {
+        setDocument({ type: 'remove-widget', id })
+    }
 
     // when input change, reset
     useEffect(() => {
@@ -73,29 +69,132 @@ export function TextToSpeechNode({ data, selected }: TextToSpeechNodeProps) {
     const llmOpenAISettings = useAtomValue(llmProvidersAtom).OpenAI
     const ttsOpenAISettings = useAtomValue(ttsProvidersAtom).OpenAI
 
-    const apiKey = ttsOpenAISettings.apiKey || llmOpenAISettings.apiKey
-    const endpoint = ttsOpenAISettings.endpoint || llmOpenAISettings.endpoint
+    const apiKey = useMemo(
+        () => ttsOpenAISettings.apiKey || llmOpenAISettings.apiKey,
+        [llmOpenAISettings.apiKey, ttsOpenAISettings.apiKey],
+    )
+    const endpoint = useMemo(
+        () => ttsOpenAISettings.endpoint || llmOpenAISettings.endpoint,
+        [llmOpenAISettings.endpoint, ttsOpenAISettings.endpoint],
+    )
 
     const corsProxy = useAtomValue(systemCorsProxyAtom)
     const corsProxyEnabled = useAtomValue(systemCorsProxyEnabledAtom)
+    const baseURL = useMemo(
+        () =>
+            createOpenAIBaseURL(
+                endpoint,
+                corsProxyEnabled ? corsProxy : undefined,
+            ),
+        [endpoint, corsProxyEnabled, corsProxy],
+    )
 
     const toast = useToast()
 
-    const handleGenerateOrPlay = async () => {
-        if (generated) {
-            const url = URL.createObjectURL(generated)
-            const audio = new Audio(url)
-            setPlaying(true)
+    const handlePlay = useCallback(async () => {
+        if (!generated) {
+            console.error('generated is null')
 
-            try {
-                await audio.play()
-            } catch (error) {
-                console.error(error)
-                toast({ type: 'error', content: (error as Error).message })
-            } finally {
+            return
+        }
+
+        const url = URL.createObjectURL(generated)
+        const audio = new Audio(url)
+
+        try {
+            audio.addEventListener('playing', () => {
+                setPlaying(true)
+            })
+
+            audio.addEventListener('ended', () => {
                 setPlaying(false)
+
                 URL.revokeObjectURL(url)
-            }
+            })
+
+            await audio.play()
+        } catch (error) {
+            console.error(error)
+            toast({ type: 'error', content: (error as Error).message })
+        }
+
+        return
+    }, [generated, toast])
+
+    const handlePlayFromStream = useCallback(async (stream: ReadableStream) => {
+        if (!window.MediaSource) {
+            console.error('MediaSource API is not available')
+
+            return
+        }
+
+        const mediaSource = new MediaSource()
+        const url = URL.createObjectURL(mediaSource)
+
+        const audio = new Audio()
+        audio.src = url
+        const chunks: BlobPart[] = []
+        mediaSource.addEventListener(
+            'sourceopen',
+            async () => {
+                try {
+                    const sourceBuffer =
+                        mediaSource.addSourceBuffer('audio/mpeg') // Example codec, adjust as needed
+
+                    // Fetch the audio chunks from the ReadableStream
+                    const reader = stream.getReader()
+
+                    // Recursive function to read and append each chunk
+                    const readAndAppendChunk = async () => {
+                        const { done, value } = await reader.read()
+                        if (done) {
+                            mediaSource.endOfStream() // Signal that we've reached the end of the stream
+
+                            return
+                        }
+
+                        // Append the chunk to the SourceBuffer
+                        sourceBuffer.appendBuffer(value)
+                        chunks.push(value)
+                        // Wait for the 'updateend' event to read and append the next chunk
+                        sourceBuffer.addEventListener(
+                            'updateend',
+                            readAndAppendChunk,
+                            { once: true },
+                        )
+                    }
+
+                    // Start reading and appending chunks
+                    readAndAppendChunk()
+
+                    // Play the audio when enough data has been loaded
+                    audio.addEventListener('canplay', () => {
+                        audio.play()
+                        setPlaying(true)
+                    })
+
+                    // Listen for the audio to finish playing
+                    audio.addEventListener('ended', () => {
+                        const blob = new Blob(chunks, {
+                            type: 'audio/mpeg',
+                        })
+                        setGenerated(blob)
+                        console.log('generated', chunks, blob)
+
+                        setPlaying(false)
+                    })
+                } catch (error) {
+                    console.error('Error while handling audio stream', error)
+                }
+            },
+            { once: true },
+        )
+    }, [])
+
+    const handleGenerateOrPlay = useCallback(async () => {
+        if (generated) {
+            console.log('generated, now play')
+            handlePlay()
 
             return
         }
@@ -104,30 +203,42 @@ export function TextToSpeechNode({ data, selected }: TextToSpeechNodeProps) {
             setGenerating(true)
             const client = new OpenAI({
                 apiKey,
-                baseURL: createOpenAIBaseURL(
-                    endpoint,
-                    corsProxyEnabled ? corsProxy : undefined,
-                ),
+                baseURL,
                 dangerouslyAllowBrowser: true,
             })
             const defaultModel = 'tts-1'
             const defaultVoice = 'alloy'
 
-            const mp3 = await client.audio.speech.create({
+            const resp = await client.audio.speech.create({
                 model: ttsOpenAISettings.model || defaultModel,
                 voice: ttsOpenAISettings.voice || defaultVoice,
                 input: input,
-                response_format: 'mp3',
             })
 
-            setGenerated(await mp3.blob())
+            if (!resp.body) {
+                throw new Error('resp.body is null')
+            }
+
+            console.log('got resp')
+
+            await handlePlayFromStream(resp.body)
         } catch (error) {
             console.error(error)
             toast({ type: 'error', content: (error as Error).message })
         } finally {
             setGenerating(false)
         }
-    }
+    }, [
+        apiKey,
+        baseURL,
+        generated,
+        handlePlay,
+        handlePlayFromStream,
+        input,
+        toast,
+        ttsOpenAISettings.model,
+        ttsOpenAISettings.voice,
+    ])
 
     const handleDownload = () => {
         if (!generated) {
@@ -141,6 +252,42 @@ export function TextToSpeechNode({ data, selected }: TextToSpeechNodeProps) {
         a.click()
         URL.revokeObjectURL(url)
     }
+
+    const { handleSignal } = useCommunicate(id)
+    const [fromSignal, setFromSignal] = useState(false)
+    useEffect(() => {
+        return handleSignal?.(
+            NodePorts.Input,
+            (input: Signal<NodePorts.Input>) => {
+                console.log('get signal', input)
+                setInput(input)
+                setFromSignal(true)
+            },
+        )
+    }, [id, handleSignal, handleGenerateOrPlay])
+
+    useEffect(() => {
+        if (fromSignal && autoTrigger) {
+            handleGenerateOrPlay()
+            setFromSignal(false)
+        }
+    }, [autoTrigger, fromSignal, handleGenerateOrPlay])
+
+    const playButtonText = useMemo(() => {
+        if (playing) {
+            return t('Playing')
+        }
+
+        if (generating) {
+            return t('Generating')
+        }
+
+        if (generated) {
+            return t('Play')
+        }
+
+        return t('Generate')
+    }, [generating, generated, playing, t])
 
     return (
         <div
@@ -169,7 +316,7 @@ export function TextToSpeechNode({ data, selected }: TextToSpeechNodeProps) {
                 </span>
                 <button
                     className="text-to-speech-node__close"
-                    onClick={data.onClose}
+                    onClick={handleClose}
                 >
                     <span>
                         <XIcon size={16} />
@@ -184,7 +331,12 @@ export function TextToSpeechNode({ data, selected }: TextToSpeechNodeProps) {
                     className="text-to-speech-node__input"
                 />
                 <div className="flex items-center gap-2">
-                    <Checkbox color="primary" label={t('Auto trigger')} />
+                    <Checkbox
+                        checked={autoTrigger}
+                        onChange={handleAutoTrigger}
+                        color="primary"
+                        label={t('Auto trigger')}
+                    />
                     <Button
                         color="primary"
                         sx={{ flex: 1 }}
@@ -192,13 +344,7 @@ export function TextToSpeechNode({ data, selected }: TextToSpeechNodeProps) {
                         onClick={handleGenerateOrPlay}
                     >
                         <PlayArrow />
-                        {generating
-                            ? t('Generating')
-                            : !generated
-                            ? t('Generate')
-                            : playing
-                            ? t('Playing')
-                            : t('Play')}
+                        {playButtonText}
                     </Button>
                     {/* Dropdown menu */}
                     <Dropdown>
